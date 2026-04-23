@@ -34,27 +34,26 @@
   <widget class="QLabel" name="label_logo">
    <property name="geometry">
     <rect>
-     <x>67</x>
-     <y>24</y>
-     <width>123</width>
-     <height>54</height>
+     <x>24</x>
+     <y>40</y>
+     <width>40</width>
+     <height>34</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>123</width>
-     <height>54</height>
+     <width>40</width>
+     <height>34</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>123</width>
-     <height>54</height>
+     <width>40</width>
+     <height>34</height>
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-image: url(:/main/pic/main_logo.png);
-border-image: url(:/login/pic/login_HW.png);</string>
+    <string notr="true">border-image: url(:/login/pic/login_zenith.png);</string>
    </property>
    <property name="text">
     <string/>
@@ -63,19 +62,31 @@ border-image: url(:/login/pic/login_HW.png);</string>
   <widget class="QLabel" name="label_chanpinName">
    <property name="geometry">
     <rect>
-     <x>650</x>
-     <y>20</y>
-     <width>561</width>
-     <height>61</height>
+     <x>90</x>
+     <y>40</y>
+     <width>271</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>271</width>
+     <height>31</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>271</width>
+     <height>31</height>
+    </size>
    </property>
    <property name="font">
     <font>
-     <pointsize>36</pointsize>
+     <pointsize>16</pointsize>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: white;
+    <string notr="true">color: black;
 </string>
    </property>
    <property name="text">
@@ -284,7 +295,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -355,7 +366,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -1740,23 +1751,31 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <string>用户名</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_8">
+    <widget class="QPushButton" name="pushButton_report">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>291</width>
-       <height>991</height>
+       <x>90</x>
+       <y>640</y>
+       <width>77</width>
+       <height>77</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">border-image: url(:/main/pic/main_buttonbackgro.png);</string>
+     <property name="minimumSize">
+      <size>
+       <width>77</width>
+       <height>77</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>77</width>
+       <height>77</height>
+      </size>
      </property>
      <property name="text">
       <string/>
      </property>
     </widget>
-    <zorder>label_8</zorder>
     <zorder>pushButton_treat</zorder>
     <zorder>pushButton_patient</zorder>
     <zorder>pushButton_plan</zorder>
@@ -1766,6 +1785,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
     <zorder>label_username</zorder>
     <zorder>label_userProphoto</zorder>
     <zorder>tabWidget</zorder>
+    <zorder>pushButton_report</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -7136,13 +7156,13 @@ padding: 0px;</string>
   <zorder>label_10</zorder>
   <zorder>label_patient</zorder>
   <zorder>label_4</zorder>
-  <zorder>label_logo</zorder>
   <zorder>label_chanpinName</zorder>
   <zorder>label_pingpong</zorder>
   <zorder>label_wifi</zorder>
   <zorder>pushButton_quit</zorder>
   <zorder>pushButton_small</zorder>
   <zorder>tabWidget_main</zorder>
+  <zorder>label_logo</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>

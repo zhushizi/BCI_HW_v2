@@ -30,6 +30,7 @@ class MainWindowNavigation:
         connect_click("pushButton_patient", lambda: self.switch_tab(1))
         connect_click("pushButton_plan", lambda: self.switch_tab(2))
         connect_click("pushButton_set", lambda: self.switch_tab(3))
+        connect_click("pushButton_report", self._on_report_clicked)
         connect_click("pushButton_tab2home", self.switch_treat_tab_to_first)
 
         tab_widget = get_ui_attr(self.ui, "tabWidget")
@@ -42,6 +43,7 @@ class MainWindowNavigation:
 
     def init_ui(self) -> None:
         self._host.setWindowTitle("BCI硬件控制系统")
+        self._host._report_selected = False
         tab_widget = get_ui_attr(self.ui, "tabWidget")
         if tab_widget:
             tab_widget.setCurrentIndex(0)
@@ -63,6 +65,7 @@ class MainWindowNavigation:
         if getattr(self._host, "_current_tab_index", 0) == 0 and tab_index != 0:
             self._host.treat_controller.on_exit_treat_page()
         if 0 <= tab_index < tab_widget.count():
+            self._host._report_selected = False
             tab_widget.setCurrentIndex(tab_index)
             self._host._current_tab_index = tab_index
             self.update_button_states()
@@ -76,6 +79,7 @@ class MainWindowNavigation:
     def on_tab_changed(self, index: int) -> None:
         previous_index = getattr(self._host, "_current_tab_index", 0)
         self._host._current_tab_index = index
+        self._host._report_selected = False
         if previous_index == 0 and index != 0:
             self._host.treat_controller.on_exit_treat_page()
         self.update_button_states()
@@ -94,6 +98,7 @@ class MainWindowNavigation:
         if tab_main:
             tab_main.setCurrentIndex(0)
         self._host._current_tab_index = 0
+        self._host._report_selected = False
         self.update_button_states()
 
     def update_button_states(self) -> None:
@@ -115,6 +120,25 @@ class MainWindowNavigation:
                 f"    border: none;"
                 f"}}"
             )
+        self._update_report_button_state(bool(getattr(self._host, "_report_selected", False)))
+
+    def _on_report_clicked(self) -> None:
+        self._host._report_selected = True
+        self._update_report_button_state(True)
+
+    def _update_report_button_state(self, selected: bool) -> None:
+        button_name = "pushButton_report"
+        button = get_ui_attr(self.ui, button_name)
+        if button is None:
+            return
+        image_name = "main_report_on.png" if selected else "main_report_off.png"
+        button.setStyleSheet(
+            f"QPushButton#{button_name} {{"
+            f"    border-image: url(:/main/pic/{image_name});"
+            f"    background: transparent;"
+            f"    border: none;"
+            f"}}"
+        )
 
 
 class MainWindowUserInfo:

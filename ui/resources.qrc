@@ -16,12 +16,12 @@
         <file>pic/login_welcome.png</file>
         <file>pic/login_checked.png</file>
         <file>pic/login_pwdopen.png</file>
+        <file>pic/login_zenith.png</file>
     </qresource>
     
     <!-- 主界面图片资源 -->
     <qresource prefix="/main">
         <!-- 文件路径：相对于 .qrc 的位置 -->
-        <file>pic/main_background.png</file>
         <file>pic/main_BCI.png</file>
         <file>pic/main_logo.png</file>
         <file>pic/main_logout.png</file>
@@ -63,6 +63,8 @@
         <file>pic/main_color.png</file>
         <file>pic/main_tips.png</file>
         <file>pic/main_tips_logo.png</file>
+        <file>pic/main_report_on.png</file>
+        <file>pic/main_report_off.png</file>
 
     </qresource>
 
