@@ -1,0 +1,16 @@
+# Python / IDE artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Generated images / analysis outputs
+db/ERDs/
+db/ReactionTimeCurve/
+
+# Local IDE settings
+.idea/
+
+# Large protocol reference docs (resource files)
+*JSON-RPC*.md
+*JSON-RPC*.pdf
+
