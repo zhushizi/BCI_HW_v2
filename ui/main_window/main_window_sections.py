@@ -8,11 +8,11 @@ from typing import Callable, Optional
 
 from PySide6.QtCore import Qt, QRect, QTimer, QObject, QEvent
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QMessageBox, QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QMessageBox, QGraphicsDropShadowEffect, QVBoxLayout
 
 from ui.core.utils import get_ui_attr, safe_call, safe_connect
-from ui.dialogs.patient_select import PatientSelectDialog
 from ui.dialogs.tips_dialog import TipsDialog
+from ui.main_window.patient_select_panel import PatientSelectPanel
 
 
 class MainWindowNavigation:
@@ -57,6 +57,7 @@ class MainWindowNavigation:
             tab_main.setCurrentIndex(0)
         label_patient = get_ui_attr(self.ui, "label_patient")
         safe_call(self.logger, getattr(label_patient, "setAlignment", None), Qt.AlignCenter)
+        self._host._treat_flow.refresh_patient_select_panel()
 
     def switch_tab(self, tab_index: int) -> None:
         tab_widget = get_ui_attr(self.ui, "tabWidget")
@@ -69,7 +70,9 @@ class MainWindowNavigation:
             tab_widget.setCurrentIndex(tab_index)
             self._host._current_tab_index = tab_index
             self.update_button_states()
-            if tab_index == 1:
+            if tab_index == 0:
+                self._host._treat_flow.refresh_patient_select_panel()
+            elif tab_index == 1:
                 self._host.patient_controller.refresh()
             elif tab_index == 2:
                 self._host.plan_controller.refresh()
@@ -83,7 +86,9 @@ class MainWindowNavigation:
         if previous_index == 0 and index != 0:
             self._host.treat_controller.on_exit_treat_page()
         self.update_button_states()
-        if index == 1:
+        if index == 0:
+            self._host._treat_flow.refresh_patient_select_panel()
+        elif index == 1:
             self._host.patient_controller.refresh()
         elif index == 2:
             self._host.plan_controller.refresh()
@@ -100,6 +105,7 @@ class MainWindowNavigation:
         self._host._current_tab_index = 0
         self._host._report_selected = False
         self.update_button_states()
+        self._host._treat_flow.refresh_patient_select_panel()
 
     def update_button_states(self) -> None:
         button_configs = [
@@ -286,12 +292,14 @@ class MainWindowTreatFlow:
         self.ui = host.ui
         self.logger = host.logger
         self._hover_filters: list[_HoverShadowFilter] = []
+        self._patient_select_panel: Optional[PatientSelectPanel] = None
 
     def bind(self) -> None:
         def connect_click(name: str, slot: Callable[[], None]) -> None:
             button = get_ui_attr(self.ui, name)
             safe_connect(self.logger, getattr(button, "clicked", None), slot)
 
+        self._ensure_patient_select_panel()
         connect_click("pushButton_tab1select", self.open_patient_select_dialog)
 
         treat_buttons = [
@@ -320,6 +328,28 @@ class MainWindowTreatFlow:
         start_evaluate_btn = get_ui_attr(self.ui, "pushButton_startevaluate")
         safe_connect(self.logger, getattr(start_evaluate_btn, "clicked", None), self.on_start_evaluate_clicked)
 
+    def _ensure_patient_select_panel(self) -> None:
+        if self._patient_select_panel is not None:
+            return
+
+        container = get_ui_attr(self.ui, "widget_patient_select")
+        if container is None:
+            return
+
+        layout = container.layout()
+        if layout is None:
+            layout = QVBoxLayout(container)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(0)
+
+        self._patient_select_panel = PatientSelectPanel(
+            patient_app=self._host.patient_app,
+            parent=container,
+            logger=self.logger,
+        )
+        layout.addWidget(self._patient_select_panel)
+        safe_connect(self.logger, self._patient_select_panel.patient_selected, self.on_patient_selected)
+
     def _attach_hover_shadow(self, button) -> None:
         effect = QGraphicsDropShadowEffect(button)
         effect.setBlurRadius(18)
@@ -333,9 +363,9 @@ class MainWindowTreatFlow:
 
 
     def open_patient_select_dialog(self) -> None:
-        dialog = PatientSelectDialog(self._host, self._host.patient_app)
-        dialog.patient_selected.connect(self.on_patient_selected)
-        dialog.exec()
+        self.refresh_patient_select_panel()
+        if self._patient_select_panel:
+            self._patient_select_panel.focus_search()
 
     def on_patient_selected(self, patient: dict) -> None:
         patient_name = patient.get("Name", "")
@@ -346,7 +376,18 @@ class MainWindowTreatFlow:
             label_fallback = get_ui_attr(self.ui, "label_11")
             safe_call(self.logger, getattr(label_fallback, "setText", None), patient_name)
         self._host._selected_patient = patient
+        if self._patient_select_panel:
+            self._patient_select_panel.refresh_patients(selected_patient=patient)
         self._host.treat_controller.set_current_patient(patient)
+
+    def refresh_patient_select_panel(self) -> None:
+        self._ensure_patient_select_panel()
+        if self._patient_select_panel:
+            self._patient_select_panel.refresh_patients(selected_patient=self._host._selected_patient)
+
+    def clear_patient_selection(self) -> None:
+        if self._patient_select_panel:
+            self._patient_select_panel.set_selected_patient(None)
 
     @staticmethod
     def extract_patient_id(patient: dict | None) -> str | None:

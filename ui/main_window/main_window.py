@@ -291,6 +291,10 @@ class MainWindow(QWidget):
             label_fallback = get_ui_attr(self.ui, "label_11")
             safe_call(self.logger, getattr(label_fallback, "setText", None), "未选择患者")
         self._selected_patient = None
+        try:
+            self._treat_flow.clear_patient_selection()
+        except Exception:
+            self.logger.exception("清空患者选择面板状态失败")
 
         if self.session_app:
             try:
