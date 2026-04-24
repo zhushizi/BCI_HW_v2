@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
 from ui.core.resource_loader import ensure_resources_loaded
 from ui.core.table_utils import set_text_item
 from ui.core.utils import get_ui_attr, safe_connect
+from ui.dialogs.record_compare import RecordCompareDialog
 from ui.dialogs.tips_dialog import TipsDialog
 from ui.dialogs.treat_record.treat_record_actions import TreatRecordActions
 from ui.dialogs.treat_record.treat_record_table import TreatRecordTable
@@ -490,7 +491,22 @@ class EmbeddedTreatRecordPanel(QWidget):
         self._on_print_clicked(rows_to_print[0])
 
     def _on_compare_clicked(self) -> None:
-        TipsDialog.show_tips(self, "横向对比功能待接入")
+        if not self._patient_id:
+            TipsDialog.show_tips(self, "请先选择患者")
+            return
+        _rows, session_ids = self._table.get_selected_session_ids()
+        if len(session_ids) < 2:
+            TipsDialog.show_tips(self, "请至少勾选两条治疗记录进行横向对比")
+            return
+        dialog = RecordCompareDialog(
+            self,
+            session_app=self._session_app,
+            report_app=self._report_app,
+            patient_id=self._patient_id,
+            patient_name=self._patient_name,
+            session_ids=session_ids,
+        )
+        dialog.exec()
 
     def _on_pdf_clicked(self, row: int) -> None:
         if self._actions is not None:
