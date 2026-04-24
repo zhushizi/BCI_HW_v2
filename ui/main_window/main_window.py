@@ -18,6 +18,7 @@ from ui.main_window.main_window_treat import TreatPageController
 from ui.main_window.main_window_patient import PatientPageController
 from ui.main_window.main_window_plan import PlanPageController
 from ui.main_window.main_window_set import SetPageController
+from ui.main_window.main_window_report import MainWindowReportPage
 from ui.main_window.main_window_sections import (
     MainWindowNavigation,
     MainWindowUserInfo,
@@ -148,6 +149,7 @@ class MainWindow(QWidget):
         self._user_info = MainWindowUserInfo(self)
         self._device_status = MainWindowDeviceStatus(self)
         self._treat_flow = MainWindowTreatFlow(self)
+        self.report_controller = MainWindowReportPage(self)
 
         self._setup_connections()
         self._init_ui()
@@ -232,6 +234,7 @@ class MainWindow(QWidget):
         self.patient_controller.init_ui()
         self.plan_controller.init_ui()
         self.set_controller.init_ui()
+        self.report_controller.init_ui()
 
     def _switch_tab(self, tab_index: int):
         """切换顶级标签页 (0=治疗, 1=患者, 2=方案, 3=设置)"""

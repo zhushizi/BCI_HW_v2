@@ -127,6 +127,8 @@ class PatientPageController(BaseTableController):
         safe_connect(self.logger, getattr(new_btn_tab, "clicked", None), self._open_new_patient_dialog)
         new_btn = get_ui_attr(self.ui, "pushButton_new")
         safe_connect(self.logger, getattr(new_btn, "clicked", None), self._open_new_patient_dialog)
+        delete_btn = get_ui_attr(self.ui, "pushButton_patient_delete")
+        safe_connect(self.logger, getattr(delete_btn, "clicked", None), self._on_delete_selected_patients)
 
     def init_ui(self):
         """初始化表格与状态"""
@@ -206,11 +208,12 @@ class PatientPageController(BaseTableController):
 
         if not patients:
             table.blockSignals(False)
-            self._update_header_check_state()
             self._patient_data = []
+            self._set_header_check_state(Qt.CheckState.Unchecked)
             return
 
         table.setRowCount(len(patients))
+        self._patient_data = list(patients)
 
         for row, patient in enumerate(patients):
             self.set_text_item(row, 1, patient.get("Name"))
@@ -227,7 +230,6 @@ class PatientPageController(BaseTableController):
 
         table.blockSignals(False)
         self._update_header_check_state()
-        self._patient_data = patients
 
     def _setup_patient_row_widgets(self, table, row: int):
         checkbox = QCheckBox()
@@ -277,25 +279,12 @@ class PatientPageController(BaseTableController):
         )
         edit_btn.clicked.connect(lambda checked, r=row: self._on_edit_patient_clicked(r))
 
-        del_btn = QPushButton()
-        del_btn.setCursor(Qt.PointingHandCursor)
-        del_btn.setFixedSize(35, 35)
-        del_btn.setStyleSheet(
-            "QPushButton {"
-            "    border: none;"
-            "    background: transparent;"
-            "    border-image: url(:/treat/pic/treat_del.png);"
-            "}"
-        )
-        del_btn.clicked.connect(lambda checked, r=row: self._on_delete_patient_clicked(r))
-
         op_container = QWidget()
         op_layout = QHBoxLayout(op_container)
         op_layout.setContentsMargins(0, 0, 0, 0)
-        op_layout.setSpacing(35)
+        op_layout.setSpacing(0)
         op_layout.setAlignment(Qt.AlignCenter)
         op_layout.addWidget(edit_btn)
-        op_layout.addWidget(del_btn)
         if table.columnCount() > 7:
             table.setCellWidget(row, 7, op_container)
 
@@ -356,36 +345,83 @@ class PatientPageController(BaseTableController):
             TipsDialog.show_tips(self.parent, "无法获取患者信息")
             return
 
-        patient = self._patient_data[row]
-        patient_id = patient.get("PatientId", "")
-        patient_name = patient.get("Name", "")
+        self._delete_patients([self._patient_data[row]])
 
-        if not patient_id:
-            TipsDialog.show_tips(self.parent, "病历号为空，无法删除")
+    def _on_delete_selected_patients(self):
+        patients = self._get_checked_patients()
+        if not patients:
+            TipsDialog.show_tips(self.parent, "请先勾选需要删除的患者")
             return
+
+        self._delete_patients(patients)
+
+    def _get_checked_patients(self) -> List[dict]:
+        checked_patients: List[dict] = []
+        for row, checkbox in enumerate(self._row_checkboxes):
+            if row >= len(self._patient_data):
+                break
+            if checkbox.checkState() == Qt.CheckState.Checked:
+                checked_patients.append(self._patient_data[row])
+        return checked_patients
+
+    def _delete_patients(self, patients: List[dict]) -> None:
+        valid_patients = []
+        for patient in patients:
+            patient_id = str(patient.get("PatientId", "") or "").strip()
+            if patient_id:
+                valid_patients.append(patient)
+
+        if not valid_patients:
+            TipsDialog.show_tips(self.parent, "所选患者病历号为空，无法删除")
+            return
+
+        if len(valid_patients) == 1:
+            patient = valid_patients[0]
+            patient_id = patient.get("PatientId", "")
+            patient_name = patient.get("Name", "")
+            message = f"确定删除患者「{patient_name or patient_id}」及其诊疗记录？"
+        else:
+            message = f"确定删除选中的 {len(valid_patients)} 位患者及其诊疗记录？"
 
         parent_win = self.parent.window() if self.parent else None
-        if not TipsDialog.show_confirm(parent_win, f"确定删除患者「{patient_name or patient_id}」及其诊疗记录？"):
+        if not TipsDialog.show_confirm(parent_win, message):
             return
 
-        try:
-            ok = self.patient_app.delete_patient(patient_id)
-        except Exception as e:
-            self.logger.error(f"删除患者异常: {e}")
-            TipsDialog.show_tips(self.parent, f"删除患者失败: {e}")
-            return
+        success_ids: List[str] = []
+        failed_names: List[str] = []
+        for patient in valid_patients:
+            patient_id = str(patient.get("PatientId", "") or "").strip()
+            patient_name = str(patient.get("Name", "") or patient_id).strip()
+            try:
+                ok = self.patient_app.delete_patient(patient_id)
+            except Exception as e:
+                self.logger.error(f"删除患者异常: {e}")
+                ok = False
+            if ok:
+                success_ids.append(patient_id)
+                host = self.parent
+                if hasattr(host, "clear_treat_context_if_patient_removed"):
+                    try:
+                        host.clear_treat_context_if_patient_removed(patient_id)
+                    except Exception:
+                        self.logger.exception("删除患者后清理当前治疗选择失败")
+            else:
+                failed_names.append(patient_name)
 
-        if ok:
-            TipsDialog.show_tips(self.parent, "删除患者成功")
-            host = self.parent
-            if hasattr(host, "clear_treat_context_if_patient_removed"):
-                try:
-                    host.clear_treat_context_if_patient_removed(patient_id)
-                except Exception:
-                    self.logger.exception("删除患者后清理当前治疗选择失败")
-            self.refresh()
+        self.refresh()
+
+        if failed_names and success_ids:
+            TipsDialog.show_tips(
+                self.parent,
+                f"已删除 {len(success_ids)} 位患者，以下删除失败：{', '.join(failed_names)}",
+            )
+        elif failed_names:
+            TipsDialog.show_tips(
+                self.parent,
+                f"删除失败：{', '.join(failed_names)}",
+            )
         else:
-            TipsDialog.show_tips(self.parent, "删除患者失败")
+            TipsDialog.show_tips(self.parent, f"已删除 {len(success_ids)} 位患者")
 
     def _open_new_patient_dialog(self):
         dialog = PatientNewDialog(self.parent)
@@ -421,7 +457,10 @@ class PatientPageController(BaseTableController):
         self._update_header_check_state()
 
     def _update_header_check_state(self):
-        if not self._row_checkboxes or self._header_checkbox is None:
+        if self._header_checkbox is None:
+            return
+        if not self._row_checkboxes:
+            self._set_header_check_state(Qt.CheckState.Unchecked)
             return
 
         total = len(self._row_checkboxes)
@@ -435,6 +474,11 @@ class PatientPageController(BaseTableController):
         else:
             state = Qt.CheckState.PartiallyChecked
 
+        self._set_header_check_state(state)
+
+    def _set_header_check_state(self, state: Qt.CheckState) -> None:
+        if self._header_checkbox is None:
+            return
         self._bulk_updating_checks = True
         self._header_checkbox.setCheckState(state)
         self._bulk_updating_checks = False

@@ -78,11 +78,14 @@ class MainWindowNavigation:
                 self._host.plan_controller.refresh()
             elif tab_index == 3:
                 self._host.set_controller.refresh()
+            elif tab_index == getattr(getattr(self._host, "report_controller", None), "REPORT_TAB_INDEX", -1):
+                self._host.report_controller.refresh()
 
     def on_tab_changed(self, index: int) -> None:
         previous_index = getattr(self._host, "_current_tab_index", 0)
         self._host._current_tab_index = index
-        self._host._report_selected = False
+        report_tab_index = getattr(getattr(self._host, "report_controller", None), "REPORT_TAB_INDEX", -1)
+        self._host._report_selected = index == report_tab_index
         if previous_index == 0 and index != 0:
             self._host.treat_controller.on_exit_treat_page()
         self.update_button_states()
@@ -94,6 +97,8 @@ class MainWindowNavigation:
             self._host.plan_controller.refresh()
         elif index == 3:
             self._host.set_controller.refresh()
+        elif index == report_tab_index:
+            self._host.report_controller.refresh()
 
     def switch_treat_tab_to_first(self) -> None:
         tab_widget = get_ui_attr(self.ui, "tabWidget")
@@ -129,7 +134,12 @@ class MainWindowNavigation:
         self._update_report_button_state(bool(getattr(self._host, "_report_selected", False)))
 
     def _on_report_clicked(self) -> None:
-        self._host._report_selected = True
+        tab_widget = get_ui_attr(self.ui, "tabWidget")
+        report_tab_index = getattr(getattr(self._host, "report_controller", None), "REPORT_TAB_INDEX", -1)
+        if tab_widget is not None and 0 <= report_tab_index < tab_widget.count():
+            self._host._report_selected = True
+            tab_widget.setCurrentIndex(report_tab_index)
+            self._host.report_controller.refresh()
         self._update_report_button_state(True)
 
     def _update_report_button_state(self, selected: bool) -> None:
