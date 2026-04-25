@@ -583,7 +583,7 @@ def main() -> None:
     apps = build_apps(services, decoder_manager)
 
     # 启动解码器
-    # apps.decoder_app.start()
+    apps.decoder_app.start()
     connect_shutdown(app, services, apps.decoder_app, ws_server_process=ws_server_process)
 
     # 说明：范式动作指令/decoder.ready/system.ping 的处理已迁到 WsMessageRouter（service 层）

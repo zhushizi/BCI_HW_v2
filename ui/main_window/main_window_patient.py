@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QStyle,
     QTableWidgetItem,
     QDialog,
+    QAbstractItemView,
 )
 
 from ui.core.base_table_controller import BaseTableController
@@ -127,7 +128,8 @@ class PatientPageController(BaseTableController):
         safe_connect(self.logger, getattr(new_btn_tab, "clicked", None), self._open_new_patient_dialog)
         new_btn = get_ui_attr(self.ui, "pushButton_new")
         safe_connect(self.logger, getattr(new_btn, "clicked", None), self._open_new_patient_dialog)
-        delete_btn = get_ui_attr(self.ui, "pushButton_patient_delete")
+        # 兼容不同 UI 命名：优先新名称，回退到当前 main_window.ui 中的 pushButton
+        delete_btn = get_ui_attr(self.ui, "pushButton_patient_delete") or get_ui_attr(self.ui, "pushButton")
         safe_connect(self.logger, getattr(delete_btn, "clicked", None), self._on_delete_selected_patients)
 
     def init_ui(self):
@@ -183,6 +185,9 @@ class PatientPageController(BaseTableController):
             item.setTextAlignment(Qt.AlignCenter)
 
         table.setRowCount(0)
+        # 支持表格多选行（除勾选框外，也可通过行选中后批量删除）
+        table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self._row_checkboxes = []
         self._load_patient_data()
 
@@ -350,7 +355,9 @@ class PatientPageController(BaseTableController):
     def _on_delete_selected_patients(self):
         patients = self._get_checked_patients()
         if not patients:
-            TipsDialog.show_tips(self.parent, "请先勾选需要删除的患者")
+            patients = self._get_row_selected_patients()
+        if not patients:
+            TipsDialog.show_tips(self.parent, "请先勾选或选中需要删除的患者")
             return
 
         self._delete_patients(patients)
@@ -363,6 +370,18 @@ class PatientPageController(BaseTableController):
             if checkbox.checkState() == Qt.CheckState.Checked:
                 checked_patients.append(self._patient_data[row])
         return checked_patients
+
+    def _get_row_selected_patients(self) -> List[dict]:
+        """读取表格当前选中行对应的患者，支持 Ctrl/Shift 多选。"""
+        table = self._get_patient_table()
+        if table is None:
+            return []
+        selected_rows = sorted({idx.row() for idx in table.selectionModel().selectedRows()})
+        patients: List[dict] = []
+        for row in selected_rows:
+            if 0 <= row < len(self._patient_data):
+                patients.append(self._patient_data[row])
+        return patients
 
     def _delete_patients(self, patients: List[dict]) -> None:
         valid_patients = []
