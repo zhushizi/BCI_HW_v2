@@ -418,7 +418,7 @@ QPushButton#pushButton_tab1new:pressed {
       <widget class="QPushButton" name="pushButton_up_ssvep">
        <property name="geometry">
         <rect>
-         <x>810</x>
+         <x>830</x>
          <y>270</y>
          <width>443</width>
          <height>310</height>
@@ -454,7 +454,7 @@ QPushButton#pushButton_up_ssvep:pressed { border-image: url(:/main/pic/main_up_c
       <widget class="QPushButton" name="pushButton_up_ssmvep">
        <property name="geometry">
         <rect>
-         <x>330</x>
+         <x>360</x>
          <y>270</y>
          <width>443</width>
          <height>310</height>
@@ -526,7 +526,7 @@ QPushButton#pushButton_up_mi:pressed { border-image: url(:/main/pic/main_up_clic
       <widget class="QPushButton" name="pushButton_down_ssvep">
        <property name="geometry">
         <rect>
-         <x>810</x>
+         <x>830</x>
          <y>610</y>
          <width>443</width>
          <height>310</height>
@@ -562,7 +562,7 @@ QPushButton#pushButton_down_ssvep:pressed { border-image: url(:/main/pic/main_do
       <widget class="QPushButton" name="pushButton_down_ssmvep">
        <property name="geometry">
         <rect>
-         <x>330</x>
+         <x>360</x>
          <y>610</y>
          <width>443</width>
          <height>310</height>
@@ -599,7 +599,7 @@ QPushButton#pushButton_down_ssmvep:pressed { border-image: url(:/main/pic/main_d
        <property name="geometry">
         <rect>
          <x>1290</x>
-         <y>620</y>
+         <y>610</y>
          <width>443</width>
          <height>310</height>
         </rect>
@@ -634,8 +634,8 @@ QPushButton#pushButton_down_mi:pressed { border-image: url(:/main/pic/main_down_
       <widget class="QLabel" name="label_23">
        <property name="geometry">
         <rect>
-         <x>820</x>
-         <y>350</y>
+         <x>850</x>
+         <y>360</y>
          <width>151</width>
          <height>31</height>
         </rect>
@@ -656,7 +656,7 @@ QPushButton#pushButton_down_mi:pressed { border-image: url(:/main/pic/main_down_
       <widget class="QLabel" name="label_24">
        <property name="geometry">
         <rect>
-         <x>360</x>
+         <x>390</x>
          <y>360</y>
          <width>131</width>
          <height>31</height>
@@ -700,8 +700,8 @@ QPushButton#pushButton_down_mi:pressed { border-image: url(:/main/pic/main_down_
       <widget class="QLabel" name="label_27">
        <property name="geometry">
         <rect>
-         <x>830</x>
-         <y>670</y>
+         <x>850</x>
+         <y>660</y>
          <width>151</width>
          <height>31</height>
         </rect>
@@ -722,7 +722,7 @@ QPushButton#pushButton_down_mi:pressed { border-image: url(:/main/pic/main_down_
       <widget class="QLabel" name="label_28">
        <property name="geometry">
         <rect>
-         <x>360</x>
+         <x>370</x>
          <y>670</y>
          <width>131</width>
          <height>31</height>
