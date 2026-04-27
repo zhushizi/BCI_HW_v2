@@ -10,6 +10,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QWidget, QMessageBox
 from PySide6.QtCore import Signal, QFile, Qt
 from PySide6.QtUiTools import QUiLoader
+from PySide6.QtGui import QIcon
 
 from ui.core.app_icon import apply_window_icon
 from ui.core.resource_loader import ensure_resources_loaded
@@ -173,7 +174,16 @@ class MainWindow(QWidget):
         # 窗口控制
         minimize_btn = get_ui_attr(self.ui, "pushButton_small") or get_ui_attr(self.ui, "pushButton_2")
         quit_btn = get_ui_attr(self.ui, "pushButton_quit") or get_ui_attr(self.ui, "pushButton")
-        # 运行时强制设置手型光标，避免 .ui 样式被其他逻辑覆盖
+        # 运行时强制设置按钮外观，避免 .ui 被覆盖后出现默认减号/图标
+        safe_call(self.logger, getattr(minimize_btn, "setText", None), "")
+        safe_call(self.logger, getattr(minimize_btn, "setIcon", None), QIcon())
+        safe_call(
+            self.logger,
+            getattr(minimize_btn, "setStyleSheet", None),
+            "background-color: transparent; border: none; border-image: none;",
+        )
+        safe_call(self.logger, getattr(minimize_btn, "setFlat", None), True)
+        # 运行时强制设置手型光标
         safe_call(self.logger, getattr(minimize_btn, "setCursor", None), Qt.PointingHandCursor)
         safe_call(self.logger, getattr(quit_btn, "setCursor", None), Qt.PointingHandCursor)
         safe_connect(self.logger, getattr(minimize_btn, "clicked", None), self.showMinimized)
