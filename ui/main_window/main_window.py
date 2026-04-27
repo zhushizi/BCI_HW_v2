@@ -174,8 +174,8 @@ class MainWindow(QWidget):
         minimize_btn = get_ui_attr(self.ui, "pushButton_small") or get_ui_attr(self.ui, "pushButton_2")
         quit_btn = get_ui_attr(self.ui, "pushButton_quit") or get_ui_attr(self.ui, "pushButton")
         # 运行时强制设置手型光标，避免 .ui 样式被其他逻辑覆盖
-        safe_call(getattr(minimize_btn, "setCursor", None), Qt.PointingHandCursor)
-        safe_call(getattr(quit_btn, "setCursor", None), Qt.PointingHandCursor)
+        safe_call(self.logger, getattr(minimize_btn, "setCursor", None), Qt.PointingHandCursor)
+        safe_call(self.logger, getattr(quit_btn, "setCursor", None), Qt.PointingHandCursor)
         safe_connect(self.logger, getattr(minimize_btn, "clicked", None), self.showMinimized)
         safe_connect(self.logger, getattr(quit_btn, "clicked", None), self.close)
 
