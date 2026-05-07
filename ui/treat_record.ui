@@ -60,10 +60,19 @@
 QTableWidget#tableWidget_treatrecord {
     outline: none;
     border: none;
+    background: transparent;
+}
+QTableWidget#tableWidget_treatrecord QTableCornerButton::section {
+    background: transparent;
+    border: none;
+}
+QTableWidget#tableWidget_treatrecord::viewport {
+    background: transparent;
 }
 QTableWidget#tableWidget_treatrecord::item {
     outline: none;
     border: none;
+    background: transparent;
 }
 QTableWidget#tableWidget_treatrecord::item:focus {
     outline: none;
@@ -86,7 +95,7 @@ QTableWidget#tableWidget_treatrecord::item:selected {
     <enum>QAbstractItemView::NoSelection</enum>
    </property>
    <property name="showGrid">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <attribute name="horizontalHeaderDefaultSectionSize">
     <number>130</number>

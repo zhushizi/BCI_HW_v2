@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
 )
 
 from ui.core.base_table_controller import BaseTableController
-from ui.core.utils import get_ui_attr, safe_call, safe_connect
+from ui.core.utils import get_ui_attr, safe_connect
 from ui.dialogs.patient_newa import PatientNewDialog
 from ui.dialogs.tips_dialog import TipsDialog
 from ui.dialogs.treat_record import TreatRecordDialog
@@ -119,12 +119,6 @@ class PatientPageController(BaseTableController):
     def bind_signals(self):
         """绑定患者页相关事件"""
         search = get_ui_attr(self.ui, "lineEdit_search")
-        safe_call(
-            self.logger,
-            getattr(search, "setStyleSheet", None),
-            "QLineEdit { background: #DDDDDD; color: #999999; border: none; border-radius: 8px; padding: 4px 10px; }"
-            "QLineEdit::placeholder { color: #999999; }",
-        )
         safe_connect(self.logger, getattr(search, "textChanged", None), self._on_search_text_changed)
         search2 = get_ui_attr(self.ui, "lineEdit_search_2")
         safe_connect(self.logger, getattr(search2, "textChanged", None), self._on_search_text_changed)

@@ -255,8 +255,11 @@ QTableWidget#tableWidget::item:selected {
    </property>
    <property name="styleSheet">
     <string notr="true">QLineEdit#lineEdit_search {
+	background-color: #DDDDDD;
 	border: none;
 	border-radius: 10px;
+	color: #999999;
+	padding: 4px 10px;
 }</string>
    </property>
    <property name="text">
@@ -293,10 +296,13 @@ QTableWidget#tableWidget::item:selected {
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">border: none;
-border-radius: 20px;
-background-color: rgb(120, 158, 255);
-color: #FFFFFF;</string>
+    <string notr="true">QPushButton {
+background: transparent;
+border: 1px solid #BDBDBD;
+color: #999999;
+border-radius: 10px;
+padding: 6px 12px;
+}</string>
    </property>
    <property name="text">
     <string>重置</string>

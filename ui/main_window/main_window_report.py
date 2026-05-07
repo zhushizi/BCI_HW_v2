@@ -125,14 +125,36 @@ class ReportPatientsPanel(QWidget):
         export_btn = QPushButton()
         export_btn.setFixedSize(71, 41)
         export_btn.setCursor(Qt.PointingHandCursor)
-        export_btn.setStyleSheet("border-image: url(:/patient/pic/patient_out.png); border: none;")
+        export_btn.setText("导出")
+        export_btn.setStyleSheet(
+            "QPushButton {"
+            "background: transparent;"
+            "border: 1px solid #4B86FC;"
+            "border-radius: 10px;"
+            "color: #4B86FC;"
+            "padding: 6px 12px;"
+            "}"
+            "QPushButton:hover { background: rgba(75,134,252,0.08); }"
+            "QPushButton:pressed { background: rgba(75,134,252,0.16); }"
+        )
         safe_connect(self._logger, export_btn.clicked, self.export_clicked.emit)
         top_bar.addWidget(export_btn)
 
         delete_btn = QPushButton()
         delete_btn.setFixedSize(71, 41)
         delete_btn.setCursor(Qt.PointingHandCursor)
-        delete_btn.setStyleSheet("border-image: url(:/patient/pic/patient_del.png); border: none;")
+        delete_btn.setText("删除")
+        delete_btn.setStyleSheet(
+            "QPushButton {"
+            "background: transparent;"
+            "border: 1px solid #F04438;"
+            "border-radius: 10px;"
+            "color: #F04438;"
+            "padding: 6px 12px;"
+            "}"
+            "QPushButton:hover { background: rgba(240,68,56,0.08); }"
+            "QPushButton:pressed { background: rgba(240,68,56,0.16); }"
+        )
         safe_connect(self._logger, delete_btn.clicked, self.delete_clicked.emit)
         top_bar.addWidget(delete_btn)
 
@@ -305,9 +327,35 @@ class EmbeddedTreatRecordPanel(QWidget):
             back_btn.hide()
 
         export_btn = get_ui_attr(self.ui, "pushButton_2")
+        if export_btn is not None:
+            export_btn.setText("导出")
+            export_btn.setStyleSheet(
+                "QPushButton {"
+                "background: transparent;"
+                "border: 1px solid #4B86FC;"
+                "border-radius: 10px;"
+                "color: #4B86FC;"
+                "padding: 6px 12px;"
+                "}"
+                "QPushButton:hover { background: rgba(75,134,252,0.08); }"
+                "QPushButton:pressed { background: rgba(75,134,252,0.16); }"
+            )
         safe_connect(self._logger, getattr(export_btn, "clicked", None), self._on_top_export_clicked)
 
         delete_btn = get_ui_attr(self.ui, "pushButton_3")
+        if delete_btn is not None:
+            delete_btn.setText("删除")
+            delete_btn.setStyleSheet(
+                "QPushButton {"
+                "background: transparent;"
+                "border: 1px solid #F04438;"
+                "border-radius: 10px;"
+                "color: #F04438;"
+                "padding: 6px 12px;"
+                "}"
+                "QPushButton:hover { background: rgba(240,68,56,0.08); }"
+                "QPushButton:pressed { background: rgba(240,68,56,0.16); }"
+            )
         safe_connect(self._logger, getattr(delete_btn, "clicked", None), self._on_delete_clicked)
 
         self._table.bind_header_click()
