@@ -411,6 +411,7 @@ class MainWindowTreatFlow:
         else:
             label_fallback = get_ui_attr(self.ui, "label_11")
             safe_call(self.logger, getattr(label_fallback, "setText", None), patient_name)
+        self._fill_patient_info_labels(patient)
         self._host._selected_patient = patient
         if self._patient_select_panel:
             self._patient_select_panel.refresh_patients(selected_patient=patient)
@@ -424,6 +425,7 @@ class MainWindowTreatFlow:
     def clear_patient_selection(self) -> None:
         if self._patient_select_panel:
             self._patient_select_panel.set_selected_patient(None)
+        self._fill_patient_info_labels(None)
 
     @staticmethod
     def extract_patient_id(patient: dict | None) -> str | None:
@@ -441,6 +443,43 @@ class MainWindowTreatFlow:
             self._host.treat_flow_app.start_treat_from_button(self._host._selected_patient, button_name)
         self._host.treat_controller.set_current_patient(self._host._selected_patient)
         self._host.treat_controller.enter_preprocess_page()
+
+    def _fill_patient_info_labels(self, patient: dict | None) -> None:
+        patient = patient or {}
+
+        def _txt(value) -> str:
+            text = str(value or "").strip()
+            return text if text else "--"
+
+        def _birthday_text() -> str:
+            for key in ("Birthday", "BirthDay", "birth_day", "birthdate"):
+                value = patient.get(key)
+                if value not in (None, ""):
+                    return _txt(value)
+            return "--"
+
+        def _height_weight_text() -> str:
+            height = _txt(patient.get("Height")) if patient.get("Height") not in (None, "") else ""
+            weight = _txt(patient.get("Weight")) if patient.get("Weight") not in (None, "") else ""
+            if height and weight:
+                return f"{height}/{weight}"
+            if height:
+                return height
+            if weight:
+                return weight
+            return "--"
+
+        label_values = {
+            "label_patient_id": _txt(patient.get("PatientId")),
+            "label_sex": _txt(patient.get("Sex")),
+            "label_birthday": _birthday_text(),
+            "label_height_weight": _height_weight_text(),
+            "label_visit_time": _txt(patient.get("VisitTime")).replace("/", "-"),
+            "label_age": _txt(patient.get("Age")),
+        }
+        for label_name, text in label_values.items():
+            label = get_ui_attr(self.ui, label_name)
+            safe_call(self.logger, getattr(label, "setText", None), text)
 
     def start_treatment_both_channels(self) -> None:
         try:
