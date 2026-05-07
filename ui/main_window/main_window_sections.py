@@ -40,6 +40,7 @@ class MainWindowNavigation:
         tab_main = get_ui_attr(self.ui, "tabWidget_main")
         if tab_main:
             safe_call(self.logger, tab_main.tabBar().hide)
+            safe_connect(self.logger, getattr(tab_main, "currentChanged", None), lambda _: self._update_line2_visibility())
 
     def init_ui(self) -> None:
         self._host.setWindowTitle("BCI硬件控制系统")
@@ -58,6 +59,7 @@ class MainWindowNavigation:
         label_patient = get_ui_attr(self.ui, "label_patient")
         safe_call(self.logger, getattr(label_patient, "setAlignment", None), Qt.AlignCenter)
         self._host._treat_flow.refresh_patient_select_panel()
+        self._update_line2_visibility()
 
     def switch_tab(self, tab_index: int) -> None:
         tab_widget = get_ui_attr(self.ui, "tabWidget")
@@ -69,6 +71,7 @@ class MainWindowNavigation:
             self._host._report_selected = False
             tab_widget.setCurrentIndex(tab_index)
             self._host._current_tab_index = tab_index
+            self._update_line2_visibility()
             self.update_button_states()
             if tab_index == 0:
                 self._host._treat_flow.refresh_patient_select_panel()
@@ -84,6 +87,7 @@ class MainWindowNavigation:
     def on_tab_changed(self, index: int) -> None:
         previous_index = getattr(self._host, "_current_tab_index", 0)
         self._host._current_tab_index = index
+        self._update_line2_visibility()
         report_tab_index = getattr(getattr(self._host, "report_controller", None), "REPORT_TAB_INDEX", -1)
         self._host._report_selected = index == report_tab_index
         if previous_index == 0 and index != 0:
@@ -109,8 +113,23 @@ class MainWindowNavigation:
             tab_main.setCurrentIndex(0)
         self._host._current_tab_index = 0
         self._host._report_selected = False
+        self._update_line2_visibility()
         self.update_button_states()
         self._host._treat_flow.refresh_patient_select_panel()
+
+    def _update_line2_visibility(self) -> None:
+        line_2 = get_ui_attr(self.ui, "line_2")
+        if line_2 is None:
+            return
+        tab_widget_main = get_ui_attr(self.ui, "tabWidget_main")
+        tab_2 = get_ui_attr(self.ui, "tab_2")
+        in_preprocess_page = False
+        if tab_widget_main is not None and tab_2 is not None:
+            try:
+                in_preprocess_page = tab_widget_main.currentWidget() is tab_2
+            except Exception:
+                in_preprocess_page = False
+        safe_call(self.logger, getattr(line_2, "setVisible", None), not in_preprocess_page)
 
     def update_button_states(self) -> None:
         button_configs = [
