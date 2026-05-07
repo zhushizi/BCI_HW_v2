@@ -43,7 +43,7 @@ class _PatientCard(QFrame):
     def _build_ui(self) -> None:
         self.setObjectName("patientCard")
         self.setCursor(Qt.PointingHandCursor)
-        self.setFixedHeight(88)
+        self.setFixedHeight(96)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(14, 10, 14, 10)
@@ -135,8 +135,8 @@ class _PatientCard(QFrame):
 
 class PatientSelectPanel(QWidget):
     patient_selected = Signal(dict)
-    _CARD_HEIGHT = 88
-    _CARD_SPACING = 10
+    _CARD_HEIGHT = 96
+    _CARD_SPACING = 8
 
     def __init__(self, patient_app=None, parent: Optional[QWidget] = None, logger: Optional[logging.Logger] = None) -> None:
         super().__init__(parent)
@@ -195,7 +195,7 @@ class PatientSelectPanel(QWidget):
         root_layout = QVBoxLayout(self)
         # 给圆角容器预留内边距，避免列表卡片在底部被视觉裁切
         root_layout.setContentsMargins(6, 10, 6, 10)
-        root_layout.setSpacing(14)
+        root_layout.setSpacing(8)
 
         search_wrap = QFrame()
         search_wrap.setObjectName("searchWrap")
@@ -207,7 +207,7 @@ class PatientSelectPanel(QWidget):
             "}"
         )
         search_layout = QHBoxLayout(search_wrap)
-        search_layout.setContentsMargins(14, 10, 14, 10)
+        search_layout.setContentsMargins(12, 8, 12, 8)
         search_layout.setSpacing(8)
 
         self._search_input = QLineEdit()
@@ -242,7 +242,7 @@ class PatientSelectPanel(QWidget):
 
         pagination = QFrame(self)
         pagination.setObjectName("patientPagination")
-        pagination.setFixedHeight(34)
+        pagination.setFixedHeight(30)
         pagination.setStyleSheet(
             "QFrame#patientPagination { background: transparent; }"
             "QLabel { color: #98A2B3; font-size: 12px; }"
