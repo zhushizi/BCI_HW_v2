@@ -328,6 +328,16 @@ class MainWindowTreatFlow:
                 self._attach_hover_shadow(button)
                 safe_connect(
                     self.logger,
+                    getattr(button, "pressed", None),
+                    lambda name=button_name: self._set_paradigm_label_pressed(name, True),
+                )
+                safe_connect(
+                    self.logger,
+                    getattr(button, "released", None),
+                    lambda name=button_name: self._set_paradigm_label_pressed(name, False),
+                )
+                safe_connect(
+                    self.logger,
                     getattr(button, "clicked", None),
                     lambda checked=False, name=button_name: self.open_treat_page(name),
                 )
@@ -370,6 +380,22 @@ class MainWindowTreatFlow:
         hover_filter = _HoverShadowFilter(button, effect)
         button.installEventFilter(hover_filter)
         self._hover_filters.append(hover_filter)
+
+    def _set_paradigm_label_pressed(self, button_name: str, pressed: bool) -> None:
+        # 这些范式按钮本体是图片，文本在独立 QLabel 上；因此用 QLabel 颜色实现“按下变蓝”
+        label_map = {
+            "pushButton_up_ssvep": "label_23",
+            "pushButton_up_ssmvep": "label_24",
+            "pushButton_up_mi": "label_25",
+            "pushButton_down_ssvep": "label_27",
+            "pushButton_down_ssmvep": "label_28",
+            "pushButton_down_mi": "label_29",
+        }
+        label = get_ui_attr(self.ui, label_map.get(button_name, ""))
+        if label is None:
+            return
+        color = "rgb(88, 122, 244)" if pressed else "rgb(31, 31, 31)"
+        safe_call(self.logger, getattr(label, "setStyleSheet", None), f"color: {color};")
 
 
     def open_patient_select_dialog(self) -> None:
