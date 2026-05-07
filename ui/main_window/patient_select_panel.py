@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import logging
+from math import ceil
 from typing import Any, Dict, List, Optional
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
     QLineEdit,
-    QScrollArea,
+    QPushButton,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
@@ -41,10 +43,10 @@ class _PatientCard(QFrame):
     def _build_ui(self) -> None:
         self.setObjectName("patientCard")
         self.setCursor(Qt.PointingHandCursor)
-        self.setFixedHeight(96)
+        self.setFixedHeight(88)
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setContentsMargins(14, 10, 14, 10)
         layout.setSpacing(12)
 
         avatar = QLabel(self._get_avatar_text())
@@ -133,6 +135,8 @@ class _PatientCard(QFrame):
 
 class PatientSelectPanel(QWidget):
     patient_selected = Signal(dict)
+    _CARD_HEIGHT = 88
+    _CARD_SPACING = 10
 
     def __init__(self, patient_app=None, parent: Optional[QWidget] = None, logger: Optional[logging.Logger] = None) -> None:
         super().__init__(parent)
@@ -141,6 +145,8 @@ class PatientSelectPanel(QWidget):
         self._cards: List[_PatientCard] = []
         self._all_patients: List[Dict[str, Any]] = []
         self._selected_patient_id: Optional[str] = None
+        self._page_index = 0
+        self._page_size = 1
         self._build_ui()
         self.refresh_patients()
 
@@ -167,6 +173,10 @@ class PatientSelectPanel(QWidget):
                 patients = []
 
         self._all_patients = list(patients or [])
+        if selected_patient is not None:
+            self._sync_page_to_selected()
+        else:
+            self._clamp_page_index()
         self._render_cards()
 
     def set_selected_patient(self, patient: Optional[Dict[str, Any]]) -> None:
@@ -183,7 +193,8 @@ class PatientSelectPanel(QWidget):
         )
 
         root_layout = QVBoxLayout(self)
-        root_layout.setContentsMargins(0, 0, 0, 0)
+        # 给圆角容器预留内边距，避免列表卡片在底部被视觉裁切
+        root_layout.setContentsMargins(6, 10, 6, 10)
         root_layout.setSpacing(14)
 
         search_wrap = QFrame()
@@ -220,29 +231,83 @@ class PatientSelectPanel(QWidget):
 
         root_layout.addWidget(search_wrap)
 
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setFrameShape(QFrame.NoFrame)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll_area.setStyleSheet(
-            "QScrollArea { background: transparent; border: none; }"
-            "QScrollBar:vertical { background: transparent; width: 8px; margin: 4px 0 4px 0; }"
-            "QScrollBar::handle:vertical { background: #D7DDEA; border-radius: 4px; min-height: 24px; }"
-            "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }"
-        )
-
-        self._list_widget = QWidget()
+        self._list_widget = QWidget(self)
+        self._list_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._list_layout = QVBoxLayout(self._list_widget)
         self._list_layout.setContentsMargins(0, 0, 0, 0)
-        self._list_layout.setSpacing(12)
+        self._list_layout.setSpacing(self._CARD_SPACING)
         self._list_layout.addStretch()
 
-        scroll_area.setWidget(self._list_widget)
-        root_layout.addWidget(scroll_area, 1)
+        root_layout.addWidget(self._list_widget, 1)
+
+        pagination = QFrame(self)
+        pagination.setObjectName("patientPagination")
+        pagination.setFixedHeight(34)
+        pagination.setStyleSheet(
+            "QFrame#patientPagination { background: transparent; }"
+            "QLabel { color: #98A2B3; font-size: 12px; }"
+            "QPushButton {"
+            "background: transparent;"
+            "border: none;"
+            "color: #98A2B3;"
+            "font-size: 13px;"
+            "padding: 0;"
+            "}"
+            "QPushButton:hover:enabled { color: #4B86FC; }"
+            "QPushButton:disabled { color: #D7DDEA; }"
+            "QLineEdit {"
+            "background: #FFFFFF;"
+            "border: none;"
+            "border-radius: 4px;"
+            "color: #8E8E93;"
+            "font-size: 12px;"
+            "padding: 1px 4px;"
+            "}"
+        )
+        pagination_layout = QHBoxLayout(pagination)
+        pagination_layout.setContentsMargins(0, 0, 0, 0)
+        pagination_layout.setSpacing(6)
+        pagination_layout.addStretch()
+
+        self._total_label = QLabel("共0条", pagination)
+        pagination_layout.addWidget(self._total_label)
+
+        self._prev_button = QPushButton("<", pagination)
+        self._prev_button.setFixedSize(16, 24)
+        self._prev_button.setCursor(Qt.PointingHandCursor)
+        self._prev_button.clicked.connect(self._on_prev_page)
+        pagination_layout.addWidget(self._prev_button)
+
+        self._page_label = QLabel("0/0页", pagination)
+        self._page_label.setAlignment(Qt.AlignCenter)
+        pagination_layout.addWidget(self._page_label)
+
+        self._next_button = QPushButton(">", pagination)
+        self._next_button.setFixedSize(16, 24)
+        self._next_button.setCursor(Qt.PointingHandCursor)
+        self._next_button.clicked.connect(self._on_next_page)
+        pagination_layout.addWidget(self._next_button)
+
+        pagination_layout.addSpacing(4)
+        pagination_layout.addWidget(QLabel("前往", pagination))
+
+        self._page_jump_input = QLineEdit(pagination)
+        self._page_jump_input.setFixedSize(36, 20)
+        self._page_jump_input.setAlignment(Qt.AlignCenter)
+        self._page_jump_input.setValidator(QIntValidator(1, 9999, self._page_jump_input))
+        self._page_jump_input.returnPressed.connect(self._on_jump_page)
+        self._page_jump_input.editingFinished.connect(self._on_jump_page)
+        pagination_layout.addWidget(self._page_jump_input)
+
+        pagination_layout.addWidget(QLabel("页", pagination))
+        pagination_layout.addStretch()
+        root_layout.addWidget(pagination)
 
     def _render_cards(self) -> None:
         self._clear_cards()
         self._cards = []
+        self._recalculate_page_size()
+        self._clamp_page_index()
 
         if not self._all_patients:
             empty = QLabel("暂无患者")
@@ -250,15 +315,19 @@ class PatientSelectPanel(QWidget):
             empty.setStyleSheet("color: #9AA2B1; font-size: 13px; padding: 24px 0;")
             empty.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             self._list_layout.insertWidget(0, empty)
+            self._update_pagination()
             return
 
-        for patient in self._all_patients:
+        start = self._page_index * self._page_size
+        end = start + self._page_size
+        for patient in self._all_patients[start:end]:
             card = _PatientCard(patient, self._list_widget)
             card.clicked.connect(self._on_card_clicked)
             self._cards.append(card)
             self._list_layout.insertWidget(self._list_layout.count() - 1, card)
 
         self._update_card_selection()
+        self._update_pagination()
 
     def _clear_cards(self) -> None:
         while self._list_layout.count() > 1:
@@ -271,6 +340,75 @@ class PatientSelectPanel(QWidget):
         for card in self._cards:
             card.set_selected(self._patient_key(card.patient()) == self._selected_patient_id)
 
+    def _recalculate_page_size(self) -> None:
+        available_height = self._list_widget.height()
+        if available_height <= 0:
+            return
+        step = self._CARD_HEIGHT + self._CARD_SPACING
+        page_size = max(1, (available_height + self._CARD_SPACING) // step)
+        if page_size != self._page_size:
+            self._page_size = page_size
+            self._sync_page_to_selected()
+
+    def _total_pages(self) -> int:
+        if not self._all_patients:
+            return 0
+        return int(ceil(len(self._all_patients) / self._page_size))
+
+    def _clamp_page_index(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages <= 0:
+            self._page_index = 0
+            return
+        self._page_index = min(max(self._page_index, 0), total_pages - 1)
+
+    def _sync_page_to_selected(self) -> None:
+        if not self._selected_patient_id:
+            self._clamp_page_index()
+            return
+        for index, patient in enumerate(self._all_patients):
+            if self._patient_key(patient) == self._selected_patient_id:
+                self._page_index = index // self._page_size
+                break
+        self._clamp_page_index()
+
+    def _update_pagination(self) -> None:
+        total = len(self._all_patients)
+        total_pages = self._total_pages()
+        current_page = 0 if total_pages == 0 else self._page_index + 1
+        self._total_label.setText(f"共{total}条")
+        self._page_label.setText(f"{current_page}/{total_pages}页")
+        self._page_jump_input.setText("" if total_pages == 0 else str(current_page))
+        self._page_jump_input.setEnabled(total_pages > 0)
+        self._prev_button.setEnabled(self._page_index > 0)
+        self._next_button.setEnabled(total_pages > 0 and self._page_index < total_pages - 1)
+
+    def _on_prev_page(self) -> None:
+        if self._page_index <= 0:
+            return
+        self._page_index -= 1
+        self._render_cards()
+
+    def _on_next_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0 or self._page_index >= total_pages - 1:
+            return
+        self._page_index += 1
+        self._render_cards()
+
+    def _on_jump_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0:
+            return
+        text = self._page_jump_input.text().strip()
+        try:
+            page = int(text)
+        except ValueError:
+            self._update_pagination()
+            return
+        self._page_index = min(max(page, 1), total_pages) - 1
+        self._render_cards()
+
     def _on_search_text_changed(self, text: str) -> None:
         self.refresh_patients(keyword=text)
 
@@ -278,6 +416,13 @@ class PatientSelectPanel(QWidget):
         self._selected_patient_id = self._patient_key(patient)
         self._update_card_selection()
         self.patient_selected.emit(patient)
+
+    def resizeEvent(self, event) -> None:  # type: ignore[override]
+        super().resizeEvent(event)
+        old_page_size = self._page_size
+        self._recalculate_page_size()
+        if self._page_size != old_page_size:
+            self._render_cards()
 
     @staticmethod
     def _patient_key(patient: Optional[Dict[str, Any]]) -> Optional[str]:

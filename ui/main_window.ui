@@ -357,7 +357,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <widget class="QPushButton" name="pushButton_tab1select">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>20</x>
          <y>20</y>
          <width>161</width>
          <height>40</height>
@@ -386,7 +386,7 @@ QTabWidget#tabWidget QTabBar::tab {
        <property name="geometry">
         <rect>
          <x>200</x>
-         <y>30</y>
+         <y>24</y>
          <width>90</width>
          <height>32</height>
         </rect>
