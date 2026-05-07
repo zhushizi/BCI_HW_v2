@@ -35,7 +35,7 @@
    <property name="geometry">
     <rect>
      <x>24</x>
-     <y>25</y>
+     <y>31</y>
      <width>40</width>
      <height>34</height>
     </rect>
@@ -63,7 +63,7 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>16</y>
+     <y>22</y>
      <width>281</width>
      <height>31</height>
     </rect>
@@ -98,7 +98,7 @@
    <property name="geometry">
     <rect>
      <x>1657</x>
-     <y>24</y>
+     <y>31</y>
      <width>56</width>
      <height>34</height>
     </rect>
@@ -126,7 +126,7 @@
    <property name="geometry">
     <rect>
      <x>1753</x>
-     <y>32</y>
+     <y>41</y>
      <width>16</width>
      <height>16</height>
     </rect>
@@ -154,7 +154,7 @@
    <property name="geometry">
     <rect>
      <x>1677</x>
-     <y>34</y>
+     <y>42</y>
      <width>17</width>
      <height>14</height>
     </rect>
@@ -182,7 +182,7 @@
    <property name="geometry">
     <rect>
      <x>1870</x>
-     <y>30</y>
+     <y>39</y>
      <width>20</width>
      <height>20</height>
     </rect>
@@ -209,8 +209,8 @@
   <widget class="QPushButton" name="pushButton_small">
    <property name="geometry">
     <rect>
-     <x>1820</x>
-     <y>32</y>
+     <x>1821</x>
+     <y>40</y>
      <width>20</width>
      <height>20</height>
     </rect>
@@ -301,7 +301,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
       <rect>
        <x>150</x>
        <y>0</y>
-       <width>1761</width>
+       <width>1831</width>
        <height>1021</height>
       </rect>
      </property>
@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -1351,8 +1351,8 @@ border-image: url(:/patient/pic/patient_icon_number.png);</string>
       <widget class="QTableWidget" name="tableWidget_patient_2">
        <property name="geometry">
         <rect>
-         <x>-24</x>
-         <y>113</y>
+         <x>80</x>
+         <y>100</y>
          <width>1651</width>
          <height>831</height>
         </rect>
@@ -1472,7 +1472,7 @@ QTableWidget#tableWidget_patient_2::item:selected {
       <widget class="QPushButton" name="pushButton_patient_in">
        <property name="geometry">
         <rect>
-         <x>1270</x>
+         <x>1400</x>
          <y>50</y>
          <width>71</width>
          <height>41</height>
@@ -1488,7 +1488,7 @@ QTableWidget#tableWidget_patient_2::item:selected {
       <widget class="QPushButton" name="pushButton_patient_out">
        <property name="geometry">
         <rect>
-         <x>1360</x>
+         <x>1500</x>
          <y>50</y>
          <width>71</width>
          <height>41</height>
@@ -1504,7 +1504,7 @@ QTableWidget#tableWidget_patient_2::item:selected {
       <widget class="QPushButton" name="pushButton_new">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>50</x>
          <y>40</y>
          <width>141</width>
          <height>41</height>
@@ -1625,7 +1625,7 @@ QLabel#label_search_2 {
       <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
-         <x>1450</x>
+         <x>1630</x>
          <y>50</y>
          <width>71</width>
          <height>41</height>
@@ -1638,14 +1638,33 @@ QLabel#label_search_2 {
       <widget class="QLabel" name="label_67">
        <property name="geometry">
         <rect>
-         <x>-20</x>
-         <y>20</y>
-         <width>1681</width>
-         <height>961</height>
+         <x>22</x>
+         <y>10</y>
+         <width>1745</width>
+         <height>941</height>
         </rect>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>1745</width>
+         <height>941</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>1745</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);</string>
+        <string notr="true">background-color: rgb(255, 255, 255);
+border-radius: 8px;</string>
        </property>
        <property name="text">
         <string/>
@@ -8357,7 +8376,7 @@ padding: 0px;</string>
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>44</y>
+     <y>50</y>
      <width>381</width>
      <height>21</height>
     </rect>
@@ -8383,7 +8402,7 @@ padding: 0px;</string>
    <property name="geometry">
     <rect>
      <x>1733</x>
-     <y>23</y>
+     <y>31</y>
      <width>56</width>
      <height>34</height>
     </rect>
@@ -8411,7 +8430,7 @@ padding: 0px;</string>
    <property name="geometry">
     <rect>
      <x>1820</x>
-     <y>40</y>
+     <y>48</y>
      <width>20</width>
      <height>2</height>
     </rect>
