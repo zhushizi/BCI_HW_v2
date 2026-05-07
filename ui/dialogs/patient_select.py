@@ -61,6 +61,12 @@ class PatientSelectDialog(BaseUiDialog):
         self._load_patients()
 
         search_input = get_ui_attr(self.ui, "lineEdit_search")
+        safe_call(
+            self._logger,
+            getattr(search_input, "setStyleSheet", None),
+            "QLineEdit { background: #DDDDDD; color: #999999; border: none; border-radius: 8px; padding: 4px 10px; }"
+            "QLineEdit::placeholder { color: #999999; }",
+        )
         safe_connect(self._logger, getattr(search_input, "textChanged", None), self._on_search_text_changed)
         reset_btn = get_ui_attr(self.ui, "pushButton_reset")
         safe_connect(self._logger, getattr(reset_btn, "clicked", None), self._on_reset_search)

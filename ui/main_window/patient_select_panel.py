@@ -215,10 +215,15 @@ class PatientSelectPanel(QWidget):
         self._search_input.setFrame(False)
         self._search_input.setStyleSheet(
             "QLineEdit {"
-            "background: transparent;"
+            "background: #DDDDDD;"
             "border: none;"
-            "color: #1F1F1F;"
+            "color: #999999;"
             "font-size: 13px;"
+            "border-radius: 8px;"
+            "padding: 4px 8px;"
+            "}"
+            "QLineEdit::placeholder {"
+            "color: #999999;"
             "}"
         )
         self._search_input.textChanged.connect(self._on_search_text_changed)
