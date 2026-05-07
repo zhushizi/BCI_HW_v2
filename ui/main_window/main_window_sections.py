@@ -382,7 +382,6 @@ class MainWindowTreatFlow:
         self._hover_filters.append(hover_filter)
 
     def _set_paradigm_label_pressed(self, button_name: str, pressed: bool) -> None:
-        # 这些范式按钮本体是图片，文本在独立 QLabel 上；因此用 QLabel 颜色实现“按下变蓝”
         label_map = {
             "pushButton_up_ssvep": "label_23",
             "pushButton_up_ssmvep": "label_24",

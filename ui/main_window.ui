@@ -444,8 +444,7 @@ QPushButton#pushButton_tab1new:pressed {
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_up_ssvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_up_ssvep.png); }
-QPushButton#pushButton_up_ssvep:pressed { border-image: url(:/main/pic/main_up_click_ssvep.png); }</string>
+border-image: url(:/main/pic/main_up_ssvep.png); }</string>
        </property>
        <property name="text">
         <string/>
@@ -480,8 +479,7 @@ QPushButton#pushButton_up_ssvep:pressed { border-image: url(:/main/pic/main_up_c
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_up_ssmvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_up_ssmvep.png); }
-QPushButton#pushButton_up_ssmvep:pressed { border-image: url(:/main/pic/main_up_click_ssmvep.png); }</string>
+border-image: url(:/main/pic/main_up_ssmvep.png); }</string>
        </property>
        <property name="text">
         <string/>
@@ -516,8 +514,7 @@ QPushButton#pushButton_up_ssmvep:pressed { border-image: url(:/main/pic/main_up_
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_up_mi { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_up_mi.png); }
-QPushButton#pushButton_up_mi:pressed { border-image: url(:/main/pic/main_up_click_mi.png); }</string>
+border-image: url(:/main/pic/main_up_mi.png); }</string>
        </property>
        <property name="text">
         <string/>
@@ -552,8 +549,7 @@ QPushButton#pushButton_up_mi:pressed { border-image: url(:/main/pic/main_up_clic
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_down_ssvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_down_ssvep.png); }
-QPushButton#pushButton_down_ssvep:pressed { border-image: url(:/main/pic/main_down_click_ssvep.png); }</string>
+border-image: url(:/main/pic/main_down_ssvep.png); }</string>
        </property>
        <property name="text">
         <string/>
@@ -588,8 +584,7 @@ QPushButton#pushButton_down_ssvep:pressed { border-image: url(:/main/pic/main_do
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_down_ssmvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_down_ssmvep.png); }
-QPushButton#pushButton_down_ssmvep:pressed { border-image: url(:/main/pic/main_down_click_ssmvep.png); }</string>
+border-image: url(:/main/pic/main_down_ssmvep.png); }</string>
        </property>
        <property name="text">
         <string/>
@@ -624,8 +619,7 @@ QPushButton#pushButton_down_ssmvep:pressed { border-image: url(:/main/pic/main_d
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_down_mi { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_down_mi.png); }
-QPushButton#pushButton_down_mi:pressed { border-image: url(:/main/pic/main_down_click_mi.png); }</string>
+border-image: url(:/main/pic/main_down_mi.png); }</string>
        </property>
        <property name="text">
         <string/>
