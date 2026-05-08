@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Callable, Optional
 
-from PySide6.QtCore import Qt, QRect, QTimer, QObject, QEvent
+from PySide6.QtCore import Qt, QRect, QSize, QTimer, QObject, QEvent
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QMessageBox, QGraphicsDropShadowEffect, QVBoxLayout
 
@@ -321,7 +321,9 @@ class MainWindowTreatFlow:
         self.ui = host.ui
         self.logger = host.logger
         self._hover_filters: list[_HoverShadowFilter] = []
+        self._label_hover_filters: list[_HoverCallbackFilter] = []
         self._patient_select_panel: Optional[PatientSelectPanel] = None
+        self._paradigm_icon_rects: dict[str, QRect] = {}
 
     def bind(self) -> None:
         def connect_click(name: str, slot: Callable[[], None]) -> None:
@@ -344,22 +346,53 @@ class MainWindowTreatFlow:
         for button_name in treat_buttons:
             button = get_ui_attr(self.ui, button_name)
             if button:
-                self._attach_hover_shadow(button)
-                safe_connect(
-                    self.logger,
-                    getattr(button, "pressed", None),
-                    lambda name=button_name: self._set_paradigm_label_pressed(name, True),
-                )
-                safe_connect(
-                    self.logger,
-                    getattr(button, "released", None),
-                    lambda name=button_name: self._set_paradigm_label_pressed(name, False),
+                self._attach_hover_shadow(
+                    button,
+                    lambda hovered, name=button_name: self._set_paradigm_label_hovered(name, hovered),
                 )
                 safe_connect(
                     self.logger,
                     getattr(button, "clicked", None),
                     lambda checked=False, name=button_name: self.open_treat_page(name),
                 )
+        label_hover_map = {
+            "label_23": "pushButton_up_ssvep",
+            "label_24": "pushButton_up_ssmvep",
+            "label_25": "pushButton_up_mi",
+            "label_27": "pushButton_down_ssvep",
+            "label_28": "pushButton_down_ssmvep",
+            "label_29": "pushButton_down_mi",
+        }
+        for label_name, button_name in label_hover_map.items():
+            label = get_ui_attr(self.ui, label_name)
+            if label is None:
+                continue
+            hover_filter = _HoverCallbackFilter(
+                label,
+                on_enter=lambda name=button_name: self._set_paradigm_label_hovered(name, True),
+                on_leave=lambda name=button_name: self._set_paradigm_label_hovered(name, False),
+            )
+            label.installEventFilter(hover_filter)
+            self._label_hover_filters.append(hover_filter)
+        icon_hover_map = {
+            "label_ssvep_up_icon": "pushButton_up_ssvep",
+            "label_ssvep_down_icon": "pushButton_down_ssvep",
+            "label_ssmvep_up_icon": "pushButton_up_ssmvep",
+            "label_ssmvep_down_icon": "pushButton_down_ssmvep",
+            "label_mi_up_icon": "pushButton_up_mi",
+            "label_mi_down_icon": "pushButton_down_mi",
+        }
+        for icon_name, button_name in icon_hover_map.items():
+            icon = get_ui_attr(self.ui, icon_name)
+            if icon is None:
+                continue
+            hover_filter = _HoverCallbackFilter(
+                icon,
+                on_enter=lambda name=button_name: self._set_paradigm_label_hovered(name, True),
+                on_leave=lambda name=button_name: self._set_paradigm_label_hovered(name, False),
+            )
+            icon.installEventFilter(hover_filter)
+            self._label_hover_filters.append(hover_filter)
         if not any(get_ui_attr(self.ui, name) for name in treat_buttons):
             connect_click("pushButton", self.open_treat_page)
             connect_click("pushButton_3", self.open_treat_page)
@@ -389,18 +422,18 @@ class MainWindowTreatFlow:
         layout.addWidget(self._patient_select_panel)
         safe_connect(self.logger, self._patient_select_panel.patient_selected, self.on_patient_selected)
 
-    def _attach_hover_shadow(self, button) -> None:
+    def _attach_hover_shadow(self, button, on_hover_changed: Optional[Callable[[bool], None]] = None) -> None:
         effect = QGraphicsDropShadowEffect(button)
         effect.setBlurRadius(18)
         effect.setOffset(0, 0)
-        effect.setColor(QColor(0, 0, 0, 90))
+        effect.setColor(QColor(0, 0, 0, 45))
         effect.setEnabled(False)
         button.setGraphicsEffect(effect)
-        hover_filter = _HoverShadowFilter(button, effect)
+        hover_filter = _HoverShadowFilter(button, effect, on_hover_changed=on_hover_changed)
         button.installEventFilter(hover_filter)
         self._hover_filters.append(hover_filter)
 
-    def _set_paradigm_label_pressed(self, button_name: str, pressed: bool) -> None:
+    def _set_paradigm_label_hovered(self, button_name: str, hovered: bool) -> None:
         label_map = {
             "pushButton_up_ssvep": "label_23",
             "pushButton_up_ssmvep": "label_24",
@@ -412,8 +445,43 @@ class MainWindowTreatFlow:
         label = get_ui_attr(self.ui, label_map.get(button_name, ""))
         if label is None:
             return
-        color = "rgb(88, 122, 244)" if pressed else "rgb(31, 31, 31)"
+        color = "rgb(88, 122, 244)" if hovered else "rgb(31, 31, 31)"
         safe_call(self.logger, getattr(label, "setStyleSheet", None), f"color: {color};")
+        self._set_paradigm_icon_hovered(button_name, hovered)
+
+    def _set_paradigm_icon_hovered(self, button_name: str, hovered: bool) -> None:
+        icon_map = {
+            "pushButton_up_ssvep": "label_ssvep_up_icon",
+            "pushButton_down_ssvep": "label_ssvep_down_icon",
+            "pushButton_up_ssmvep": "label_ssmvep_up_icon",
+            "pushButton_down_ssmvep": "label_ssmvep_down_icon",
+            "pushButton_up_mi": "label_mi_up_icon",
+            "pushButton_down_mi": "label_mi_down_icon",
+        }
+        icon_name = icon_map.get(button_name)
+        if not icon_name:
+            return
+        icon_label = get_ui_attr(self.ui, icon_name)
+        if icon_label is None:
+            return
+
+        if icon_name not in self._paradigm_icon_rects:
+            self._paradigm_icon_rects[icon_name] = icon_label.geometry()
+        base_rect = self._paradigm_icon_rects[icon_name]
+
+        if not hovered:
+            icon_label.setGeometry(base_rect)
+            return
+
+        scale = 1.1
+        new_w = int(round(base_rect.width() * scale))
+        new_h = int(round(base_rect.height() * scale))
+        # 用浮点中心点计算，避免 QRect.center() 在偶数尺寸时向左上偏 1px
+        center_x = base_rect.x() + base_rect.width() / 2.0
+        center_y = base_rect.y() + base_rect.height() / 2.0
+        new_x = int(round(center_x - new_w / 2.0))
+        new_y = int(round(center_y - new_h / 2.0))
+        icon_label.setGeometry(new_x, new_y, new_w, new_h)
 
 
     def open_patient_select_dialog(self) -> None:
@@ -555,15 +623,41 @@ class MainWindowTreatFlow:
 
 
 class _HoverShadowFilter(QObject):
-    def __init__(self, target, effect: QGraphicsDropShadowEffect):
+    def __init__(
+        self,
+        target,
+        effect: QGraphicsDropShadowEffect,
+        on_hover_changed: Optional[Callable[[bool], None]] = None,
+    ):
         super().__init__(target)
         self._target = target
         self._effect = effect
+        self._on_hover_changed = on_hover_changed
 
     def eventFilter(self, obj, event):
         if obj is self._target:
             if event.type() == QEvent.Enter:
                 self._effect.setEnabled(True)
+                if callable(self._on_hover_changed):
+                    self._on_hover_changed(True)
             elif event.type() == QEvent.Leave:
                 self._effect.setEnabled(False)
+                if callable(self._on_hover_changed):
+                    self._on_hover_changed(False)
+        return super().eventFilter(obj, event)
+
+
+class _HoverCallbackFilter(QObject):
+    def __init__(self, target, on_enter: Optional[Callable[[], None]] = None, on_leave: Optional[Callable[[], None]] = None):
+        super().__init__(target)
+        self._target = target
+        self._on_enter = on_enter
+        self._on_leave = on_leave
+
+    def eventFilter(self, obj, event):
+        if obj is self._target:
+            if event.type() == QEvent.Enter and callable(self._on_enter):
+                self._on_enter()
+            elif event.type() == QEvent.Leave and callable(self._on_leave):
+                self._on_leave()
         return super().eventFilter(obj, event)

@@ -144,5 +144,8 @@
         <file>pic/set_volumeopen.png</file>
         <file>pic/set_volumedown.png</file>
         <file>pic/set_volumeup.png</file>
+        <file>pic/icon_ssvep.png</file>
+        <file>pic/icon_ssmvep.png</file>
+        <file>pic/icon_mi.png</file>
     </qresource>
 </RCC>

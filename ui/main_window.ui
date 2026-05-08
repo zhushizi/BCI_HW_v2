@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -444,7 +444,8 @@ QPushButton#pushButton_tab1new:pressed {
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_up_ssvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_up_ssvep.png); }</string>
+background-color: rgb(255, 255, 255);}
+</string>
        </property>
        <property name="text">
         <string/>
@@ -479,7 +480,7 @@ border-image: url(:/main/pic/main_up_ssvep.png); }</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_up_ssmvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_up_ssmvep.png); }</string>
+background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
         <string/>
@@ -514,7 +515,7 @@ border-image: url(:/main/pic/main_up_ssmvep.png); }</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_up_mi { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_up_mi.png); }</string>
+background-color: rgb(255, 255, 255);}</string>
        </property>
        <property name="text">
         <string/>
@@ -549,7 +550,7 @@ border-image: url(:/main/pic/main_up_mi.png); }</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_down_ssvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_down_ssvep.png); }</string>
+background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
         <string/>
@@ -584,7 +585,7 @@ border-image: url(:/main/pic/main_down_ssvep.png); }</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_down_ssmvep { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_down_ssmvep.png); }</string>
+background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
         <string/>
@@ -619,7 +620,7 @@ border-image: url(:/main/pic/main_down_ssmvep.png); }</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_down_mi { background-color: #DBE9F7; border-radius: 42px;
-border-image: url(:/main/pic/main_down_mi.png); }</string>
+background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
         <string/>
@@ -1338,6 +1339,174 @@ border-image: url(:/patient/pic/patient_icon_number.png);</string>
        </property>
        <property name="styleSheet">
         <string notr="true">background-color: #F2F3F6;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_ssvep_up_icon">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>340</y>
+         <width>146</width>
+         <height>135</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>146</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>146</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_ssvep.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_ssvep_down_icon">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>680</y>
+         <width>146</width>
+         <height>135</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>146</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>146</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_ssvep.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_ssmvep_up_icon">
+       <property name="geometry">
+        <rect>
+         <x>980</x>
+         <y>330</y>
+         <width>138</width>
+         <height>146</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>138</width>
+         <height>146</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>138</width>
+         <height>146</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_ssmvep.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_ssmvep_down_icon">
+       <property name="geometry">
+        <rect>
+         <x>980</x>
+         <y>680</y>
+         <width>138</width>
+         <height>146</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>138</width>
+         <height>146</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>138</width>
+         <height>146</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_ssmvep.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_mi_up_icon">
+       <property name="geometry">
+        <rect>
+         <x>1440</x>
+         <y>340</y>
+         <width>156</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>156</width>
+         <height>141</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>156</width>
+         <height>141</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_mi.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_mi_down_icon">
+       <property name="geometry">
+        <rect>
+         <x>1440</x>
+         <y>680</y>
+         <width>156</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>156</width>
+         <height>141</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>156</width>
+         <height>141</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_mi.png);</string>
        </property>
        <property name="text">
         <string/>
