@@ -4,7 +4,7 @@ import logging
 from math import ceil
 from typing import Any, Dict, List, Optional
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QIntValidator, QPalette
 from PySide6.QtWidgets import (
     QFrame,
@@ -43,42 +43,44 @@ class _PatientCard(QFrame):
     def _build_ui(self) -> None:
         self.setObjectName("patientCard")
         self.setCursor(Qt.PointingHandCursor)
-        self.setFixedHeight(96)
+        self.setFixedHeight(PatientSelectPanel.CARD_MIN_HEIGHT)
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(14, 10, 14, 10)
-        layout.setSpacing(12)
+        layout.setContentsMargins(10, 5, 10, 5)
+        layout.setSpacing(8)
 
         avatar = QLabel(self._get_avatar_text())
-        avatar.setFixedSize(34, 34)
+        avatar.setFixedSize(28, 28)
         avatar.setAlignment(Qt.AlignCenter)
         avatar.setStyleSheet(
             "background-color: #F2F4F7;"
-            "border-radius: 10px;"
+            "border-radius: 8px;"
             "color: #8E8E93;"
-            "font-size: 15px;"
+            "font-size: 13px;"
             "font-weight: 600;"
         )
         avatar.setAttribute(Qt.WA_TransparentForMouseEvents, True)
-        layout.addWidget(avatar, 0, Qt.AlignTop)
+        layout.addWidget(avatar, 0, Qt.AlignVCenter)
 
         info_layout = QVBoxLayout()
         info_layout.setContentsMargins(0, 0, 0, 0)
-        info_layout.setSpacing(6)
+        info_layout.setSpacing(0)
 
         name_row = QHBoxLayout()
         name_row.setContentsMargins(0, 0, 0, 0)
         name_row.setSpacing(6)
 
         name_label = QLabel(str(self._patient.get("Name", "") or "未命名"))
-        name_label.setStyleSheet("color: #1F1F1F; font-size: 15px; font-weight: 600;")
+        name_label.setStyleSheet(
+            "color: #1F1F1F; font-size: 14px; font-weight: 600; margin: 0; padding: 0;"
+        )
         name_label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
         name_row.addWidget(name_label)
 
         meta_text = self._build_meta_text()
         if meta_text:
             meta_label = QLabel(meta_text)
-            meta_label.setStyleSheet("color: #8E8E93; font-size: 12px;")
+            meta_label.setStyleSheet("color: #8E8E93; font-size: 11px;")
             meta_label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             name_row.addWidget(meta_label)
 
@@ -86,11 +88,10 @@ class _PatientCard(QFrame):
         info_layout.addLayout(name_row)
 
         visit_label = QLabel(f"入院时间：{self._format_visit_time()}")
-        visit_label.setStyleSheet("color: #6B7280; font-size: 12px;")
+        visit_label.setStyleSheet("color: #6B7280; font-size: 11px; margin: 0; padding: 0;")
         visit_label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
         info_layout.addWidget(visit_label)
 
-        info_layout.addStretch()
         layout.addLayout(info_layout, 1)
 
     def _get_avatar_text(self) -> str:
@@ -117,7 +118,7 @@ class _PatientCard(QFrame):
                 "QFrame#patientCard {"
                 "background-color: #FFFFFF;"
                 "border: 2px solid #4B86FC;"
-                "border-radius: 16px;"
+                "border-radius: 8px;"
                 "}"
             )
         else:
@@ -125,7 +126,7 @@ class _PatientCard(QFrame):
                 "QFrame#patientCard {"
                 "background-color: #FFFFFF;"
                 "border: 1px solid #E8ECF3;"
-                "border-radius: 16px;"
+                "border-radius: 8px;"
                 "}"
                 "QFrame#patientCard:hover {"
                 "border: 1px solid #C8D7FF;"
@@ -135,8 +136,10 @@ class _PatientCard(QFrame):
 
 class PatientSelectPanel(QWidget):
     patient_selected = Signal(dict)
-    _CARD_HEIGHT = 96
-    _CARD_SPACING = 8
+    PAGE_SIZE = 10
+    CARD_MIN_HEIGHT = 44
+    CARD_SPACING = 4
+    LIST_BOTTOM_GAP = 6
 
     def __init__(self, patient_app=None, parent: Optional[QWidget] = None, logger: Optional[logging.Logger] = None) -> None:
         super().__init__(parent)
@@ -146,7 +149,7 @@ class PatientSelectPanel(QWidget):
         self._all_patients: List[Dict[str, Any]] = []
         self._selected_patient_id: Optional[str] = None
         self._page_index = 0
-        self._page_size = 1
+        self._page_size = self.PAGE_SIZE
         self._build_ui()
         self.refresh_patients()
 
@@ -188,14 +191,14 @@ class PatientSelectPanel(QWidget):
         self.setStyleSheet(
             "QWidget#patientSelectPanel {"
             "background: #F7F8FC;"
-            "border-radius: 24px;"
+            "border-radius: 8px;"
             "}"
         )
 
         root_layout = QVBoxLayout(self)
         # 给圆角容器预留内边距，避免列表卡片在底部被视觉裁切
         root_layout.setContentsMargins(6, 10, 6, 10)
-        root_layout.setSpacing(8)
+        root_layout.setSpacing(6)
 
         search_wrap = QFrame()
         search_wrap.setObjectName("searchWrap")
@@ -203,7 +206,7 @@ class PatientSelectPanel(QWidget):
             "QFrame#searchWrap {"
             "background: #DDDDDD;"
             "border: none;"
-            "border-radius: 20px;"
+            "border-radius: 8px;"
             "}"
         )
         search_layout = QHBoxLayout(search_wrap)
@@ -223,6 +226,7 @@ class PatientSelectPanel(QWidget):
             "QLineEdit {"
             "background-color: #DDDDDD;"
             "border: none;"
+            "border-radius: 8px;"
             "color: #666666;"
             "font-size: 13px;"
             "padding: 4px 0px;"
@@ -245,8 +249,7 @@ class PatientSelectPanel(QWidget):
         self._list_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._list_layout = QVBoxLayout(self._list_widget)
         self._list_layout.setContentsMargins(0, 0, 0, 0)
-        self._list_layout.setSpacing(self._CARD_SPACING)
-        self._list_layout.addStretch()
+        self._list_layout.setSpacing(0)
 
         root_layout.addWidget(self._list_widget, 1)
 
@@ -268,7 +271,7 @@ class PatientSelectPanel(QWidget):
             "QLineEdit {"
             "background: #FFFFFF;"
             "border: none;"
-            "border-radius: 4px;"
+            "border-radius: 8px;"
             "color: #8E8E93;"
             "font-size: 12px;"
             "padding: 1px 4px;"
@@ -311,20 +314,43 @@ class PatientSelectPanel(QWidget):
 
         pagination_layout.addWidget(QLabel("页", pagination))
         pagination_layout.addStretch()
-        root_layout.addWidget(pagination)
+        root_layout.addWidget(pagination, 0)
+
+    def _add_cards_evenly(self, cards: List[_PatientCard]) -> None:
+        """卡片贴底排列，固定小间距，高度随列表区域均分。"""
+        if not cards:
+            return
+        self._list_layout.setSpacing(self.CARD_SPACING)
+        self._list_layout.addStretch(1)
+        for card in cards:
+            self._list_layout.addWidget(card, 0)
+        self._list_layout.addSpacing(self.LIST_BOTTOM_GAP)
+
+    def _update_card_heights(self) -> None:
+        if not self._cards:
+            return
+        count = len(self._cards)
+        available = self._list_widget.height()
+        if available <= 0:
+            return
+        total_gap = (count - 1) * self.CARD_SPACING + self.LIST_BOTTOM_GAP
+        card_height = max(self.CARD_MIN_HEIGHT, (available - total_gap) // count)
+        for card in self._cards:
+            card.setFixedHeight(card_height)
 
     def _render_cards(self) -> None:
         self._clear_cards()
         self._cards = []
-        self._recalculate_page_size()
+        self._page_size = self.PAGE_SIZE
         self._clamp_page_index()
 
         if not self._all_patients:
-            empty = QLabel("暂无患者")
+            self._list_layout.addStretch(1)
+            empty = QLabel("暂无患者", self._list_widget)
             empty.setAlignment(Qt.AlignCenter)
-            empty.setStyleSheet("color: #9AA2B1; font-size: 13px; padding: 24px 0;")
-            empty.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-            self._list_layout.insertWidget(0, empty)
+            empty.setStyleSheet("color: #9AA2B1; font-size: 13px;")
+            self._list_layout.addWidget(empty, 0, Qt.AlignCenter)
+            self._list_layout.addStretch(1)
             self._update_pagination()
             return
 
@@ -334,13 +360,14 @@ class PatientSelectPanel(QWidget):
             card = _PatientCard(patient, self._list_widget)
             card.clicked.connect(self._on_card_clicked)
             self._cards.append(card)
-            self._list_layout.insertWidget(self._list_layout.count() - 1, card)
+        self._add_cards_evenly(self._cards)
+        QTimer.singleShot(0, self._update_card_heights)
 
         self._update_card_selection()
         self._update_pagination()
 
     def _clear_cards(self) -> None:
-        while self._list_layout.count() > 1:
+        while self._list_layout.count() > 0:
             item = self._list_layout.takeAt(0)
             widget = item.widget()
             if widget is not None:
@@ -349,16 +376,6 @@ class PatientSelectPanel(QWidget):
     def _update_card_selection(self) -> None:
         for card in self._cards:
             card.set_selected(self._patient_key(card.patient()) == self._selected_patient_id)
-
-    def _recalculate_page_size(self) -> None:
-        available_height = self._list_widget.height()
-        if available_height <= 0:
-            return
-        step = self._CARD_HEIGHT + self._CARD_SPACING
-        page_size = max(1, (available_height + self._CARD_SPACING) // step)
-        if page_size != self._page_size:
-            self._page_size = page_size
-            self._sync_page_to_selected()
 
     def _total_pages(self) -> int:
         if not self._all_patients:
@@ -429,10 +446,7 @@ class PatientSelectPanel(QWidget):
 
     def resizeEvent(self, event) -> None:  # type: ignore[override]
         super().resizeEvent(event)
-        old_page_size = self._page_size
-        self._recalculate_page_size()
-        if self._page_size != old_page_size:
-            self._render_cards()
+        self._update_card_heights()
 
     @staticmethod
     def _patient_key(patient: Optional[Dict[str, Any]]) -> Optional[str]:

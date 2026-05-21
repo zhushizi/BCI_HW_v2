@@ -230,11 +230,20 @@ QCheckBox::indicator:checked {
      <height>31</height>
     </size>
    </property>
+   <property name="font">
+    <font>
+     <family>Microsoft YaHei UI</family>
+     <pointsize>19</pointsize>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
    <property name="styleSheet">
-    <string notr="true">border-image: url(:/login/pic/login_product.png);</string>
+    <string notr="true">font: 19pt &quot;Microsoft YaHei UI&quot;;
+color:#939393;</string>
    </property>
    <property name="text">
-    <string/>
+    <string>ZNKL-BCI-MFR系列 脑机接口产品</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_tip">
@@ -483,6 +492,34 @@ QCheckBox::indicator:checked {
     <string/>
    </property>
   </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>216</x>
+     <y>163</y>
+     <width>600</width>
+     <height>752</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>600</width>
+     <height>752</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>600</width>
+     <height>752</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-image: url(:/set/pic/脑机接口-上下肢-21.png);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <zorder>label_7</zorder>
   <zorder>pushButton_login</zorder>
   <zorder>label_welcome</zorder>
@@ -497,6 +534,7 @@ QCheckBox::indicator:checked {
   <zorder>label_5</zorder>
   <zorder>lineEdit_upwd</zorder>
   <zorder>pushButton_pwdvision</zorder>
+  <zorder>label</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>

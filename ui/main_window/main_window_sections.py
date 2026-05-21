@@ -549,7 +549,7 @@ class MainWindowTreatFlow:
         }
         for label_name, text in label_values.items():
             label = get_ui_attr(self.ui, label_name)
-            safe_call(self.logger, getattr(label, "setText", None), text)
+            safe_call(self.logger, getattr(label, "setText", None), f"  {text}")
 
     def start_treatment_both_channels(self) -> None:
         try:

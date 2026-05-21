@@ -64,7 +64,7 @@
     <rect>
      <x>80</x>
      <y>22</y>
-     <width>300</width>
+     <width>421</width>
      <height>31</height>
     </rect>
    </property>
@@ -76,7 +76,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>300</width>
+     <width>3000</width>
      <height>31</height>
     </size>
    </property>
@@ -91,7 +91,7 @@
 </string>
    </property>
    <property name="text">
-    <string>脑机接口-神经肌肉电刺激仪</string>
+    <string>非侵入式脑机接口神经肌肉电刺激系统</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
@@ -262,7 +262,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -450,7 +450,7 @@ QPushButton#pushButton_tab1new:pressed {
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton#pushButton_up_ssvep { background-color: #DBE9F7; border-radius: 42px;
+        <string notr="true">QPushButton#pushButton_up_ssvep { background-color: #DBE9F7; border-radius: 8px;
 background-color: rgb(255, 255, 255);}
 </string>
        </property>
@@ -486,7 +486,7 @@ background-color: rgb(255, 255, 255);}
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton#pushButton_up_ssmvep { background-color: #DBE9F7; border-radius: 42px;
+        <string notr="true">QPushButton#pushButton_up_ssmvep { background-color: #DBE9F7; border-radius: 8px;
 background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
@@ -521,7 +521,7 @@ background-color: rgb(255, 255, 255); }</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton#pushButton_up_mi { background-color: #DBE9F7; border-radius: 42px;
+        <string notr="true">QPushButton#pushButton_up_mi { background-color: #DBE9F7; border-radius: 8px;
 background-color: rgb(255, 255, 255);}</string>
        </property>
        <property name="text">
@@ -556,7 +556,7 @@ background-color: rgb(255, 255, 255);}</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton#pushButton_down_ssvep { background-color: #DBE9F7; border-radius: 42px;
+        <string notr="true">QPushButton#pushButton_down_ssvep { background-color: #DBE9F7; border-radius: 8px;
 background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
@@ -591,7 +591,7 @@ background-color: rgb(255, 255, 255); }</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton#pushButton_down_ssmvep { background-color: #DBE9F7; border-radius: 42px;
+        <string notr="true">QPushButton#pushButton_down_ssmvep { background-color: #DBE9F7; border-radius: 8px;
 background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
@@ -626,7 +626,7 @@ background-color: rgb(255, 255, 255); }</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton#pushButton_down_mi { background-color: #DBE9F7; border-radius: 42px;
+        <string notr="true">QPushButton#pushButton_down_mi { background-color: #DBE9F7; border-radius: 8px;
 background-color: rgb(255, 255, 255); }</string>
        </property>
        <property name="text">
@@ -849,7 +849,7 @@ background-color: rgb(255, 255, 255); }</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>90</y>
+         <y>70</y>
          <width>301</width>
          <height>841</height>
         </rect>
@@ -2182,14 +2182,14 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>脑机接口-神经肌肉电刺激仪</string>
+          <string>非侵入式脑机接口神经肌肉电刺激系统</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_9">
          <property name="geometry">
           <rect>
            <x>24</x>
-           <y>138</y>
+           <y>190</y>
            <width>61</width>
            <height>20</height>
           </rect>
@@ -2205,8 +2205,8 @@ QTabBar::tab:hover:!selected {
          <property name="geometry">
           <rect>
            <x>100</x>
-           <y>138</y>
-           <width>80</width>
+           <y>190</y>
+           <width>111</width>
            <height>20</height>
           </rect>
          </property>
@@ -2221,7 +2221,7 @@ QTabBar::tab:hover:!selected {
          <property name="geometry">
           <rect>
            <x>24</x>
-           <y>190</y>
+           <y>242</y>
            <width>61</width>
            <height>20</height>
           </rect>
@@ -2237,8 +2237,8 @@ QTabBar::tab:hover:!selected {
          <property name="geometry">
           <rect>
            <x>100</x>
-           <y>190</y>
-           <width>100</width>
+           <y>242</y>
+           <width>141</width>
            <height>20</height>
           </rect>
          </property>
@@ -2253,7 +2253,7 @@ QTabBar::tab:hover:!selected {
          <property name="geometry">
           <rect>
            <x>24</x>
-           <y>242</y>
+           <y>294</y>
            <width>61</width>
            <height>20</height>
           </rect>
@@ -2269,7 +2269,7 @@ QTabBar::tab:hover:!selected {
          <property name="geometry">
           <rect>
            <x>100</x>
-           <y>242</y>
+           <y>294</y>
            <width>910</width>
            <height>31</height>
           </rect>
@@ -2278,7 +2278,7 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>南京华伟智脑康联科技有限公司对本软件拥有一切法定权利、所有权和利益，严禁对本软件进行各种形式的复制和修改。违者将追究其法律责任最终解释权归南京华伟华疗设备有限公司所有。</string>
+          <string>南京华伟智脑康联科技有限公司对本软件拥有一切法定权利、所有权和利益，严禁对本软件进行各种形式的复制和修改，违者将追究其法律责任。最终解释权归南京华伟华智脑康联科技有限公司所有。</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -2298,6 +2298,134 @@ QTabBar::tab:hover:!selected {
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_26">
+         <property name="geometry">
+          <rect>
+           <x>24</x>
+           <y>138</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #6B7280;</string>
+         </property>
+         <property name="text">
+          <string>外控型软件：</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_31">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>138</y>
+           <width>191</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #4A4A4A;</string>
+         </property>
+         <property name="text">
+          <string>ZNKL-MFR11K-V1.0.0.0</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_34">
+         <property name="geometry">
+          <rect>
+           <x>440</x>
+           <y>138</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #6B7280;</string>
+         </property>
+         <property name="text">
+          <string>嵌入式软件：</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_42">
+         <property name="geometry">
+          <rect>
+           <x>520</x>
+           <y>138</y>
+           <width>191</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #4A4A4A;</string>
+         </property>
+         <property name="text">
+          <string>ZNKL-MFR11-V1.0.0.0</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_43">
+         <property name="geometry">
+          <rect>
+           <x>440</x>
+           <y>242</y>
+           <width>61</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #6B7280;</string>
+         </property>
+         <property name="text">
+          <string>完整版本:</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_releaseversion_2">
+         <property name="geometry">
+          <rect>
+           <x>520</x>
+           <y>190</y>
+           <width>111</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #4A4A4A;</string>
+         </property>
+         <property name="text">
+          <string>V1</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_49">
+         <property name="geometry">
+          <rect>
+           <x>440</x>
+           <y>190</y>
+           <width>61</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #6B7280;</string>
+         </property>
+         <property name="text">
+          <string>发布版本:</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_fullreleaseversion_2">
+         <property name="geometry">
+          <rect>
+           <x>520</x>
+           <y>242</y>
+           <width>141</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #4A4A4A;</string>
+         </property>
+         <property name="text">
+          <string>V1.0.0.0</string>
          </property>
         </widget>
        </widget>
@@ -8715,12 +8843,12 @@ padding: 0px;</string>
     <rect>
      <x>80</x>
      <y>50</y>
-     <width>381</width>
+     <width>501</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>Brain-Computer Interface - Neuromuscular Electrical Stimulation</string>
+    <string>Non-invasive Brain-Computer Interface Neuromuscular Electrical Stimulation System</string>
    </property>
   </widget>
   <widget class="Line" name="line">
