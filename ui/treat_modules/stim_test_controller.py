@@ -5,7 +5,7 @@ from typing import Optional
 
 from PySide6.QtCore import QEvent, QObject, QTimer
 from PySide6.QtGui import QRegion
-from PySide6.QtWidgets import QMessageBox, QVBoxLayout
+from PySide6.QtWidgets import QMessageBox, QStyleFactory, QVBoxLayout
 
 from ui.dialogs.tips_dialog import TipsDialog
 from ui.widgets.circle_level_widget import CircleLevelWidget
@@ -95,6 +95,22 @@ class StimTestController:
 
         self._init_left_circle_widget()
         self._init_right_circle_widget()
+        self._ensure_stim_combo_arrow_style()
+
+    def _ensure_stim_combo_arrow_style(self) -> None:
+        """Windows 原生样式会忽略 down-arrow 图片，Fusion 才能显示 combo_triangle_down.png。"""
+        fusion = QStyleFactory.create("Fusion")
+        if fusion is None:
+            return
+        for name in (
+            "comboBox_left_freq",
+            "comboBox_left_scheme",
+            "comboBox_right_freq",
+            "comboBox_right_scheme",
+        ):
+            combo = get_ui_attr(self.ui, name)
+            if combo is not None:
+                combo.setStyle(fusion)
 
     def _init_left_circle_widget(self) -> None:
         """在 widget_circle_level_left 中放入只读圆环，并裁剪为圆形区域。"""

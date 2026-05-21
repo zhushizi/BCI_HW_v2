@@ -3328,7 +3328,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -3365,8 +3365,8 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <widget class="QPushButton" name="pushButton_left_turnsmall">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>570</y>
+         <x>310</x>
+         <y>590</y>
          <width>71</width>
          <height>71</height>
         </rect>
@@ -3381,8 +3381,8 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <widget class="QPushButton" name="pushButton_left_turnbig">
        <property name="geometry">
         <rect>
-         <x>600</x>
-         <y>570</y>
+         <x>640</x>
+         <y>590</y>
          <width>71</width>
          <height>71</height>
         </rect>
@@ -3432,8 +3432,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QLabel" name="label_left_channel">
        <property name="geometry">
         <rect>
-         <x>450</x>
-         <y>30</y>
+         <x>460</x>
+         <y>50</y>
          <width>150</width>
          <height>55</height>
         </rect>
@@ -3466,8 +3466,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QLabel" name="label_right_channel">
        <property name="geometry">
         <rect>
-         <x>1370</x>
-         <y>60</y>
+         <x>1340</x>
+         <y>50</y>
          <width>150</width>
          <height>55</height>
         </rect>
@@ -3501,7 +3501,7 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
        <property name="geometry">
         <rect>
          <x>1230</x>
-         <y>580</y>
+         <y>590</y>
          <width>71</width>
          <height>71</height>
         </rect>
@@ -3516,8 +3516,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QPushButton" name="pushButton_right_turnbig">
        <property name="geometry">
         <rect>
-         <x>1530</x>
-         <y>580</y>
+         <x>1520</x>
+         <y>590</y>
          <width>71</width>
          <height>71</height>
         </rect>
@@ -3532,8 +3532,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QComboBox" name="comboBox_left_scheme">
        <property name="geometry">
         <rect>
-         <x>350</x>
-         <y>712</y>
+         <x>380</x>
+         <y>707</y>
          <width>90</width>
          <height>30</height>
         </rect>
@@ -3554,6 +3554,11 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
         <font>
          <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox { color: #666666; border: none; background: transparent; padding-right: 24px; }
+QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; width: 22px; border: none; background: transparent; }
+QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 12px; height: 12px; }</string>
        </property>
        <item>
         <property name="text">
@@ -3569,8 +3574,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QComboBox" name="comboBox_right_scheme">
        <property name="geometry">
         <rect>
-         <x>1270</x>
-         <y>706</y>
+         <x>1280</x>
+         <y>707</y>
          <width>90</width>
          <height>30</height>
         </rect>
@@ -3591,6 +3596,11 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
         <font>
          <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox { color: #666666; border: none; background: transparent; padding-right: 24px; }
+QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; width: 22px; border: none; background: transparent; }
+QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 12px; height: 12px; }</string>
        </property>
        <item>
         <property name="text">
@@ -3606,15 +3616,15 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QLabel" name="label_left_channel_2">
        <property name="geometry">
         <rect>
-         <x>210</x>
-         <y>710</y>
-         <width>111</width>
+         <x>280</x>
+         <y>707</y>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>20</pointsize>
+         <pointsize>13</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -3627,15 +3637,15 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QLabel" name="label_right_channel_2">
        <property name="geometry">
         <rect>
-         <x>1110</x>
-         <y>705</y>
-         <width>111</width>
+         <x>1170</x>
+         <y>707</y>
+         <width>71</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>20</pointsize>
+         <pointsize>13</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -3648,15 +3658,15 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>590</x>
-         <y>706</y>
-         <width>111</width>
+         <x>580</x>
+         <y>707</y>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>20</pointsize>
+         <pointsize>13</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -3669,15 +3679,15 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>1470</x>
-         <y>703</y>
-         <width>111</width>
+         <x>1460</x>
+         <y>706</y>
+         <width>71</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>20</pointsize>
+         <pointsize>13</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -3690,8 +3700,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QComboBox" name="comboBox_left_freq">
        <property name="geometry">
         <rect>
-         <x>730</x>
-         <y>710</y>
+         <x>660</x>
+         <y>707</y>
          <width>150</width>
          <height>30</height>
         </rect>
@@ -3712,6 +3722,11 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
         <font>
          <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox { color: #666666; border: none; background: transparent; padding-right: 24px; }
+QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; width: 22px; border: none; background: transparent; }
+QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 12px; height: 12px; }</string>
        </property>
        <item>
         <property name="text">
@@ -3767,8 +3782,8 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
       <widget class="QComboBox" name="comboBox_right_freq">
        <property name="geometry">
         <rect>
-         <x>1605</x>
-         <y>704</y>
+         <x>1560</x>
+         <y>707</y>
          <width>150</width>
          <height>30</height>
         </rect>
@@ -3789,6 +3804,11 @@ QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(
         <font>
          <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox { color: #666666; border: none; background: transparent; padding-right: 24px; }
+QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; width: 22px; border: none; background: transparent; }
+QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 12px; height: 12px; }</string>
        </property>
        <item>
         <property name="text">
@@ -3879,9 +3899,9 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
        <property name="geometry">
         <rect>
          <x>300</x>
-         <y>130</y>
-         <width>451</width>
-         <height>431</height>
+         <y>170</y>
+         <width>460</width>
+         <height>460</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -3900,9 +3920,9 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
       <widget class="QLabel" name="label_30">
        <property name="geometry">
         <rect>
-         <x>180</x>
-         <y>690</y>
-         <width>291</width>
+         <x>250</x>
+         <y>680</y>
+         <width>241</width>
          <height>81</height>
         </rect>
        </property>
@@ -3919,57 +3939,17 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 25px;</string>
+        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 5px;</string>
        </property>
        <property name="text">
         <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_33">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>580</y>
-         <width>161</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>27</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>2700</width>
-         <height>1440</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>22</pointsize>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string>电刺激强度</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
        </property>
       </widget>
       <widget class="QWidget" name="widget_circle_level_right" native="true">
        <property name="geometry">
         <rect>
          <x>1190</x>
-         <y>120</y>
+         <y>170</y>
          <width>431</width>
          <height>451</height>
         </rect>
@@ -3987,11 +3967,164 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
         </size>
        </property>
       </widget>
+      <widget class="QLabel" name="label_51">
+       <property name="geometry">
+        <rect>
+         <x>1140</x>
+         <y>680</y>
+         <width>241</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>81</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>748</width>
+         <height>81</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 5px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_48">
+       <property name="geometry">
+        <rect>
+         <x>560</x>
+         <y>680</y>
+         <width>261</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>748</width>
+         <height>81</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 5px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_62">
+       <property name="geometry">
+        <rect>
+         <x>1440</x>
+         <y>680</y>
+         <width>281</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>81</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>748</width>
+         <height>81</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 5px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="Line" name="line_8">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>780</y>
+         <width>1741</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>0</y>
+         <width>761</width>
+         <height>748</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>761</width>
+         <height>748</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>761</width>
+         <height>748</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/stim_background.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_20">
+       <property name="geometry">
+        <rect>
+         <x>1030</x>
+         <y>0</y>
+         <width>761</width>
+         <height>748</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>761</width>
+         <height>748</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>761</width>
+         <height>748</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/stim_background.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
       <widget class="QLabel" name="label_50">
        <property name="geometry">
         <rect>
-         <x>1340</x>
-         <y>600</y>
+         <x>1330</x>
+         <y>610</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -4027,104 +4160,49 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QLabel" name="label_51">
+      <widget class="QLabel" name="label_33">
        <property name="geometry">
         <rect>
-         <x>1080</x>
-         <y>680</y>
-         <width>301</width>
-         <height>81</height>
+         <x>440</x>
+         <y>600</y>
+         <width>161</width>
+         <height>51</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>81</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>748</width>
-         <height>81</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 25px;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_48">
-       <property name="geometry">
-        <rect>
-         <x>570</x>
-         <y>685</y>
-         <width>321</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
+         <width>27</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>748</width>
-         <height>81</height>
+         <width>2700</width>
+         <height>1440</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>22</pointsize>
+         <bold>false</bold>
+        </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 25px;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
-        <string/>
+        <string>电刺激强度</string>
        </property>
-      </widget>
-      <widget class="QLabel" name="label_62">
-       <property name="geometry">
-        <rect>
-         <x>1440</x>
-         <y>680</y>
-         <width>341</width>
-         <height>81</height>
-        </rect>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>81</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>748</width>
-         <height>81</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 245, 248);border-radius: 25px;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="Line" name="line_8">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>780</y>
-         <width>1741</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="wordWrap">
+        <bool>false</bool>
        </property>
       </widget>
       <zorder>label_3</zorder>
+      <zorder>label_20</zorder>
+      <zorder>label_6</zorder>
       <zorder>pushButton_next</zorder>
       <zorder>label_left_channel</zorder>
       <zorder>label_right_channel</zorder>
@@ -4137,9 +4215,7 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
       <zorder>label_30</zorder>
       <zorder>label_left_channel_2</zorder>
       <zorder>comboBox_left_scheme</zorder>
-      <zorder>label_33</zorder>
       <zorder>widget_circle_level_right</zorder>
-      <zorder>label_50</zorder>
       <zorder>label_51</zorder>
       <zorder>label_right_channel_2</zorder>
       <zorder>comboBox_right_scheme</zorder>
@@ -4150,6 +4226,8 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
       <zorder>label_2</zorder>
       <zorder>comboBox_right_freq</zorder>
       <zorder>line_8</zorder>
+      <zorder>label_50</zorder>
+      <zorder>label_33</zorder>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
