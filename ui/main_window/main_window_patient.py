@@ -3,14 +3,18 @@ from __future__ import annotations
 患者页（tabWidget 的 tab2）管理
 '''
 import logging
+from math import ceil
 from typing import Callable, List, Optional
 
-from PySide6.QtCore import Qt, QDateTime, QRect, QSize, Signal
-from PySide6.QtGui import QColor, QPalette
+from PySide6.QtCore import Qt, QDateTime, QRect, QSize, Signal, QTimer
+from PySide6.QtGui import QColor, QIntValidator, QPalette
 from PySide6.QtWidgets import (
     QWidget,
     QCheckBox,
+    QFrame,
     QHBoxLayout,
+    QLineEdit,
+    QLabel,
     QPushButton,
     QHeaderView,
     QStyleOptionButton,
@@ -94,6 +98,8 @@ class CheckBoxHeader(QHeaderView):
 class PatientPageController(BaseTableController):
     """患者页（tabWidget 的 tab2）管理"""
 
+    _PAGINATION_HEIGHT = 38
+
     def __init__(
         self,
         parent: QWidget,
@@ -113,7 +119,12 @@ class PatientPageController(BaseTableController):
         self._row_checkboxes: List[QCheckBox] = []
         self._header_checkbox: Optional[CheckBoxHeader] = None
         self._bulk_updating_checks = False
+        self._all_patients: List[dict] = []
         self._patient_data: List[dict] = []
+        self._page_index = 0
+        self._page_size = 10
+        self._pagination_frame: Optional[QFrame] = None
+        self._table_height_adjusted = False
         self._on_patient_selected = on_patient_selected
 
     # ---------- 对外接口 ----------
@@ -142,7 +153,7 @@ class PatientPageController(BaseTableController):
         if self._header_checkbox is None:
             self._setup_patient_table()
         else:
-            self._load_patient_data()
+            self._load_patient_data(reset_page=False)
 
     # ---------- 内部逻辑 ----------
     def get_table(self):
@@ -208,23 +219,211 @@ class PatientPageController(BaseTableController):
             getattr(table.selectionModel(), "selectionChanged", None),
             self._on_table_selection_changed,
         )
+        self._ensure_pagination_ui()
         self._row_checkboxes = []
-        self._load_patient_data()
+        self._load_patient_data(reset_page=True)
 
-    def _load_patient_data(self):
+    def _ensure_pagination_ui(self) -> None:
+        if self._pagination_frame is not None:
+            return
         table = self._get_patient_table()
         if table is None:
             return
+        tab = table.parentWidget()
+        if tab is None:
+            return
 
-        patients: List[dict] = []
+        pag_h = self._PAGINATION_HEIGHT
+        geo = table.geometry()
+        if not self._table_height_adjusted and geo.height() > pag_h + 200:
+            table.setGeometry(geo.x(), geo.y(), geo.width(), geo.height() - pag_h)
+            self._table_height_adjusted = True
+        geo = table.geometry()
+
+        pagination = QFrame(tab)
+        pagination.setObjectName("patientPagePagination")
+        pagination.setMinimumHeight(pag_h)
+        pagination.setStyleSheet(
+            "QFrame#patientPagePagination { background: transparent; }"
+            "QLabel { color: #98A2B3; font-size: 12px; padding: 2px 0; }"
+            "QPushButton {"
+            "background: transparent;"
+            "border: none;"
+            "color: #98A2B3;"
+            "font-size: 13px;"
+            "padding: 0;"
+            "}"
+            "QPushButton:hover:enabled { color: #4B86FC; }"
+            "QPushButton:disabled { color: #D7DDEA; }"
+            "QLineEdit {"
+            "background: #FFFFFF;"
+            "border: none;"
+            "border-radius: 4px;"
+            "color: #8E8E93;"
+            "font-size: 12px;"
+            "padding: 1px 4px;"
+            "}"
+        )
+        layout = QHBoxLayout(pagination)
+        layout.setContentsMargins(0, 4, 0, 4)
+        layout.setSpacing(6)
+        layout.setAlignment(Qt.AlignVCenter)
+        layout.addStretch()
+
+        self._total_label = QLabel("共0条", pagination)
+        layout.addWidget(self._total_label)
+
+        self._prev_button = QPushButton("<", pagination)
+        self._prev_button.setFixedSize(16, 24)
+        self._prev_button.setCursor(Qt.PointingHandCursor)
+        self._prev_button.clicked.connect(self._on_prev_page)
+        layout.addWidget(self._prev_button)
+
+        self._page_label = QLabel("0/0页", pagination)
+        self._page_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self._page_label)
+
+        self._next_button = QPushButton(">", pagination)
+        self._next_button.setFixedSize(16, 24)
+        self._next_button.setCursor(Qt.PointingHandCursor)
+        self._next_button.clicked.connect(self._on_next_page)
+        layout.addWidget(self._next_button)
+
+        layout.addSpacing(4)
+        layout.addWidget(QLabel("前往", pagination))
+
+        self._page_jump_input = QLineEdit(pagination)
+        self._page_jump_input.setFixedSize(36, 20)
+        self._page_jump_input.setAlignment(Qt.AlignCenter)
+        self._page_jump_input.setValidator(QIntValidator(1, 9999, self._page_jump_input))
+        self._page_jump_input.returnPressed.connect(self._on_jump_page)
+        self._page_jump_input.editingFinished.connect(self._on_jump_page)
+        layout.addWidget(self._page_jump_input)
+
+        layout.addWidget(QLabel("页", pagination))
+
+        self._pagination_frame = pagination
+        self._layout_pagination_position()
+        pagination.show()
+        QTimer.singleShot(0, self._refresh_page)
+
+    def _layout_pagination_position(self) -> None:
+        """将分页器贴在表格区域右下角。"""
+        if self._pagination_frame is None:
+            return
+        table = self._get_patient_table()
+        if table is None:
+            return
+        geo = table.geometry()
+        self._pagination_frame.adjustSize()
+        content_width = self._pagination_frame.sizeHint().width()
+        pag_h = max(self._PAGINATION_HEIGHT, self._pagination_frame.sizeHint().height())
+        right_inset = 40
+        pag_w = min(content_width, geo.width())
+        pag_x = geo.x() + geo.width() - pag_w - right_inset
+        pag_y = geo.y() + geo.height() + 2
+        self._pagination_frame.setGeometry(pag_x, pag_y, pag_w, pag_h)
+
+    def _recalculate_page_size(self) -> None:
+        table = self._get_patient_table()
+        if table is None:
+            return
+        v_header = table.verticalHeader()
+        row_height = v_header.defaultSectionSize() if v_header is not None else 50
+        viewport_h = table.viewport().height()
+        if viewport_h <= 0:
+            return
+        page_size = max(1, viewport_h // row_height)
+        if page_size != self._page_size:
+            self._page_size = page_size
+            self._clamp_page_index()
+
+    def _total_pages(self) -> int:
+        if not self._all_patients:
+            return 0
+        return int(ceil(len(self._all_patients) / self._page_size))
+
+    def _clamp_page_index(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages <= 0:
+            self._page_index = 0
+            return
+        self._page_index = min(max(self._page_index, 0), total_pages - 1)
+
+    def _update_pagination(self) -> None:
+        if self._pagination_frame is None:
+            return
+        total = len(self._all_patients)
+        total_pages = self._total_pages()
+        current_page = 0 if total_pages == 0 else self._page_index + 1
+        self._total_label.setText(f"共{total}条")
+        self._page_label.setText(f"{current_page}/{total_pages}页")
+        self._page_jump_input.setText("" if total_pages == 0 else str(current_page))
+        self._page_jump_input.setEnabled(total_pages > 0)
+        self._prev_button.setEnabled(self._page_index > 0)
+        self._next_button.setEnabled(total_pages > 0 and self._page_index < total_pages - 1)
+        self._layout_pagination_position()
+
+    def _refresh_page(self) -> None:
+        table = self._get_patient_table()
+        if table is None:
+            return
+        self._recalculate_page_size()
+        self._clamp_page_index()
+        start = self._page_index * self._page_size
+        end = start + self._page_size
+        page_patients = self._all_patients[start:end]
+        self._populate_patient_table(table, page_patients)
+        self._update_pagination()
+
+    def _on_prev_page(self) -> None:
+        if self._page_index <= 0:
+            return
+        self._page_index -= 1
+        self._refresh_page()
+
+    def _on_next_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0 or self._page_index >= total_pages - 1:
+            return
+        self._page_index += 1
+        self._refresh_page()
+
+    def _on_jump_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0:
+            return
+        text = self._page_jump_input.text().strip()
         try:
-            patients = self.patient_app.get_patients()
+            page = int(text)
+        except ValueError:
+            self._update_pagination()
+            return
+        self._page_index = min(max(page, 1), total_pages) - 1
+        self._refresh_page()
+
+    def _fetch_patients(self) -> List[dict]:
+        keyword = ""
+        for name in ("lineEdit_search_2", "lineEdit_search"):
+            edit = get_ui_attr(self.ui, name)
+            if edit is not None:
+                keyword = edit.text().strip()
+                if keyword:
+                    break
+        try:
+            if keyword:
+                return list(self.patient_app.search_patients(keyword) or [])
+            return list(self.patient_app.get_patients() or [])
         except Exception as e:
             self.logger.error(f"加载患者数据失败: {e}")
             TipsDialog.show_tips(self.parent, f"加载患者数据失败: {e}")
-            patients = []
+            return []
 
-        self._populate_patient_table(table, patients)
+    def _load_patient_data(self, *, reset_page: bool = False):
+        if reset_page:
+            self._page_index = 0
+        self._all_patients = self._fetch_patients()
+        self._refresh_page()
 
     def _populate_patient_table(self, table, patients: List[dict]):
         table.blockSignals(True)
@@ -591,9 +790,9 @@ class PatientPageController(BaseTableController):
             TipsDialog.show_tips(self.parent, f"搜索患者失败: {e}")
             patients = []
 
-        table = self._get_patient_table()
-        if table is not None:
-            self._populate_patient_table(table, patients)
+        self._page_index = 0
+        self._all_patients = list(patients)
+        self._refresh_page()
 
     def _on_reset_search(self):
         line_edit = get_ui_attr(self.ui, "lineEdit_search")
@@ -602,4 +801,4 @@ class PatientPageController(BaseTableController):
         line_edit_2 = get_ui_attr(self.ui, "lineEdit_search_2")
         if line_edit_2:
             line_edit_2.clear()
-        self._load_patient_data()
+        self._load_patient_data(reset_page=True)
