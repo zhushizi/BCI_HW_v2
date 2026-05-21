@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import csv
 import logging
+from math import ceil
 from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import QFile, QIODevice, Qt, Signal
+from PySide6.QtGui import QIntValidator, QColor, QPalette
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -38,36 +40,46 @@ class ReportPatientsPanel(QWidget):
     export_clicked = Signal()
     delete_clicked = Signal()
 
+    _PAGINATION_HEIGHT = 38
+
     def __init__(self, patient_app, logger: logging.Logger, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.patient_app = patient_app
         self._logger = logger
-        self._patients: list[dict] = []
+        self._all_patients: list[dict] = []
         self._selected_patient_id: Optional[str] = None
+        self._page_index = 0
+        self._page_size = 8
         self._build_ui()
         self.refresh()
 
-    def refresh(self, selected_patient_id: Optional[str] = None) -> Optional[dict]:
+    def refresh(self, selected_patient_id: Optional[str] = None, *, reset_page: bool = False) -> Optional[dict]:
         if selected_patient_id is not None:
             self._selected_patient_id = str(selected_patient_id or "").strip() or None
+        if reset_page:
+            self._page_index = 0
 
         keyword = self._search_input.text().strip()
         try:
             if keyword:
-                self._patients = list(self.patient_app.search_patients(keyword) or [])
+                self._all_patients = list(self.patient_app.search_patients(keyword) or [])
             else:
-                self._patients = list(self.patient_app.get_patients() or [])
+                self._all_patients = list(self.patient_app.get_patients() or [])
         except Exception:
             self._logger.exception("加载报表页患者列表失败")
-            self._patients = []
+            self._all_patients = []
 
-        return self._populate_table()
+        if selected_patient_id is not None:
+            self._sync_page_to_selected()
+        else:
+            self._clamp_page_index()
+        return self._refresh_page()
 
     def current_patient(self) -> Optional[dict]:
         patient_id = self._selected_patient_id
         if not patient_id:
             return None
-        for patient in self._patients:
+        for patient in self._all_patients:
             if self._patient_key(patient) == patient_id:
                 return patient
         return None
@@ -169,7 +181,11 @@ class ReportPatientsPanel(QWidget):
         self._table.setSelectionMode(QAbstractItemView.SingleSelection)
         self._table.setFocusPolicy(Qt.NoFocus)
         self._table.setShowGrid(False)
-        self._table.setAlternatingRowColors(False)
+        self._table.setAlternatingRowColors(True)
+        palette = self._table.palette()
+        palette.setColor(QPalette.ColorRole.Base, QColor("#FFFFFF"))
+        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#F7F7F7"))
+        self._table.setPalette(palette)
         self._table.horizontalHeader().setStretchLastSection(True)
         self._table.horizontalHeader().setDefaultSectionSize(100)
         self._table.horizontalHeader().resizeSection(0, 70)
@@ -178,7 +194,8 @@ class ReportPatientsPanel(QWidget):
         self._table.setStyleSheet(
             "QTableWidget {"
             "border: none;"
-            "background: transparent;"
+            "background: #FFFFFF;"
+            "alternate-background-color: #F7F7F7;"
             "gridline-color: transparent;"
             "}"
             "QHeaderView::section {"
@@ -201,13 +218,132 @@ class ReportPatientsPanel(QWidget):
         safe_connect(self._logger, self._table.cellClicked, self._on_row_clicked)
         root_layout.addWidget(self._table, 1)
 
+        pagination = QFrame(self)
+        pagination.setObjectName("reportPatientPagination")
+        pagination.setMinimumHeight(self._PAGINATION_HEIGHT)
+        pagination.setStyleSheet(
+            "QFrame#reportPatientPagination { background: transparent; }"
+            "QLabel { color: #98A2B3; font-size: 12px; padding: 2px 0; }"
+            "QPushButton {"
+            "background: transparent;"
+            "border: none;"
+            "color: #98A2B3;"
+            "font-size: 13px;"
+            "padding: 0;"
+            "}"
+            "QPushButton:hover:enabled { color: #4B86FC; }"
+            "QPushButton:disabled { color: #D7DDEA; }"
+            "QLineEdit {"
+            "background: #FFFFFF;"
+            "border: none;"
+            "border-radius: 4px;"
+            "color: #8E8E93;"
+            "font-size: 12px;"
+            "padding: 1px 4px;"
+            "}"
+        )
+        pagination_layout = QHBoxLayout(pagination)
+        pagination_layout.setContentsMargins(0, 4, 0, 4)
+        pagination_layout.setSpacing(6)
+        pagination_layout.setAlignment(Qt.AlignVCenter)
+        pagination_layout.addStretch()
+
+        self._total_label = QLabel("共0条", pagination)
+        pagination_layout.addWidget(self._total_label)
+
+        self._prev_button = QPushButton("<", pagination)
+        self._prev_button.setFixedSize(16, 24)
+        self._prev_button.setCursor(Qt.PointingHandCursor)
+        self._prev_button.clicked.connect(self._on_prev_page)
+        pagination_layout.addWidget(self._prev_button)
+
+        self._page_label = QLabel("0/0页", pagination)
+        self._page_label.setAlignment(Qt.AlignCenter)
+        pagination_layout.addWidget(self._page_label)
+
+        self._next_button = QPushButton(">", pagination)
+        self._next_button.setFixedSize(16, 24)
+        self._next_button.setCursor(Qt.PointingHandCursor)
+        self._next_button.clicked.connect(self._on_next_page)
+        pagination_layout.addWidget(self._next_button)
+
+        pagination_layout.addSpacing(4)
+        pagination_layout.addWidget(QLabel("前往", pagination))
+
+        self._page_jump_input = QLineEdit(pagination)
+        self._page_jump_input.setFixedSize(36, 20)
+        self._page_jump_input.setAlignment(Qt.AlignCenter)
+        self._page_jump_input.setValidator(QIntValidator(1, 9999, self._page_jump_input))
+        self._page_jump_input.returnPressed.connect(self._on_jump_page)
+        self._page_jump_input.editingFinished.connect(self._on_jump_page)
+        pagination_layout.addWidget(self._page_jump_input)
+
+        pagination_layout.addWidget(QLabel("页", pagination))
+        root_layout.addWidget(pagination)
+
+    def _page_patients(self) -> list[dict]:
+        start = self._page_index * self._page_size
+        end = start + self._page_size
+        return self._all_patients[start:end]
+
+    def _recalculate_page_size(self) -> None:
+        row_height = self._table.verticalHeader().defaultSectionSize()
+        viewport_h = self._table.viewport().height()
+        if viewport_h <= 0:
+            return
+        page_size = max(1, viewport_h // row_height)
+        if page_size != self._page_size:
+            self._page_size = page_size
+            self._clamp_page_index()
+
+    def _total_pages(self) -> int:
+        if not self._all_patients:
+            return 0
+        return int(ceil(len(self._all_patients) / self._page_size))
+
+    def _clamp_page_index(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages <= 0:
+            self._page_index = 0
+            return
+        self._page_index = min(max(self._page_index, 0), total_pages - 1)
+
+    def _sync_page_to_selected(self) -> None:
+        if not self._selected_patient_id:
+            self._clamp_page_index()
+            return
+        for index, patient in enumerate(self._all_patients):
+            if self._patient_key(patient) == self._selected_patient_id:
+                self._page_index = index // self._page_size
+                break
+        self._clamp_page_index()
+
+    def _update_pagination(self) -> None:
+        total = len(self._all_patients)
+        total_pages = self._total_pages()
+        current_page = 0 if total_pages == 0 else self._page_index + 1
+        self._total_label.setText(f"共{total}条")
+        self._page_label.setText(f"{current_page}/{total_pages}页")
+        self._page_jump_input.setText("" if total_pages == 0 else str(current_page))
+        self._page_jump_input.setEnabled(total_pages > 0)
+        self._prev_button.setEnabled(self._page_index > 0)
+        self._next_button.setEnabled(total_pages > 0 and self._page_index < total_pages - 1)
+
+    def _refresh_page(self) -> Optional[dict]:
+        self._recalculate_page_size()
+        self._clamp_page_index()
+        return self._populate_table()
+
     def _populate_table(self) -> Optional[dict]:
+        page_patients = self._page_patients()
+        start = self._page_index * self._page_size
+
         self._table.blockSignals(True)
-        self._table.setRowCount(len(self._patients))
+        self._table.setRowCount(len(page_patients))
 
         selected_row = -1
-        for row, patient in enumerate(self._patients):
-            index_text = f"{row + 1:02d}"
+        for row, patient in enumerate(page_patients):
+            index_text = f"{start + row + 1:02d}"
             set_text_item(self._table, row, 0, index_text)
             name_item = set_text_item(self._table, row, 1, patient.get("Name", ""))
             name_item.setData(Qt.UserRole, patient)
@@ -215,27 +351,69 @@ class ReportPatientsPanel(QWidget):
             if self._patient_key(patient) == self._selected_patient_id:
                 selected_row = row
 
-        if selected_row < 0 and self._patients:
+        if selected_row < 0 and page_patients:
             selected_row = 0
-            self._selected_patient_id = self._patient_key(self._patients[0])
+            self._selected_patient_id = self._patient_key(page_patients[0])
 
         self._table.clearSelection()
         selected_patient = None
-        if 0 <= selected_row < len(self._patients):
+        if 0 <= selected_row < len(page_patients):
             self._table.selectRow(selected_row)
-            selected_patient = self._patients[selected_row]
+            selected_patient = page_patients[selected_row]
         self._table.blockSignals(False)
+        self._update_pagination()
         return selected_patient
 
+    def _on_prev_page(self) -> None:
+        if self._page_index <= 0:
+            return
+        self._page_index -= 1
+        selected = self._refresh_page()
+        if selected is not None:
+            self.patient_selected.emit(selected)
+
+    def _on_next_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0 or self._page_index >= total_pages - 1:
+            return
+        self._page_index += 1
+        selected = self._refresh_page()
+        if selected is not None:
+            self.patient_selected.emit(selected)
+
+    def _on_jump_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0:
+            return
+        text = self._page_jump_input.text().strip()
+        try:
+            page = int(text)
+        except ValueError:
+            self._update_pagination()
+            return
+        self._page_index = min(max(page, 1), total_pages) - 1
+        selected = self._refresh_page()
+        if selected is not None:
+            self.patient_selected.emit(selected)
+
     def _on_search_text_changed(self, _text: str) -> None:
+        self._page_index = 0
         self.refresh()
 
     def _on_row_clicked(self, row: int, _column: int) -> None:
-        if not (0 <= row < len(self._patients)):
+        page_patients = self._page_patients()
+        if not (0 <= row < len(page_patients)):
             return
-        patient = self._patients[row]
+        patient = page_patients[row]
         self._selected_patient_id = self._patient_key(patient)
         self.patient_selected.emit(patient)
+
+    def resizeEvent(self, event) -> None:  # type: ignore[override]
+        super().resizeEvent(event)
+        old_page_size = self._page_size
+        self._recalculate_page_size()
+        if self._page_size != old_page_size:
+            self._refresh_page()
 
     @staticmethod
     def _format_visit_time(value: object) -> str:

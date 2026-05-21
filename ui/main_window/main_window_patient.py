@@ -201,7 +201,7 @@ class PatientPageController(BaseTableController):
         table.setAlternatingRowColors(True)
         palette = table.palette()
         palette.setColor(QPalette.ColorRole.Base, QColor("#FFFFFF"))
-        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#F4F4F4"))
+        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#F7F7F7"))
         palette.setColor(QPalette.ColorRole.Highlight, QColor("#E8F1FF"))
         palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#1F1F1F"))
         table.setPalette(palette)
@@ -464,7 +464,7 @@ class PatientPageController(BaseTableController):
     def _row_widget_background(self, table, row: int) -> str:
         if row in self._selected_rows(table):
             return "#E8F1FF"
-        return "#F4F4F4" if row % 2 == 1 else "#FFFFFF"
+        return "#F7F7F7" if row % 2 == 1 else "#FFFFFF"
 
     def _apply_widget_background(self, widget: QWidget, row: int, col: int, bg: str) -> None:
         """用 objectName 限定样式，只给容器上色，不影响 QCheckBox / 按钮。"""

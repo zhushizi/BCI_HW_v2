@@ -1548,7 +1548,7 @@ border-image: url(:/patient/pic/patient_icon_number.png);</string>
     border-radius: 8px;
     gridline-color: transparent;
     background-color: #FFFFFF;
-    alternate-background-color: #F4F4F4;
+    alternate-background-color: #F7F7F7;
     selection-background-color: #E8F1FF;
     selection-color: #1F1F1F;
     font-size: 16px;
