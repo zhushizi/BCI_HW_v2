@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QGuiApplication
-
 from ui.core.app_icon import apply_application_icon
 
 # 基础设施 & 服务层（组合根负责装配，业务层对下游透明）

@@ -401,7 +401,7 @@ QTabWidget#tabWidget QTabBar::tab {
         <string notr="true">QPushButton#pushButton_tab1new {
     background-color: #FFFFFF;
     border: 1px solid #4B86FC;
-    border-radius: 16px;
+    border-radius: 10px;
     color: #4B86FC;
 }
 QPushButton#pushButton_tab1new:hover {

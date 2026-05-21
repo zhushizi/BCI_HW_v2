@@ -315,13 +315,28 @@ class MainWindowDeviceStatus:
             pass
 
 
+_PARADIGM_OVERLAY_LABELS = (
+    "label_23",
+    "label_24",
+    "label_25",
+    "label_27",
+    "label_28",
+    "label_29",
+    "label_ssvep_up_icon",
+    "label_ssvep_down_icon",
+    "label_ssmvep_up_icon",
+    "label_ssmvep_down_icon",
+    "label_mi_up_icon",
+    "label_mi_down_icon",
+)
+
+
 class MainWindowTreatFlow:
     def __init__(self, host):
         self._host = host
         self.ui = host.ui
         self.logger = host.logger
         self._hover_filters: list[_HoverShadowFilter] = []
-        self._label_hover_filters: list[_HoverCallbackFilter] = []
         self._patient_select_panel: Optional[PatientSelectPanel] = None
         self._paradigm_icon_rects: dict[str, QRect] = {}
 
@@ -332,6 +347,7 @@ class MainWindowTreatFlow:
 
         self._ensure_patient_select_panel()
         connect_click("pushButton_tab1select", self.open_patient_select_dialog)
+        self._set_paradigm_overlays_mouse_transparent()
 
         treat_buttons = [
             "pushButton_up_ssvep",
@@ -355,50 +371,18 @@ class MainWindowTreatFlow:
                     getattr(button, "clicked", None),
                     lambda checked=False, name=button_name: self.open_treat_page(name),
                 )
-        label_hover_map = {
-            "label_23": "pushButton_up_ssvep",
-            "label_24": "pushButton_up_ssmvep",
-            "label_25": "pushButton_up_mi",
-            "label_27": "pushButton_down_ssvep",
-            "label_28": "pushButton_down_ssmvep",
-            "label_29": "pushButton_down_mi",
-        }
-        for label_name, button_name in label_hover_map.items():
-            label = get_ui_attr(self.ui, label_name)
-            if label is None:
-                continue
-            hover_filter = _HoverCallbackFilter(
-                label,
-                on_enter=lambda name=button_name: self._set_paradigm_label_hovered(name, True),
-                on_leave=lambda name=button_name: self._set_paradigm_label_hovered(name, False),
-            )
-            label.installEventFilter(hover_filter)
-            self._label_hover_filters.append(hover_filter)
-        icon_hover_map = {
-            "label_ssvep_up_icon": "pushButton_up_ssvep",
-            "label_ssvep_down_icon": "pushButton_down_ssvep",
-            "label_ssmvep_up_icon": "pushButton_up_ssmvep",
-            "label_ssmvep_down_icon": "pushButton_down_ssmvep",
-            "label_mi_up_icon": "pushButton_up_mi",
-            "label_mi_down_icon": "pushButton_down_mi",
-        }
-        for icon_name, button_name in icon_hover_map.items():
-            icon = get_ui_attr(self.ui, icon_name)
-            if icon is None:
-                continue
-            hover_filter = _HoverCallbackFilter(
-                icon,
-                on_enter=lambda name=button_name: self._set_paradigm_label_hovered(name, True),
-                on_leave=lambda name=button_name: self._set_paradigm_label_hovered(name, False),
-            )
-            icon.installEventFilter(hover_filter)
-            self._label_hover_filters.append(hover_filter)
         if not any(get_ui_attr(self.ui, name) for name in treat_buttons):
             connect_click("pushButton", self.open_treat_page)
             connect_click("pushButton_3", self.open_treat_page)
 
         start_evaluate_btn = get_ui_attr(self.ui, "pushButton_startevaluate")
         safe_connect(self.logger, getattr(start_evaluate_btn, "clicked", None), self.on_start_evaluate_clicked)
+
+    def _set_paradigm_overlays_mouse_transparent(self) -> None:
+        for name in _PARADIGM_OVERLAY_LABELS:
+            label = get_ui_attr(self.ui, name)
+            if label is not None:
+                label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
 
     def _ensure_patient_select_panel(self) -> None:
         if self._patient_select_panel is not None:
@@ -644,20 +628,4 @@ class _HoverShadowFilter(QObject):
                 self._effect.setEnabled(False)
                 if callable(self._on_hover_changed):
                     self._on_hover_changed(False)
-        return super().eventFilter(obj, event)
-
-
-class _HoverCallbackFilter(QObject):
-    def __init__(self, target, on_enter: Optional[Callable[[], None]] = None, on_leave: Optional[Callable[[], None]] = None):
-        super().__init__(target)
-        self._target = target
-        self._on_enter = on_enter
-        self._on_leave = on_leave
-
-    def eventFilter(self, obj, event):
-        if obj is self._target:
-            if event.type() == QEvent.Enter and callable(self._on_enter):
-                self._on_enter()
-            elif event.type() == QEvent.Leave and callable(self._on_leave):
-                self._on_leave()
         return super().eventFilter(obj, event)
