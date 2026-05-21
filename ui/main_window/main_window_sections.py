@@ -592,18 +592,12 @@ class MainWindowTreatFlow:
             pass
         self.update_title_to_practising()
 
-    def update_title_to_practising(self, x: int = None, y: int = None, width: int = None, height: int = None) -> None:
+    def update_title_to_practising(self) -> None:
         label_title = get_ui_attr(self.ui, "label_title")
         if label_title is None:
             return
-        default_x = 860 if x is None else x
-        default_y = 20 if y is None else y
-        default_width = 270 if width is None else width
-        default_height = 59 if height is None else height
-        label_title.setGeometry(QRect(default_x, default_y, default_width, default_height))
-        label_title.setMinimumSize(default_width, default_height)
-        label_title.setMaximumSize(default_width, default_height)
-        label_title.setStyleSheet("border-image: url(:/treat/pic/treat_practising.png);")
+        label_title.setText("训练中")
+        label_title.setStyleSheet("")
 
 
 class _HoverShadowFilter(QObject):

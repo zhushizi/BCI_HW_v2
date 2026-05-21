@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QRect
-
 from ui.dialogs.tips_dialog import TipsDialog
 from ui.core.utils import get_ui_attr, safe_call, safe_connect
 
@@ -158,15 +156,16 @@ class TreatNavigation:
             except Exception:
                 self._logger.exception("进入训练主屏失败")
 
+    _PREPROCESS_TITLE_TEXT = {
+        "preprocess_eletitle.png": "电刺激强度适应性测试",
+        "preprocess_bciImpeTitle.png": "脑电阻抗测试",
+    }
+
     def update_preprocess_title(self, image_name: str) -> None:
         label = get_ui_attr(self.ui, "label_title")
         if label is None:
             return
-        if image_name == "preprocess_bciImpeTitle.png":
-            x, y, w, h = 784, 20, 333, 59
-        else:
-            x, y, w, h = 520, 20, 840, 59
-        label.setGeometry(QRect(x, y, w, h))
-        label.setMinimumSize(w, h)
-        label.setMaximumSize(w, h)
-        label.setStyleSheet(f"border-image: url(:/preprocess/pic/{image_name});")
+        title = self._PREPROCESS_TITLE_TEXT.get(image_name)
+        if title:
+            label.setText(title)
+        label.setStyleSheet("")

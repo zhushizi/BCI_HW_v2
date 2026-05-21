@@ -563,7 +563,6 @@ class StimTestController:
             self._logger.exception("弹出提示失败")
         return False
 
-
 class _CircleMaskResizeFilter(QObject):
     """Resize 时重新为 host 设置圆形 mask。"""
 
@@ -579,3 +578,4 @@ class _CircleMaskResizeFilter(QObject):
                 x, y = (w - d) // 2, (h - d) // 2
                 self._host.setMask(QRegion(x, y, d, d, QRegion.Ellipse))
         return False
+
