@@ -48,12 +48,18 @@ class StimTestController:
         }
 
         self._current_patient_id: Optional[str] = None
+        self._left_grade = 0
+        self._right_grade = 0
         self._left_circle_widget: Optional[CircleLevelWidget] = None
         self._right_circle_widget: Optional[CircleLevelWidget] = None
 
     @property
     def is_test_running(self) -> bool:
         return bool(self._test_running)
+
+    def get_stimulus_grades(self) -> tuple[int, int]:
+        """返回当前左右通道刺激强度，数据源为圆形等级控件。"""
+        return self._get_left_grade(), self._get_right_grade()
 
     def bind_signals(self) -> None:
         # 开始/停止合并到同一按钮：点击切换
@@ -91,7 +97,7 @@ class StimTestController:
         self._init_right_circle_widget()
 
     def _init_left_circle_widget(self) -> None:
-        """在 widget_circle_level_left 中放入只读圆环，与 label_left_grade 联动，并裁剪为圆形区域。"""
+        """在 widget_circle_level_left 中放入只读圆环，并裁剪为圆形区域。"""
         host = get_ui_attr(self.ui, "widget_circle_level_left")
         if host is None:
             return
@@ -102,14 +108,14 @@ class StimTestController:
         self._left_circle_widget = CircleLevelWidget(host)
         self._left_circle_widget.set_level_range(0, 99)
         self._left_circle_widget.set_read_only(True)
-        self._left_circle_widget.set_level(self._get_left_grade())
+        self._left_circle_widget.set_level(self._left_grade)
         layout.addWidget(self._left_circle_widget)
 
         host.installEventFilter(_CircleMaskResizeFilter(host))
         QTimer.singleShot(0, lambda: self._apply_circle_mask_to_host(host))
 
     def _init_right_circle_widget(self) -> None:
-        """在 widget_circle_level_right 中放入只读圆环，与 label_right_grade 联动，并裁剪为圆形区域。"""
+        """在 widget_circle_level_right 中放入只读圆环，并裁剪为圆形区域。"""
         host = get_ui_attr(self.ui, "widget_circle_level_right")
         if host is None:
             return
@@ -120,7 +126,7 @@ class StimTestController:
         self._right_circle_widget = CircleLevelWidget(host)
         self._right_circle_widget.set_level_range(0, 99)
         self._right_circle_widget.set_read_only(True)
-        self._right_circle_widget.set_level(self._get_right_grade())
+        self._right_circle_widget.set_level(self._right_grade)
         layout.addWidget(self._right_circle_widget)
 
         host.installEventFilter(_CircleMaskResizeFilter(host))
@@ -312,45 +318,30 @@ class StimTestController:
             return first_char
         return first_char
 
-    def _get_left_grade(self) -> int:
-        label = get_ui_attr(self.ui, "label_left_grade")
-        if label is None:
-            return 0
-        text = label.text()
-        try:
-            grade_str = text.replace("级", "").strip()
-            return int(grade_str)
-        except (ValueError, AttributeError):
-            return 0
+    def _normalize_grade(self, grade: int) -> int:
+        return max(0, min(99, int(grade)))
 
-    def _set_left_grade(self, grade: int) -> None:
-        label = get_ui_attr(self.ui, "label_left_grade")
-        if label is None:
-            return
-        grade = max(0, min(99, grade))
-        safe_call(self._logger, getattr(label, "setText", None), f"{grade}级")
+    def _get_left_grade(self) -> int:
         if self._left_circle_widget is not None:
-            self._left_circle_widget.set_level(grade)
+            self._left_grade = self._normalize_grade(self._left_circle_widget.level())
+        return self._left_grade
+
+    def _set_left_grade(self, grade: int) -> int:
+        self._left_grade = self._normalize_grade(grade)
+        if self._left_circle_widget is not None:
+            self._left_circle_widget.set_level(self._left_grade)
+        return self._left_grade
 
     def _get_right_grade(self) -> int:
-        label = get_ui_attr(self.ui, "label_right_grade")
-        if label is None:
-            return 0
-        text = label.text()
-        try:
-            grade_str = text.replace("级", "").strip()
-            return int(grade_str)
-        except (ValueError, AttributeError):
-            return 0
-
-    def _set_right_grade(self, grade: int) -> None:
-        label = get_ui_attr(self.ui, "label_right_grade")
-        if label is None:
-            return
-        grade = max(0, min(99, grade))
-        safe_call(self._logger, getattr(label, "setText", None), f"{grade}级")
         if self._right_circle_widget is not None:
-            self._right_circle_widget.set_level(grade)
+            self._right_grade = self._normalize_grade(self._right_circle_widget.level())
+        return self._right_grade
+
+    def _set_right_grade(self, grade: int) -> int:
+        self._right_grade = self._normalize_grade(grade)
+        if self._right_circle_widget is not None:
+            self._right_circle_widget.set_level(self._right_grade)
+        return self._right_grade
 
     def _send_left_channel_params(self, current_value: int) -> None:
         if not self.stim_app:
@@ -428,8 +419,7 @@ class StimTestController:
             TipsDialog.show_tips(self.ui, "请先点击“开始测试”按钮")
             return
         current_grade = self._get_left_grade()
-        new_grade = current_grade + 1
-        self._set_left_grade(new_grade)
+        new_grade = self._set_left_grade(current_grade + 1)
         self._send_left_channel_params(current_value=new_grade)
         self._save_current_params()
 
@@ -438,8 +428,7 @@ class StimTestController:
             TipsDialog.show_tips(self.ui, "请先点击“开始测试”按钮")
             return
         current_grade = self._get_left_grade()
-        new_grade = current_grade - 1
-        self._set_left_grade(new_grade)
+        new_grade = self._set_left_grade(current_grade - 1)
         self._send_left_channel_params(current_value=new_grade)
         self._save_current_params()
 
@@ -448,8 +437,7 @@ class StimTestController:
             TipsDialog.show_tips(self.ui, "请先点击“开始测试”按钮")
             return
         current_grade = self._get_right_grade()
-        new_grade = current_grade + 1
-        self._set_right_grade(new_grade)
+        new_grade = self._set_right_grade(current_grade + 1)
         self._send_right_channel_params(current_value=new_grade)
         self._save_current_params()
 
@@ -458,8 +446,7 @@ class StimTestController:
             TipsDialog.show_tips(self.ui, "请先点击“开始测试”按钮")
             return
         current_grade = self._get_right_grade()
-        new_grade = current_grade - 1
-        self._set_right_grade(new_grade)
+        new_grade = self._set_right_grade(current_grade - 1)
         self._send_right_channel_params(current_value=new_grade)
         self._save_current_params()
 

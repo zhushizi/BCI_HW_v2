@@ -89,21 +89,10 @@ class TreatNavigation:
         self.update_preprocess_title("preprocess_eletitle.png")
         self._host.stim_ctrl.on_enter()
 
-    def _get_grade_from_label(self, name: str) -> int:
-        label = get_ui_attr(self.ui, name)
-        if label is None:
-            return 0
-        try:
-            grade_str = (label.text() or "").replace("级", "").strip()
-            return int(grade_str) if grade_str else 0
-        except (ValueError, AttributeError):
-            return 0
-
     def on_preprocess_next(self) -> None:
         sub_tab = get_ui_attr(self.ui, "tabWidget_2")
         if sub_tab and sub_tab.currentIndex() == 0:
-            left_grade = self._get_grade_from_label("label_left_grade")
-            right_grade = self._get_grade_from_label("label_right_grade")
+            left_grade, right_grade = self._host.stim_ctrl.get_stimulus_grades()
             if left_grade == 0 or right_grade == 0:
                 TipsDialog.show_tips(self.ui, "请进行电刺激强度测试")
                 return

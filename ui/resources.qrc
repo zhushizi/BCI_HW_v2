@@ -148,5 +148,6 @@
         <file>pic/icon_ssmvep.png</file>
         <file>pic/icon_mi.png</file>
         <file>pic/big_icon.png</file>
+        <file>pic/stim_background.png</file>
     </qresource>
 </RCC>
