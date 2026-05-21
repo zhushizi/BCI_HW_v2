@@ -197,18 +197,18 @@ class TrainingMainController:
         layout = host.layout()
         if layout is None:
             layout = QVBoxLayout(host)
-            layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(58, 0, 0, 0)
+        layout.setSpacing(0)
         self._wave_widget = BCIWaveWidget(host)
         self._wave_widget.set_draw_labels(False)
         layout.addWidget(self._wave_widget)
         self._init_wave_label_panel(host)
 
     def _init_wave_label_panel(self, host: QWidget) -> None:
-        parent = host.parentWidget()
-        if parent is None or self._wave_widget is None:
+        if self._wave_widget is None:
             return
         if self._wave_label_panel is None:
-            self._wave_label_panel = QWidget(parent)
+            self._wave_label_panel = QWidget(host)
             self._wave_label_panel.setObjectName("widget_BCIWaveLabels")
             self._wave_label_panel.setStyleSheet(
                 "background-color: #ffffff; color: rgb(128, 146, 219); font-weight: bold;"
@@ -228,12 +228,9 @@ class TrainingMainController:
         host = self._wave_widget.parentWidget()
         if host is None:
             return
-        host_geo = host.geometry()
-        panel_width = 50
-        panel_x = max(host_geo.x() - panel_width - 8, 0)
-        self._wave_label_panel.setGeometry(
-            QRect(panel_x, host_geo.y(), panel_width, host_geo.height())
-        )
+        panel_width = 58
+        self._wave_label_panel.setGeometry(QRect(0, 0, panel_width, host.height()))
+        self._wave_label_panel.show()
         self._wave_label_panel.raise_()
         if len(self._wave_label_items) != len(labels):
             for text_item, dot_item in self._wave_label_items:
@@ -248,11 +245,16 @@ class TrainingMainController:
                 dot_item = QLabel(self._wave_label_panel)
                 dot_item.setText("•" if label else "")
                 dot_item.setAlignment(Qt.AlignCenter)
+                text_item.show()
+                dot_item.show()
                 self._wave_label_items.append((text_item, dot_item))
-        row_h = max(int(host_geo.height() / n_rows), 1)
+        row_h = max(int(host.height() / n_rows), 1)
         for idx, (text_item, dot_item) in enumerate(self._wave_label_items):
             text_item.setGeometry(0, idx * row_h, panel_width - 14, row_h)
             dot_item.setGeometry(panel_width - 14, idx * row_h, 14, row_h)
+            text_item.show()
+            dot_item.show()
+        self._wave_label_panel.raise_()
 
     def _init_power_widget(self) -> None:
         host = get_ui_attr(self.ui, "widget_PowerBar")

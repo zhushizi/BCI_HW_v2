@@ -23,10 +23,10 @@ class BCIWaveWidget(QWidget):
         self._sample_interval: float | None = None
         self._window_sec = 10.0
         self._max_points = 800
-        self._bg_color = QColor(10, 10, 10)
-        self._grid_color = QColor(40, 40, 40)
-        self._wave_color = QColor(0, 200, 255)
-        self._label_color = QColor(220, 220, 220)
+        self._bg_color = QColor(255, 255, 255)
+        self._grid_color = QColor(225, 230, 240)
+        self._wave_color = QColor("#789EFF")
+        self._label_color = QColor(80, 96, 128)
         self._draw_labels = True
         # 由 decoder.ImpedanceValue 的 electrode 经 set_channel_labels 写入；未收到前为空
         self._channel_labels: list[str] = []
