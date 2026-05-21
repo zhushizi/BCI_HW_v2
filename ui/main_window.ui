@@ -64,7 +64,7 @@
     <rect>
      <x>80</x>
      <y>22</y>
-     <width>281</width>
+     <width>300</width>
      <height>31</height>
     </rect>
    </property>
@@ -91,7 +91,7 @@
 </string>
    </property>
    <property name="text">
-    <string>脑机接口-神经肌肉电刺激</string>
+    <string>脑机接口-神经肌肉电刺激仪</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -1535,7 +1535,7 @@ border-image: url(:/patient/pic/patient_icon_number.png);</string>
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>-1</pointsize>
         </font>
        </property>
        <property name="focusPolicy">
@@ -1583,14 +1583,14 @@ QTableWidget#tableWidget_patient_2::item:selected:!active {
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
        <property name="selectionMode">
         <enum>QAbstractItemView::NoSelection</enum>
        </property>
        <property name="showGrid">
         <bool>false</bool>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
        </property>
        <attribute name="horizontalHeaderDefaultSectionSize">
         <number>205</number>
@@ -2077,7 +2077,7 @@ QTableWidget#tableWidget_plan::item:selected {
         <rect>
          <x>24</x>
          <y>20</y>
-         <width>1610</width>
+         <width>1701</width>
          <height>900</height>
         </rect>
        </property>
@@ -2088,7 +2088,12 @@ QTableWidget#tableWidget_plan::item:selected {
 }
 QTabWidget#tabWidget_set::pane {
     border: none;
-    background: #FFFFFF;
+    background: transparent;
+}
+QWidget#tab_set_system,
+QWidget#tab_set_account,
+QWidget#tab_set_other {
+    background: transparent;
 }
 QTabBar::tab {
     min-width: 110px;
@@ -2116,22 +2121,6 @@ QTabBar::tab:hover:!selected {
         <attribute name="title">
          <string>系统信息</string>
         </attribute>
-        <widget class="QLabel" name="label_set_system_bg">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>1600</width>
-           <height>850</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background: #FFFFFF;</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
         <widget class="QLabel" name="label_11">
          <property name="geometry">
           <rect>
@@ -2161,7 +2150,7 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>南京华伟医疗设备有限公司</string>
+          <string>南京华伟智脑康联科技有限公司</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_7">
@@ -2193,7 +2182,7 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>脑机接口-神经肌肉电刺激</string>
+          <string>脑机接口-神经肌肉电刺激仪</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_9">
@@ -2282,14 +2271,14 @@ QTabBar::tab:hover:!selected {
            <x>100</x>
            <y>242</y>
            <width>910</width>
-           <height>80</height>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>南京华伟华疗设备有限公司对本软件拥有一切法定权利、所有权和利益，严禁对本软件进行各种形式的复制和修改。违者将追究其法律责任最终解释权归南京华伟华疗设备有限公司所有。</string>
+          <string>南京华伟智脑康联科技有限公司对本软件拥有一切法定权利、所有权和利益，严禁对本软件进行各种形式的复制和修改。违者将追究其法律责任最终解释权归南京华伟华疗设备有限公司所有。</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -2300,20 +2289,15 @@ QTabBar::tab:hover:!selected {
           <rect>
            <x>980</x>
            <y>120</y>
-           <width>520</width>
-           <height>520</height>
+           <width>695</width>
+           <height>600</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: rgba(120, 158, 255, 0.08);
-font-size: 420px;
-font-weight: 700;</string>
+          <string notr="true">border-image: url(:/set/pic/big_icon.png);</string>
          </property>
          <property name="text">
-          <string>S</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string/>
          </property>
         </widget>
        </widget>
@@ -2525,21 +2509,16 @@ color: #FFFFFF;
          <property name="geometry">
           <rect>
            <x>980</x>
-           <y>140</y>
-           <width>520</width>
-           <height>520</height>
+           <y>120</y>
+           <width>695</width>
+           <height>600</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: rgba(120, 158, 255, 0.08);
-font-size: 420px;
-font-weight: 700;</string>
+          <string notr="true">border-image: url(:/set/pic/big_icon.png);</string>
          </property>
          <property name="text">
-          <string>S</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string/>
          </property>
         </widget>
        </widget>
@@ -2978,20 +2957,15 @@ padding-left: 12px;
           <rect>
            <x>980</x>
            <y>120</y>
-           <width>520</width>
-           <height>520</height>
+           <width>695</width>
+           <height>600</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">color: rgba(120, 158, 255, 0.08);
-font-size: 420px;
-font-weight: 700;</string>
+          <string notr="true">border-image: url(:/set/pic/big_icon.png);</string>
          </property>
          <property name="text">
-          <string>S</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string/>
          </property>
         </widget>
        </widget>

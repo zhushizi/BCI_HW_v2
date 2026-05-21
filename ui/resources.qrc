@@ -147,5 +147,6 @@
         <file>pic/icon_ssvep.png</file>
         <file>pic/icon_ssmvep.png</file>
         <file>pic/icon_mi.png</file>
+        <file>pic/big_icon.png</file>
     </qresource>
 </RCC>
