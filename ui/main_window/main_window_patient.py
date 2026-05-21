@@ -6,6 +6,7 @@ import logging
 from typing import Callable, List, Optional
 
 from PySide6.QtCore import Qt, QDateTime, QRect, QSize, Signal
+from PySide6.QtGui import QColor, QPalette
 from PySide6.QtWidgets import (
     QWidget,
     QCheckBox,
@@ -185,9 +186,28 @@ class PatientPageController(BaseTableController):
             item.setTextAlignment(Qt.AlignCenter)
 
         table.setRowCount(0)
+        table.setShowGrid(False)
+        table.setAlternatingRowColors(True)
+        palette = table.palette()
+        palette.setColor(QPalette.ColorRole.Base, QColor("#FFFFFF"))
+        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#F4F4F4"))
+        palette.setColor(QPalette.ColorRole.Highlight, QColor("#E8F1FF"))
+        palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#1F1F1F"))
+        table.setPalette(palette)
+        v_header = table.verticalHeader()
+        if v_header is not None:
+            v_header.setDefaultSectionSize(50)
+        header = table.horizontalHeader()
+        if header is not None:
+            header.setHighlightSections(False)
         # 支持表格多选行（除勾选框外，也可通过行选中后批量删除）
         table.setSelectionBehavior(QAbstractItemView.SelectRows)
         table.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        safe_connect(
+            self.logger,
+            getattr(table.selectionModel(), "selectionChanged", None),
+            self._on_table_selection_changed,
+        )
         self._row_checkboxes = []
         self._load_patient_data()
 
@@ -236,9 +256,48 @@ class PatientPageController(BaseTableController):
         table.blockSignals(False)
         self._update_header_check_state()
 
+    def _selected_rows(self, table) -> set[int]:
+        model = table.selectionModel()
+        if model is None:
+            return set()
+        return {idx.row() for idx in model.selectedRows()}
+
+    def _row_widget_background(self, table, row: int) -> str:
+        if row in self._selected_rows(table):
+            return "#E8F1FF"
+        return "#F4F4F4" if row % 2 == 1 else "#FFFFFF"
+
+    def _apply_widget_background(self, widget: QWidget, row: int, col: int, bg: str) -> None:
+        """用 objectName 限定样式，只给容器上色，不影响 QCheckBox / 按钮。"""
+        object_name = f"patient_cell_wrap_{row}_{col}"
+        widget.setObjectName(object_name)
+        widget.setAttribute(Qt.WA_StyledBackground, True)
+        widget.setStyleSheet(f"QWidget#{object_name} {{ background-color: {bg}; }}")
+
+    def _sync_widget_row_background(self, table, row: int) -> None:
+        bg = self._row_widget_background(table, row)
+        for col in range(table.columnCount()):
+            widget = table.cellWidget(row, col)
+            if widget is not None:
+                self._apply_widget_background(widget, row, col, bg)
+
+    def _on_table_selection_changed(self, selected, deselected) -> None:
+        table = self._get_patient_table()
+        if table is None:
+            return
+        changed_rows = set()
+        for index in list(selected.indexes()) + list(deselected.indexes()):
+            changed_rows.add(index.row())
+        for row in changed_rows:
+            self._sync_widget_row_background(table, row)
+
     def _setup_patient_row_widgets(self, table, row: int):
         checkbox = QCheckBox()
         checkbox.setTristate(False)
+        checkbox.setStyleSheet(
+            "QCheckBox { background: transparent; spacing: 4px; }"
+            "QCheckBox::indicator { width: 18px; height: 18px; }"
+        )
         checkbox.stateChanged.connect(lambda state, r=row: self._on_row_checkbox_changed(r, state))
         cb_container = QWidget()
         cb_layout = QHBoxLayout(cb_container)
@@ -272,14 +331,19 @@ class PatientPageController(BaseTableController):
         if table.columnCount() > 6:
             table.setCellWidget(row, 6, view_container)
 
-        edit_btn = QPushButton()
+        edit_btn = QPushButton("编辑")
         edit_btn.setCursor(Qt.PointingHandCursor)
-        edit_btn.setFixedSize(35, 35)
+        edit_btn.setFlat(True)
         edit_btn.setStyleSheet(
             "QPushButton {"
-            "    border: none;"
+            "    color: #4B86FC;"
+            "    text-decoration: underline;"
             "    background: transparent;"
-            "    border-image: url(:/treat/pic/treat_edit.png);"
+            "    border: none;"
+            "    font-size: 20px;"
+            "}"
+            "QPushButton:pressed {"
+            "    color: #2f64c8;"
             "}"
         )
         edit_btn.clicked.connect(lambda checked, r=row: self._on_edit_patient_clicked(r))
@@ -292,6 +356,8 @@ class PatientPageController(BaseTableController):
         op_layout.addWidget(edit_btn)
         if table.columnCount() > 7:
             table.setCellWidget(row, 7, op_container)
+
+        self._sync_widget_row_background(table, row)
 
     def _on_view_treat_record_clicked(self, row: int):
         if not self._patient_data or row >= len(self._patient_data):

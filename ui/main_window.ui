@@ -399,16 +399,23 @@ QTabWidget#tabWidget QTabBar::tab {
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#pushButton_tab1new {
-    background-color: #FFFFFF;
+    background-color: transparent;
     border: 1px solid #4B86FC;
     border-radius: 10px;
     color: #4B86FC;
+    padding: 4px 10px;
 }
 QPushButton#pushButton_tab1new:hover {
-    background-color: #EEF4FF;
+    background-color: rgba(75, 134, 252, 0.12);
+    border: 1px solid #6B9BFD;
+    color: #3A6FE0;
 }
 QPushButton#pushButton_tab1new:pressed {
-    background-color: #DCE8FF;
+    background-color: rgba(75, 134, 252, 0.24);
+    border: 1px solid #3A6FE0;
+    color: #2A5FD0;
+    padding-top: 5px;
+    padding-bottom: 3px;
 }</string>
        </property>
        <property name="text">
@@ -1535,30 +1542,39 @@ border-image: url(:/patient/pic/patient_icon_number.png);</string>
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">QTableWidget#tableWidget_patient_2 QHeaderView::section {
-	background-color: #EDF3FF;
-	color: #929292;
-	border: none;
-	padding: 8px;
-	font-size: 18px;
-}
-QTableWidget#tableWidget_patient_2 {
+        <string notr="true">QTableWidget#tableWidget_patient_2 {
     outline: none;
+    border: 1px solid #E6EAF2;
+    border-radius: 8px;
+    gridline-color: transparent;
+    background-color: #FFFFFF;
+    alternate-background-color: #F4F4F4;
+    selection-background-color: #E8F1FF;
+    selection-color: #1F1F1F;
+    font-size: 16px;
+}
+QTableWidget#tableWidget_patient_2 QHeaderView::section {
+    background-color: #EDF3FF;
+    color: #6B7A99;
     border: none;
+    border-bottom: 1px solid #D6E4FF;
+    padding: 12px 8px;
+    font-size: 16px;
+    font-weight: 600;
 }
 QTableWidget#tableWidget_patient_2::item {
-    outline: none;
+    padding: 12px 8px;
     border: none;
-}
-QTableWidget#tableWidget_patient_2::item:focus {
-    outline: none;
-    border: none;
-    background: transparent;
+    color: #333333;
 }
 QTableWidget#tableWidget_patient_2::item:selected {
-    outline: none;
-    border: none;
-    background: transparent;
+    background-color: #E8F1FF;
+    color: #1F1F1F;
+}
+QTableWidget#tableWidget_patient_2::item:selected:active,
+QTableWidget#tableWidget_patient_2::item:selected:!active {
+    background-color: #E8F1FF;
+    color: #1F1F1F;
 }</string>
        </property>
        <property name="horizontalScrollBarPolicy">
@@ -1571,6 +1587,9 @@ QTableWidget#tableWidget_patient_2::item:selected {
         <enum>QAbstractItemView::NoSelection</enum>
        </property>
        <property name="showGrid">
+        <bool>false</bool>
+       </property>
+       <property name="alternatingRowColors">
         <bool>true</bool>
        </property>
        <attribute name="horizontalHeaderDefaultSectionSize">
