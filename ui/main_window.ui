@@ -3328,7 +3328,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -7821,6 +7821,35 @@ padding: 0px;</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <widget class="QLabel" name="label_21">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>0</y>
+         <width>1881</width>
+         <height>901</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>813</width>
+         <height>659</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>8130</width>
+         <height>6590</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 10px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <zorder>label_21</zorder>
       <zorder>label_19</zorder>
       <zorder>label_18</zorder>
       <zorder>radioButton_checksafe</zorder>
@@ -8079,10 +8108,22 @@ padding: 0px;</string>
        <property name="geometry">
         <rect>
          <x>50</x>
-         <y>330</y>
-         <width>121</width>
-         <height>86</height>
+         <y>385</y>
+         <width>127</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>127</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>127</width>
+         <height>16777215</height>
+        </size>
        </property>
        <property name="styleSheet">
         <string notr="true">background-color: #F5F6F9; border-radius: 4px;</string>
@@ -8095,10 +8136,22 @@ padding: 0px;</string>
        <property name="geometry">
         <rect>
          <x>210</x>
-         <y>330</y>
-         <width>121</width>
-         <height>86</height>
+         <y>385</y>
+         <width>127</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>127</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>127</width>
+         <height>16777215</height>
+        </size>
        </property>
        <property name="styleSheet">
         <string notr="true">background-color: #F5F6F9; border-radius: 4px;</string>
@@ -8111,10 +8164,22 @@ padding: 0px;</string>
        <property name="geometry">
         <rect>
          <x>370</x>
-         <y>330</y>
-         <width>121</width>
-         <height>86</height>
+         <y>385</y>
+         <width>128</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>127</width>
+         <height>16777215</height>
+        </size>
        </property>
        <property name="styleSheet">
         <string notr="true">background-color: #F5F6F9; border-radius: 4px;</string>
@@ -8127,13 +8192,25 @@ padding: 0px;</string>
        <property name="geometry">
         <rect>
          <x>210</x>
-         <y>340</y>
-         <width>110</width>
-         <height>30</height>
+         <y>304</y>
+         <width>127</width>
+         <height>81</height>
         </rect>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>127</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>127</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
-        <string notr="true">color: #3478F6; font-size: 18px;</string>
+        <string notr="true">color: #3478F6; font-size: 18px; border: 1px solid #D9D9D9; border-radius: 4px; background-color: #FFFFFF;</string>
        </property>
        <property name="text">
         <string/>
@@ -8146,13 +8223,25 @@ padding: 0px;</string>
        <property name="geometry">
         <rect>
          <x>370</x>
-         <y>340</y>
-         <width>110</width>
-         <height>30</height>
+         <y>305</y>
+         <width>127</width>
+         <height>81</height>
         </rect>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>127</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>127</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
-        <string notr="true">color: #3478F6; font-size: 18px;</string>
+        <string notr="true">color: #3478F6; font-size: 18px; border: 1px solid #D9D9D9; border-radius: 4px; background-color: #FFFFFF;</string>
        </property>
        <property name="text">
         <string/>
@@ -8222,8 +8311,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_36">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>460</y>
+         <x>20</x>
+         <y>462</y>
          <width>490</width>
          <height>439</height>
         </rect>
@@ -8241,7 +8330,7 @@ padding: 0px;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 20px;</string>
+        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 10px;</string>
        </property>
        <property name="text">
         <string/>
@@ -8250,10 +8339,10 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_35">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>10</y>
+         <x>20</x>
+         <y>1</y>
          <width>490</width>
-         <height>435</height>
+         <height>438</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -8263,7 +8352,7 @@ padding: 0px;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 20px;</string>
+        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 10px;</string>
        </property>
        <property name="text">
         <string/>
@@ -8272,14 +8361,14 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_37">
        <property name="geometry">
         <rect>
-         <x>540</x>
-         <y>10</y>
-         <width>1361</width>
-         <height>891</height>
+         <x>530</x>
+         <y>0</y>
+         <width>1371</width>
+         <height>901</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 20px;</string>
+        <string notr="true">background-color: rgb(255, 255, 255); border-radius: 10px;</string>
        </property>
        <property name="text">
         <string/>
@@ -8541,7 +8630,7 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_train_trial_caption">
        <property name="geometry">
         <rect>
-         <x>50</x>
+         <x>60</x>
          <y>390</y>
          <width>110</width>
          <height>20</height>
@@ -8561,13 +8650,25 @@ padding: 0px;</string>
        <property name="geometry">
         <rect>
          <x>50</x>
-         <y>340</y>
-         <width>110</width>
-         <height>30</height>
+         <y>303</y>
+         <width>127</width>
+         <height>81</height>
         </rect>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>127</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>127</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
-        <string notr="true">color: #3478F6; font-size: 18px;</string>
+        <string notr="true">color: #3478F6; font-size: 18px; border: 1px solid #D9D9D9; border-radius: 4px; background-color: #FFFFFF;</string>
        </property>
        <property name="text">
         <string/>
