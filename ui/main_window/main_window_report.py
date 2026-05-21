@@ -429,6 +429,9 @@ class ReportPatientsPanel(QWidget):
 
 
 class EmbeddedTreatRecordPanel(QWidget):
+    _PAGINATION_HEIGHT = 38
+    _HEADER_HEIGHT = 71
+
     def __init__(self, session_app, report_app, logger: logging.Logger, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         ensure_resources_loaded()
@@ -438,6 +441,10 @@ class EmbeddedTreatRecordPanel(QWidget):
         self._patient_id = ""
         self._patient_name = ""
         self._all_records: list[dict] = []
+        self._filtered_records: list[dict] = []
+        self._page_index = 0
+        self._page_size = 10
+        self._pagination_frame: Optional[QFrame] = None
         self._actions: Optional[TreatRecordActions] = None
 
         loader = QUiLoader()
@@ -449,6 +456,7 @@ class EmbeddedTreatRecordPanel(QWidget):
         if self.ui is None:
             raise RuntimeError(f"无法加载 UI 文件: {TREAT_RECORD_UI_PATH}")
 
+        self._setup_panel_background(parent)
         self.ui.setMinimumSize(0, 0)
         self.ui.setMaximumSize(16777215, 16777215)
         self.ui.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -460,6 +468,7 @@ class EmbeddedTreatRecordPanel(QWidget):
 
         self._table = TreatRecordTable(self.ui, self._logger)
         self._table.setup_header_checkbox()
+        self._setup_record_table_background()
         self._build_header_controls()
         self._setup_connections()
         self.clear_records()
@@ -474,6 +483,7 @@ class EmbeddedTreatRecordPanel(QWidget):
 
         self._patient_id = str(patient.get("PatientId", "") or "").strip()
         self._patient_name = str(patient.get("Name", "") or self._patient_id).strip()
+        self._page_index = 0
         self._actions = TreatRecordActions(
             session_app=self._session_app,
             report_app=self._report_app,
@@ -492,12 +502,45 @@ class EmbeddedTreatRecordPanel(QWidget):
 
     def clear_records(self) -> None:
         self._all_records = []
+        self._filtered_records = []
+        self._page_index = 0
         self._update_title()
         self._apply_filter()
 
     def resizeEvent(self, event) -> None:  # type: ignore[override]
         super().resizeEvent(event)
         self._relayout_loaded_ui()
+        old_page_size = self._page_size
+        self._recalculate_page_size()
+        if self._page_size != old_page_size:
+            self._refresh_page()
+        elif self._pagination_frame is not None:
+            self._layout_pagination_position()
+
+    def _setup_panel_background(self, container: Optional[QWidget]) -> None:
+        self.setObjectName("embeddedTreatRecordPanel")
+        self.setStyleSheet("QWidget#embeddedTreatRecordPanel { background-color: #FFFFFF; }")
+
+        for widget in (container, self, self.ui):
+            if widget is None:
+                continue
+            widget.setAttribute(Qt.WA_StyledBackground, True)
+            widget.setAutoFillBackground(True)
+            palette = widget.palette()
+            palette.setColor(QPalette.ColorRole.Window, QColor("#FFFFFF"))
+            palette.setColor(QPalette.ColorRole.Base, QColor("#FFFFFF"))
+            widget.setPalette(palette)
+
+        if container is not None:
+            container.setStyleSheet(
+                container.styleSheet()
+                + "\nQWidget#widget_patient_treat_record { background-color: #FFFFFF; }"
+            )
+
+        self.ui.setStyleSheet(
+            self.ui.styleSheet()
+            + "\nQWidget#Form { background-color: #FFFFFF; border: none; border-radius: 0; }"
+        )
 
     def _setup_connections(self) -> None:
         back_btn = get_ui_attr(self.ui, "pushButton")
@@ -538,7 +581,32 @@ class EmbeddedTreatRecordPanel(QWidget):
 
         self._table.bind_header_click()
 
+    def _setup_record_table_background(self) -> None:
+        table = get_ui_attr(self.ui, "tableWidget_treatrecord")
+        if table is None:
+            return
+
+        table.setShowGrid(False)
+        table.setAlternatingRowColors(True)
+        table.setAutoFillBackground(True)
+        palette = table.palette()
+        palette.setColor(QPalette.ColorRole.Base, QColor("#FFFFFF"))
+        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#F7F7F7"))
+        table.setPalette(palette)
+        table.setStyleSheet(
+            table.styleSheet()
+            + "\nQTableWidget#tableWidget_treatrecord {"
+            + " background: #FFFFFF;"
+            + " alternate-background-color: #F7F7F7;"
+            + " }"
+            + "\nQTableWidget#tableWidget_treatrecord::viewport { background: #FFFFFF; }"
+        )
+
     def _build_header_controls(self) -> None:
+        self._header_bg = QFrame(self.ui)
+        self._header_bg.setStyleSheet("QFrame { background-color: #FFFFFF; border: none; }")
+        self._header_bg.lower()
+
         self._header_title = QLabel("诊疗记录", self.ui)
         self._header_title.setStyleSheet("color: #1F1F1F; font-size: 18px; font-weight: 600;")
 
@@ -590,6 +658,179 @@ class EmbeddedTreatRecordPanel(QWidget):
             )
         safe_connect(self._logger, self._compare_btn.clicked, self._on_compare_clicked)
         safe_connect(self._logger, self._print_btn.clicked, self._on_top_print_clicked)
+        self._build_pagination()
+
+    def _build_pagination(self) -> None:
+        if self._pagination_frame is not None:
+            return
+
+        self._footer_bg = QFrame(self.ui)
+        self._footer_bg.setStyleSheet("QFrame { background-color: #FFFFFF; border: none; }")
+        self._footer_bg.setAttribute(Qt.WA_StyledBackground, True)
+        self._footer_bg.lower()
+
+        pagination = QFrame(self.ui)
+        pagination.setObjectName("treatRecordPagination")
+        pagination.setMinimumHeight(self._PAGINATION_HEIGHT)
+        pagination.setAttribute(Qt.WA_StyledBackground, True)
+        pagination.setAutoFillBackground(False)
+        pagination.setStyleSheet(
+            "QFrame#treatRecordPagination { background-color: #FFFFFF; border: none; }"
+            "QLabel { color: #98A2B3; font-size: 12px; padding: 2px 0; background: transparent; }"
+            "QPushButton {"
+            "background: transparent;"
+            "border: none;"
+            "color: #98A2B3;"
+            "font-size: 13px;"
+            "padding: 0;"
+            "}"
+            "QPushButton:hover:enabled { color: #4B86FC; }"
+            "QPushButton:disabled { color: #D7DDEA; }"
+            "QLineEdit {"
+            "background: #FFFFFF;"
+            "border: none;"
+            "border-radius: 4px;"
+            "color: #8E8E93;"
+            "font-size: 12px;"
+            "padding: 1px 4px;"
+            "}"
+        )
+        layout = QHBoxLayout(pagination)
+        layout.setContentsMargins(0, 4, 0, 4)
+        layout.setSpacing(6)
+        layout.setAlignment(Qt.AlignVCenter)
+        layout.addStretch()
+
+        self._total_label = QLabel("共0条", pagination)
+        layout.addWidget(self._total_label)
+
+        self._prev_button = QPushButton("<", pagination)
+        self._prev_button.setFixedSize(16, 24)
+        self._prev_button.setCursor(Qt.PointingHandCursor)
+        self._prev_button.clicked.connect(self._on_prev_page)
+        layout.addWidget(self._prev_button)
+
+        self._page_label = QLabel("0/0页", pagination)
+        self._page_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self._page_label)
+
+        self._next_button = QPushButton(">", pagination)
+        self._next_button.setFixedSize(16, 24)
+        self._next_button.setCursor(Qt.PointingHandCursor)
+        self._next_button.clicked.connect(self._on_next_page)
+        layout.addWidget(self._next_button)
+
+        layout.addSpacing(4)
+        layout.addWidget(QLabel("前往", pagination))
+
+        self._page_jump_input = QLineEdit(pagination)
+        self._page_jump_input.setFixedSize(36, 20)
+        self._page_jump_input.setAlignment(Qt.AlignCenter)
+        self._page_jump_input.setValidator(QIntValidator(1, 9999, self._page_jump_input))
+        self._page_jump_input.returnPressed.connect(self._on_jump_page)
+        self._page_jump_input.editingFinished.connect(self._on_jump_page)
+        layout.addWidget(self._page_jump_input)
+
+        layout.addWidget(QLabel("页", pagination))
+        self._pagination_frame = pagination
+        pagination.show()
+
+    def _layout_pagination_position(self) -> None:
+        if self._pagination_frame is None:
+            return
+        table = get_ui_attr(self.ui, "tableWidget_treatrecord")
+        if table is None:
+            return
+
+        geo = table.geometry()
+        self._pagination_frame.adjustSize()
+        content_width = self._pagination_frame.sizeHint().width()
+        pag_h = max(self._PAGINATION_HEIGHT, self._pagination_frame.sizeHint().height())
+        right_inset = 40
+        pag_w = min(content_width, geo.width())
+        pag_x = geo.x() + geo.width() - pag_w - right_inset
+        pag_y = geo.y() + geo.height() + 2
+        self._pagination_frame.setGeometry(pag_x, pag_y, pag_w, pag_h)
+        self._pagination_frame.raise_()
+
+    def _recalculate_page_size(self) -> None:
+        table = get_ui_attr(self.ui, "tableWidget_treatrecord")
+        if table is None:
+            return
+        v_header = table.verticalHeader()
+        row_height = v_header.defaultSectionSize() if v_header is not None else 46
+        viewport_h = table.viewport().height()
+        if viewport_h <= 0:
+            return
+        page_size = max(1, viewport_h // row_height)
+        if page_size != self._page_size:
+            self._page_size = page_size
+            self._clamp_page_index()
+
+    def _total_pages(self) -> int:
+        if not self._filtered_records:
+            return 0
+        return int(ceil(len(self._filtered_records) / self._page_size))
+
+    def _clamp_page_index(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages <= 0:
+            self._page_index = 0
+            return
+        self._page_index = min(max(self._page_index, 0), total_pages - 1)
+
+    def _update_pagination(self) -> None:
+        if self._pagination_frame is None:
+            return
+        total = len(self._filtered_records)
+        total_pages = self._total_pages()
+        current_page = 0 if total_pages == 0 else self._page_index + 1
+        self._total_label.setText(f"共{total}条")
+        self._page_label.setText(f"{current_page}/{total_pages}页")
+        self._page_jump_input.setText("" if total_pages == 0 else str(current_page))
+        self._page_jump_input.setEnabled(total_pages > 0)
+        self._prev_button.setEnabled(self._page_index > 0)
+        self._next_button.setEnabled(total_pages > 0 and self._page_index < total_pages - 1)
+        self._layout_pagination_position()
+
+    def _refresh_page(self) -> None:
+        self._recalculate_page_size()
+        self._clamp_page_index()
+        start = self._page_index * self._page_size
+        end = start + self._page_size
+        page_records = self._filtered_records[start:end]
+        self._table.load_records(
+            page_records,
+            on_view_clicked=self._on_pdf_clicked,
+            patient_name=self._patient_name,
+        )
+        self._update_pagination()
+
+    def _on_prev_page(self) -> None:
+        if self._page_index <= 0:
+            return
+        self._page_index -= 1
+        self._refresh_page()
+
+    def _on_next_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0 or self._page_index >= total_pages - 1:
+            return
+        self._page_index += 1
+        self._refresh_page()
+
+    def _on_jump_page(self) -> None:
+        total_pages = self._total_pages()
+        if total_pages == 0:
+            return
+        text = self._page_jump_input.text().strip()
+        try:
+            page = int(text)
+        except ValueError:
+            self._update_pagination()
+            return
+        self._page_index = min(max(page, 1), total_pages) - 1
+        self._refresh_page()
 
     def _relayout_loaded_ui(self) -> None:
         width = max(self.width(), 1)
@@ -598,11 +839,22 @@ class EmbeddedTreatRecordPanel(QWidget):
 
         title_bg = get_ui_attr(self.ui, "label")
         if title_bg is not None:
-            title_bg.setGeometry(0, 0, width, 71)
+            title_bg.setGeometry(0, 0, width, self._HEADER_HEIGHT)
+
+        self._header_bg.setGeometry(0, 0, width, self._HEADER_HEIGHT)
+        self._header_bg.lower()
 
         table = get_ui_attr(self.ui, "tableWidget_treatrecord")
+        body_h = max(height - self._HEADER_HEIGHT - self._PAGINATION_HEIGHT, 0)
         if table is not None:
-            table.setGeometry(0, 71, width, max(height - 71, 0))
+            table.setGeometry(0, self._HEADER_HEIGHT, width, body_h)
+
+        footer_y = self._HEADER_HEIGHT + body_h
+        footer_h = max(height - footer_y, 0)
+        if hasattr(self, "_footer_bg"):
+            self._footer_bg.setGeometry(0, footer_y, width, footer_h)
+            self._footer_bg.lower()
+        self._layout_pagination_position()
 
         title_tip = get_ui_attr(self.ui, "label_treatrecordtip")
         if title_tip is not None:
@@ -647,10 +899,7 @@ class EmbeddedTreatRecordPanel(QWidget):
         self._apply_filter()
 
     def _update_title(self) -> None:
-        if self._patient_name:
-            self._header_title.setText(f"诊疗记录 - {self._patient_name}")
-        else:
-            self._header_title.setText("诊疗记录")
+        self._header_title.setText("诊疗记录")
 
     def _apply_filter(self) -> None:
         keyword = self._search_input.text().strip().lower() if hasattr(self, "_search_input") else ""
@@ -671,15 +920,11 @@ class EmbeddedTreatRecordPanel(QWidget):
                 if keyword in haystack:
                     filtered_records.append(record)
             records = filtered_records
-        self._table.load_records(
-            records,
-            on_pdf_clicked=self._on_pdf_clicked,
-            on_export_pdf_clicked=self._on_export_pdf_clicked,
-            on_print_clicked=self._on_print_clicked,
-            patient_name=self._patient_name,
-        )
+        self._filtered_records = list(records)
+        self._refresh_page()
 
     def _on_search_text_changed(self, _text: str) -> None:
+        self._page_index = 0
         self._apply_filter()
 
     def _on_top_export_clicked(self) -> None:
