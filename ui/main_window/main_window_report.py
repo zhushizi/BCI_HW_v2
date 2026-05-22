@@ -9,9 +9,9 @@ from typing import Optional
 from PySide6.QtCore import QFile, QIODevice, Qt, Signal
 from PySide6.QtGui import QIntValidator, QColor, QPalette
 from PySide6.QtUiTools import QUiLoader
+from ui.core.dialog_overlay import get_save_file_name
 from PySide6.QtWidgets import (
     QAbstractItemView,
-    QFileDialog,
     QFrame,
     QHBoxLayout,
     QLabel,
@@ -1071,7 +1071,7 @@ class MainWindowReportPage:
             return
 
         default_name = f"{patient_name or patient_id}_治疗记录.csv"
-        path, _ = QFileDialog.getSaveFileName(
+        path, _ = get_save_file_name(
             self._host,
             "导出患者治疗记录",
             default_name,

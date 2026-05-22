@@ -8,6 +8,8 @@ from typing import List, Optional
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QMessageBox, QPushButton, QHBoxLayout, QDialog
 
+from ui.core.dialog_overlay import message_box_question
+
 from ui.core.base_table_controller import BaseTableController
 from ui.core.utils import get_ui_attr, safe_connect
 from ui.dialogs.scheme_newa import SchemeNewDialog
@@ -128,7 +130,7 @@ class PlanPageController(BaseTableController):
             TipsDialog.show_tips(self.parent, "缺少方案标识，无法删除")
             return
 
-        reply = QMessageBox.question(
+        reply = message_box_question(
             self.parent,
             "确认删除",
             f"确定删除方案「{scheme_name or '未命名'}」？",

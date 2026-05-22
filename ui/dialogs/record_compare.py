@@ -7,9 +7,10 @@ from typing import Optional
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QTextDocument
 from PySide6.QtPrintSupport import QPrintDialog, QPrinter
-from PySide6.QtWidgets import QFileDialog, QTableWidgetItem
+from PySide6.QtWidgets import QTableWidgetItem
 
 from ui.core.base_dialog import BaseUiDialog
+from ui.core.dialog_overlay import exec_print_dialog, get_save_file_name
 from ui.core.utils import get_ui_attr, safe_connect
 from ui.dialogs.tips_dialog import TipsDialog
 from ui.report import build_report_html, default_pdf_filename, generate_and_open_pdf
@@ -166,7 +167,7 @@ class RecordCompareDialog(BaseUiDialog):
             return
         printer = QPrinter()
         dialog = QPrintDialog(printer, self)
-        if dialog.exec() == 0:
+        if exec_print_dialog(dialog) == 0:
             return
         doc = QTextDocument()
         doc.setHtml(browser.toHtml())
@@ -178,7 +179,7 @@ class RecordCompareDialog(BaseUiDialog):
         record = self._records[self._current_index]
         session_id = record.get("SessionId")
         default_name = default_pdf_filename(self._patient_id or self._patient_name or "诊疗报告", "诊疗报告")
-        path, _ = QFileDialog.getSaveFileName(
+        path, _ = get_save_file_name(
             self,
             "导出 PDF",
             default_name,

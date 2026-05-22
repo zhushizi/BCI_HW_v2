@@ -7,7 +7,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide6.QtWidgets import QWidget, QMessageBox
+from PySide6.QtWidgets import QMessageBox, QWidget
+
+from ui.core.dialog_overlay import message_box_question
 from PySide6.QtCore import Signal, QFile, Qt
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QIcon
@@ -370,7 +372,7 @@ class MainWindow(QWidget):
         self._device_status.update_treat_controls_by_pingpong()
 
     def _handle_logout(self):
-        reply = QMessageBox.question(
+        reply = message_box_question(
             self,
             "确认登出",
             "确定要退出登录吗？",
