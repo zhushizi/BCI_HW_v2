@@ -79,7 +79,7 @@ class PatientNewDialog(BaseUiDialog):
             safe_connect(self._logger, ok_btn.clicked, self._on_ok)
 
         # .ui 里设的是根控件的尺寸，实际窗口是 BaseUiDialog 的外层 QDialog，需在此固定大小以防拖动调整
-        self.setFixedSize(1200, 612)
+        self.setFixedSize(1046, 548)
 
     @classmethod
     def _apply_calendar_arrow_style(cls) -> None:
@@ -152,6 +152,12 @@ class PatientNewDialog(BaseUiDialog):
             index = combo_gender.findText(sex)
             if index != -1:
                 safe_call(self._logger, combo_gender.setCurrentIndex, index)
+        combo_marital = get_ui_attr(self.ui, "comboBox_marital")
+        if combo_marital:
+            marital = data.get("MaritalStatus", "")
+            index = combo_marital.findText(marital)
+            if index != -1:
+                safe_call(self._logger, combo_marital.setCurrentIndex, index)
         spin_age = get_ui_attr(self.ui, "spinBox_age")
         if spin_age:
             age = data.get("Age")
@@ -177,6 +183,11 @@ class PatientNewDialog(BaseUiDialog):
         if combo_gender:
             sex = combo_gender.currentText()
 
+        marital_status = ""
+        combo_marital = get_ui_attr(self.ui, "comboBox_marital")
+        if combo_marital:
+            marital_status = combo_marital.currentText()
+
         age = None
         spin_age = get_ui_attr(self.ui, "spinBox_age")
         if spin_age:
@@ -200,6 +211,7 @@ class PatientNewDialog(BaseUiDialog):
             "PatientId": self._get_text("lineEdit_patientId"),
             "Name": self._get_text("lineEdit_name"),
             "Sex": sex,
+            "MaritalStatus": marital_status,
             "Age": age,
             "VisitTime": visit_time,
             "PhoneNumber": self._get_text("lineEdit_phone"),
