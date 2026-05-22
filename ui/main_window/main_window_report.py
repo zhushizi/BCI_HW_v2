@@ -53,6 +53,22 @@ class ReportPatientsPanel(QWidget):
         self._build_ui()
         self.refresh()
 
+    def select_patient_by_id(
+        self,
+        patient_id: str,
+        *,
+        clear_search: bool = True,
+    ) -> Optional[dict]:
+        """选中指定患者并刷新列表（可选清空搜索框）。"""
+        pid = str(patient_id or "").strip()
+        if not pid:
+            return None
+        if clear_search:
+            prev = self._search_input.blockSignals(True)
+            self._search_input.clear()
+            self._search_input.blockSignals(prev)
+        return self.refresh(selected_patient_id=pid, reset_page=False)
+
     def refresh(self, selected_patient_id: Optional[str] = None, *, reset_page: bool = False) -> Optional[dict]:
         if selected_patient_id is not None:
             self._selected_patient_id = str(selected_patient_id or "").strip() or None
@@ -1002,6 +1018,41 @@ class MainWindowReportPage:
     def init_ui(self) -> None:
         self._ensure_panels()
         self.refresh()
+
+    def open_for_patient(self, patient: dict) -> None:
+        """跳转到诊疗记录页并展示指定患者及其记录。"""
+        patient_id = str(patient.get("PatientId") or "").strip()
+        if not patient_id:
+            TipsDialog.show_tips(self._host, "患者病历号为空")
+            return
+
+        self._current_patient_id = patient_id
+        tab_widget = get_ui_attr(self.ui, "tabWidget")
+        nav = getattr(self._host, "_nav", None)
+        report_tab_index = self.REPORT_TAB_INDEX
+
+        if tab_widget is not None and 0 <= report_tab_index < tab_widget.count():
+            prev_index = getattr(self._host, "_current_tab_index", 0)
+            if prev_index == 0:
+                try:
+                    self._host.treat_controller.on_exit_treat_page()
+                except Exception:
+                    self.logger.exception("离开治疗页时清理状态失败")
+            self._host._report_selected = True
+            tab_widget.setCurrentIndex(report_tab_index)
+            self._host._current_tab_index = report_tab_index
+
+        if nav is not None:
+            nav.update_button_states()
+
+        self._ensure_panels()
+        selected: Optional[dict] = None
+        if self._patients_panel is not None:
+            selected = self._patients_panel.select_patient_by_id(patient_id, clear_search=True)
+            if selected is not None:
+                self._current_patient_id = self._patient_key(selected)
+        if self._treat_record_panel is not None:
+            self._treat_record_panel.set_patient(selected or patient)
 
     def refresh(self) -> None:
         self._ensure_panels()

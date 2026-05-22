@@ -252,6 +252,10 @@ class MainWindow(QWidget):
         self._user_info.init_org_info()
         self.report_controller.init_ui()
 
+    def open_patient_treat_records(self, patient: dict) -> None:
+        """从患者管理等入口打开诊疗记录模块并定位到指定患者。"""
+        self.report_controller.open_for_patient(patient)
+
     def _switch_tab(self, tab_index: int):
         """切换顶级标签页 (0=治疗, 1=患者, 2=方案, 3=设置)"""
         self._nav.switch_tab(tab_index)

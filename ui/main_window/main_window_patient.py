@@ -28,7 +28,6 @@ from ui.core.base_table_controller import BaseTableController
 from ui.core.utils import get_ui_attr, safe_connect
 from ui.dialogs.patient_newa import PatientNewDialog
 from ui.dialogs.tips_dialog import TipsDialog
-from ui.dialogs.treat_record import TreatRecordDialog
 
 
 class CheckBoxHeader(QHeaderView):
@@ -564,22 +563,11 @@ class PatientPageController(BaseTableController):
             return
 
         patient = self._patient_data[row]
-        patient_id = patient.get("PatientId", "")
-        patient_name = patient.get("Name", "")
-
-        if not patient_id:
-            TipsDialog.show_tips(self.parent, "患者病历号为空")
+        open_records = getattr(self.parent, "open_patient_treat_records", None)
+        if callable(open_records):
+            open_records(patient)
             return
-
-        dialog = TreatRecordDialog(
-            self.parent,
-            self.patient_app,
-            patient_id,
-            patient_name,
-            self.report_app,
-            session_app=getattr(self.parent, "session_app", None),
-        )
-        dialog.exec()
+        TipsDialog.show_tips(self.parent, "无法打开诊疗记录模块")
 
     def _on_edit_patient_clicked(self, row: int):
         if not self._patient_data or row >= len(self._patient_data):
