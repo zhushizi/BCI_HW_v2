@@ -5,13 +5,14 @@ import logging
 from pathlib import Path
 from typing import Any, Optional
 
+from infrastructure.app_paths import get_config_file_path, resolve_config_exe_paths
+
 
 class ConfigService:
     """配置读写服务（服务层）。"""
 
     def __init__(self, config_path: Optional[Path] = None, logger: Optional[logging.Logger] = None) -> None:
-        default_path = Path(__file__).resolve().parents[3] / "infrastructure" / "config" / "config.json"
-        self._config_path = config_path or default_path
+        self._config_path = config_path or get_config_file_path()
         self._logger = logger or logging.getLogger(__name__)
 
     @property
@@ -23,7 +24,8 @@ class ConfigService:
             self._logger.warning("配置文件不存在，无法读取: %s", self._config_path)
             return {}
         try:
-            return json.loads(self._config_path.read_text(encoding="utf-8"))
+            data = json.loads(self._config_path.read_text(encoding="utf-8"))
+            return resolve_config_exe_paths(data)
         except Exception:
             self._logger.exception("读取配置失败: %s", self._config_path)
             return {}

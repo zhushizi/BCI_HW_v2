@@ -1,4 +1,10 @@
-打包命令：pyinstaller -n HW_BCI_NES main.py --icon ui\pic\icon_BCI.ico --hidden-import ui.resources_rc --collect-all PySide6 --add-data "db\HW_BCI.db;db" --add-data "ui\*.ui;ui" --add-data "infrastructure\config\config.json;infrastructure/config"
+打包前请确保项目根目录存在 `runtime/`（范式、解码器、WebSocket 等），`config.json` 内路径已使用相对路径（如 `runtime/ParadigmOne/ParadigmOne.exe`）。
+
+打包命令（PowerShell）：
+
+powershell -NoProfile -Command "if (!(Test-Path 'runtime')) { New-Item -ItemType Directory -Path 'runtime' | Out-Null }; pyinstaller -n HW_BCI_NES main.py --icon ui\pic\icon_BCI.ico --hidden-import ui.resources_rc --collect-all PySide6 --add-data 'db\HW_BCI.db;db' --add-data 'ui\*.ui;ui' --add-data 'ui\pic;ui/pic' --add-data 'ui\resources_rc.py;ui' --add-data 'infrastructure\config\config.json;infrastructure/config' --add-data 'runtime;runtime'"
+
+开发环境与打包后均可通过 `infrastructure/app_paths.py` 将上述相对路径解析为绝对路径。
 
 Windows 下 `--icon` 需为 `.ico`；若坚持用 `.png`，请先 `pip install Pillow` 以便 PyInstaller 自动转换。
 

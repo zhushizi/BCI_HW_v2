@@ -13,6 +13,11 @@ db/ReactionTimeCurve/
 # Bundled paradigm / Unity runtimes (large binaries, local deploy only)
 runtime/
 
+# PyInstaller
+build/
+dist/
+HW_BCI_NES.spec
+
 # Large protocol reference docs (resource files)
 *JSON-RPC*.md
 *JSON-RPC*.pdf

@@ -9,8 +9,11 @@ from application.patient_app import PatientApp
 from application.training_sub_app import TrainingSubApp
 from ui.main_window.sub_window import SubWindow
 from ui.core.utils import safe_call
+from infrastructure.app_paths import resolve_resource_path
 
-DEFAULT_PARADIGM_EXE = r"C:\Users\24114\Desktop\ParadigmSSMVEP\ParadigmOne.exe"
+DEFAULT_PARADIGM_EXE = str(
+    resolve_resource_path("runtime/ParadigmSmvep/ParadigmOne.exe")
+)
 
 
 class TrainingSubController:
