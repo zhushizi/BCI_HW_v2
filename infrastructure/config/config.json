@@ -2,7 +2,7 @@
     "NES_port": "COM2",
     "decoder_port": "COM4",
     "ws_url": "ws://127.0.0.1:8080",
-    "log_receive_enabled": false,
+    "log_receive_enabled": true,
     "ws_enable_heartbeat": false,
     "ws_max_message_size": 4194304,
     "swap_screens": false,
@@ -27,6 +27,6 @@
         }
     },
     "websocket_exe": "D:\\WORK_space\\Code_WS\\code_localized\\Websocket_Server\\dist\\Websocket_Server\\websocket_server.exe",
-    "hospital_name": "中大医院",
+    "hospital_name": "**医院",
     "department_name": "康复科"
 }

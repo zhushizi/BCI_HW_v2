@@ -11,6 +11,11 @@ from typing import Optional, Callable
 from threading import Thread
 import logging
 
+from infrastructure.hardware.heartbeat_log_filter import (
+    looks_like_heartbeat_frame,
+    strip_heartbeat_frames,
+)
+
 
 class SerialHardware:
     """串口硬件通信类"""
@@ -44,8 +49,27 @@ class SerialHardware:
         self.receive_thread: Optional[Thread] = None
         self.receive_running = False
         self.log_receive_enabled = bool(log_receive_enabled)
-        
+
         self.logger = logging.getLogger(__name__)
+
+    def _log_serial_traffic(self, data: bytes, *, receiving: bool) -> None:
+        """打印串口原始数据；心跳帧 (ab01/ab02) 不输出 INFO，避免刷屏。"""
+        if not self.log_receive_enabled or not data:
+            return
+        label = "接收指令" if receiving else "发送指令"
+        if looks_like_heartbeat_frame(data):
+            self.logger.debug("[%s] 心跳: %s (%s 字节)", label, data.hex(), len(data))
+            return
+        payload = strip_heartbeat_frames(data)
+        if not payload:
+            self.logger.debug(
+                "[%s] 心跳(混合缓冲): %s (%s 字节)",
+                label,
+                data.hex(),
+                len(data),
+            )
+            return
+        self.logger.info("[%s] 数据: %s (%s 字节)", label, payload.hex(), len(payload))
     
     @property
     def device_name(self) -> str:
@@ -140,8 +164,7 @@ class SerialHardware:
         try:
             bytes_written = self.serial_obj.write(data)
             self.serial_obj.flush()  # 确保数据立即发送
-            if self.log_receive_enabled:
-                self.logger.info(f"[发送指令] 数据: {data.hex()} ({len(data)} 字节)")
+            self._log_serial_traffic(data, receiving=False)
             return bytes_written == len(data)
         except serial.SerialException as e:
             self.logger.error(f"发送数据失败: {e}")
@@ -167,9 +190,7 @@ class SerialHardware:
         try:
             if self.serial_obj.in_waiting > 0:
                 data = self.serial_obj.read(min(size, self.serial_obj.in_waiting))
-                if self.log_receive_enabled:
-                    # 使用 INFO 级别，确保在终端打印
-                    self.logger.info(f"[接收指令] 数据: {data.hex()} ({len(data)} 字节)")
+                self._log_serial_traffic(data, receiving=True)
                 return data
             return b''
         except serial.SerialException as e:
@@ -223,9 +244,7 @@ class SerialHardware:
                 if self.serial_obj and self.serial_obj.in_waiting > 0:
                     data = self.serial_obj.read(self.serial_obj.in_waiting)
                     if data:
-                        if self.log_receive_enabled:
-                            # 使用 INFO 级别，确保在终端打印接收到的数据
-                            self.logger.info(f"[接收指令] 数据: {data.hex()} ({len(data)} 字节)")
+                        self._log_serial_traffic(data, receiving=True)
                         if self._data_received_callbacks:
                             for cb in list(self._data_received_callbacks):
                                 try:

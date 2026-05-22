@@ -262,7 +262,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -3454,7 +3454,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -4362,16 +4362,16 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
       <widget class="QLabel" name="label_18">
        <property name="geometry">
         <rect>
-         <x>1170</x>
-         <y>120</y>
-         <width>552</width>
-         <height>594</height>
+         <x>1390</x>
+         <y>380</y>
+         <width>421</width>
+         <height>451</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
-         <width>552</width>
-         <height>594</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -4390,10 +4390,10 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
       <widget class="QRadioButton" name="radioButton_checksafe">
        <property name="geometry">
         <rect>
-         <x>1221</x>
-         <y>545</y>
-         <width>268</width>
-         <height>24</height>
+         <x>1426</x>
+         <y>700</y>
+         <width>291</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="font">
@@ -4412,8 +4412,8 @@ QRadioButton::indicator { width: 16px; height: 16px; }</string>
       <widget class="QPushButton" name="pushButton_startevaluate">
        <property name="geometry">
         <rect>
-         <x>1510</x>
-         <y>620</y>
+         <x>890</x>
+         <y>790</y>
          <width>141</width>
          <height>41</height>
         </rect>
@@ -4436,8 +4436,8 @@ border-radius: 8px;</string>
       <widget class="QLabel" name="label_Electrode_P7">
        <property name="geometry">
         <rect>
-         <x>450</x>
-         <y>530</y>
+         <x>770</x>
+         <y>490</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4477,8 +4477,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF8">
        <property name="geometry">
         <rect>
-         <x>770</x>
-         <y>240</y>
+         <x>1090</x>
+         <y>200</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4518,8 +4518,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_19">
        <property name="geometry">
         <rect>
-         <x>350</x>
-         <y>110</y>
+         <x>670</x>
+         <y>70</y>
          <width>591</width>
          <height>591</height>
         </rect>
@@ -4546,8 +4546,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Fpz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>200</y>
+         <x>950</x>
+         <y>160</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4587,8 +4587,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Fp2">
        <property name="geometry">
         <rect>
-         <x>700</x>
-         <y>210</y>
+         <x>1020</x>
+         <y>170</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4628,8 +4628,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F8">
        <property name="geometry">
         <rect>
-         <x>810</x>
-         <y>290</y>
+         <x>1130</x>
+         <y>250</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4669,8 +4669,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_T8">
        <property name="geometry">
         <rect>
-         <x>850</x>
-         <y>410</y>
+         <x>1170</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4710,8 +4710,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P8">
        <property name="geometry">
         <rect>
-         <x>820</x>
-         <y>530</y>
+         <x>1140</x>
+         <y>490</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4751,8 +4751,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_O2">
        <property name="geometry">
         <rect>
-         <x>720</x>
-         <y>610</y>
+         <x>1040</x>
+         <y>570</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4792,8 +4792,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_OZ">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>630</y>
+         <x>950</x>
+         <y>590</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4833,8 +4833,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_O1">
        <property name="geometry">
         <rect>
-         <x>550</x>
-         <y>610</y>
+         <x>870</x>
+         <y>570</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4873,8 +4873,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Fp1">
        <property name="geometry">
         <rect>
-         <x>560</x>
-         <y>210</y>
+         <x>880</x>
+         <y>170</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4914,8 +4914,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F7">
        <property name="geometry">
         <rect>
-         <x>460</x>
-         <y>280</y>
+         <x>780</x>
+         <y>240</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4955,8 +4955,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_T7">
        <property name="geometry">
         <rect>
-         <x>410</x>
-         <y>410</y>
+         <x>730</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -4996,8 +4996,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F3">
        <property name="geometry">
         <rect>
-         <x>546</x>
-         <y>307</y>
+         <x>866</x>
+         <y>265</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5037,8 +5037,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F4">
        <property name="geometry">
         <rect>
-         <x>720</x>
-         <y>306</y>
+         <x>1040</x>
+         <y>266</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5078,8 +5078,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Fz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>310</y>
+         <x>950</x>
+         <y>270</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5119,8 +5119,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_C3">
        <property name="geometry">
         <rect>
-         <x>510</x>
-         <y>410</y>
+         <x>830</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5160,8 +5160,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Cz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>410</y>
+         <x>950</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5201,8 +5201,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_C4">
        <property name="geometry">
         <rect>
-         <x>750</x>
-         <y>410</y>
+         <x>1070</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5242,8 +5242,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P3">
        <property name="geometry">
         <rect>
-         <x>540</x>
-         <y>510</y>
+         <x>857</x>
+         <y>471</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5283,8 +5283,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Pz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>510</y>
+         <x>950</x>
+         <y>470</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5324,8 +5324,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P4">
        <property name="geometry">
         <rect>
-         <x>720</x>
-         <y>510</y>
+         <x>1044</x>
+         <y>471</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5365,8 +5365,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FT9">
        <property name="geometry">
         <rect>
-         <x>370</x>
-         <y>330</y>
+         <x>690</x>
+         <y>290</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5406,8 +5406,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P9">
        <property name="geometry">
         <rect>
-         <x>410</x>
-         <y>570</y>
+         <x>730</x>
+         <y>530</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5447,8 +5447,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_T9">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>420</y>
+         <x>680</x>
+         <y>380</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5488,8 +5488,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F5">
        <property name="geometry">
         <rect>
-         <x>500</x>
-         <y>300</y>
+         <x>820</x>
+         <y>257</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5529,8 +5529,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF6">
        <property name="geometry">
         <rect>
-         <x>732</x>
-         <y>245</y>
+         <x>1052</x>
+         <y>205</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5570,8 +5570,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AFz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>258</y>
+         <x>950</x>
+         <y>218</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5611,8 +5611,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF1">
        <property name="geometry">
         <rect>
-         <x>600</x>
-         <y>255</y>
+         <x>920</x>
+         <y>215</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5652,8 +5652,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF3">
        <property name="geometry">
         <rect>
-         <x>570</x>
-         <y>253</y>
+         <x>890</x>
+         <y>213</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5693,8 +5693,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FT10">
        <property name="geometry">
         <rect>
-         <x>890</x>
-         <y>320</y>
+         <x>1210</x>
+         <y>280</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5734,8 +5734,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF5">
        <property name="geometry">
         <rect>
-         <x>538</x>
-         <y>251</y>
+         <x>857</x>
+         <y>210</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5775,8 +5775,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF2">
        <property name="geometry">
         <rect>
-         <x>665</x>
-         <y>255</y>
+         <x>985</x>
+         <y>215</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5816,8 +5816,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F1">
        <property name="geometry">
         <rect>
-         <x>590</x>
-         <y>310</y>
+         <x>910</x>
+         <y>270</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5857,8 +5857,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_TP9">
        <property name="geometry">
         <rect>
-         <x>370</x>
-         <y>500</y>
+         <x>690</x>
+         <y>460</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5898,8 +5898,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F9">
        <property name="geometry">
         <rect>
-         <x>420</x>
-         <y>240</y>
+         <x>740</x>
+         <y>200</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5939,8 +5939,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Nz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>140</y>
+         <x>950</x>
+         <y>100</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -5980,8 +5980,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO9">
        <property name="geometry">
         <rect>
-         <x>470</x>
-         <y>630</y>
+         <x>790</x>
+         <y>590</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6021,8 +6021,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF4">
        <property name="geometry">
         <rect>
-         <x>700</x>
-         <y>250</y>
+         <x>1020</x>
+         <y>210</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6062,8 +6062,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F10">
        <property name="geometry">
         <rect>
-         <x>842</x>
-         <y>240</y>
+         <x>1160</x>
+         <y>200</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6103,8 +6103,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_AF7">
        <property name="geometry">
         <rect>
-         <x>500</x>
-         <y>240</y>
+         <x>820</x>
+         <y>200</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6144,8 +6144,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_TP10">
        <property name="geometry">
         <rect>
-         <x>890</x>
-         <y>500</y>
+         <x>1210</x>
+         <y>460</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6185,8 +6185,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO10">
        <property name="geometry">
         <rect>
-         <x>810</x>
-         <y>620</y>
+         <x>1130</x>
+         <y>580</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6228,8 +6228,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_I2">
        <property name="geometry">
         <rect>
-         <x>730</x>
-         <y>670</y>
+         <x>1050</x>
+         <y>630</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6269,8 +6269,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_Iz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>690</y>
+         <x>950</x>
+         <y>650</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6310,8 +6310,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_I1">
        <property name="geometry">
         <rect>
-         <x>550</x>
-         <y>670</y>
+         <x>870</x>
+         <y>630</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6351,8 +6351,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_T10">
        <property name="geometry">
         <rect>
-         <x>900</x>
-         <y>410</y>
+         <x>1220</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6392,8 +6392,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P10">
        <property name="geometry">
         <rect>
-         <x>860</x>
-         <y>560</y>
+         <x>1180</x>
+         <y>520</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6433,8 +6433,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F2">
        <property name="geometry">
         <rect>
-         <x>680</x>
-         <y>310</y>
+         <x>1000</x>
+         <y>270</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6474,8 +6474,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_F6">
        <property name="geometry">
         <rect>
-         <x>760</x>
-         <y>300</y>
+         <x>1084</x>
+         <y>260</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6515,8 +6515,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FT7">
        <property name="geometry">
         <rect>
-         <x>430</x>
-         <y>340</y>
+         <x>750</x>
+         <y>300</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6556,8 +6556,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FC7">
        <property name="geometry">
         <rect>
-         <x>480</x>
-         <y>350</y>
+         <x>800</x>
+         <y>310</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6597,8 +6597,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FC5">
        <property name="geometry">
         <rect>
-         <x>540</x>
-         <y>360</y>
+         <x>857</x>
+         <y>318</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6638,8 +6638,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FCz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>360</y>
+         <x>950</x>
+         <y>320</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6679,8 +6679,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FC3">
        <property name="geometry">
         <rect>
-         <x>590</x>
-         <y>360</y>
+         <x>907</x>
+         <y>320</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6720,8 +6720,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FC2">
        <property name="geometry">
         <rect>
-         <x>680</x>
-         <y>360</y>
+         <x>1000</x>
+         <y>320</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6761,8 +6761,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FC4">
        <property name="geometry">
         <rect>
-         <x>740</x>
-         <y>350</y>
+         <x>1053</x>
+         <y>312</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6802,8 +6802,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FC6">
        <property name="geometry">
         <rect>
-         <x>790</x>
-         <y>340</y>
+         <x>1107</x>
+         <y>306</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6843,8 +6843,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_FT8">
        <property name="geometry">
         <rect>
-         <x>840</x>
-         <y>340</y>
+         <x>1160</x>
+         <y>300</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6884,8 +6884,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_C5">
        <property name="geometry">
         <rect>
-         <x>460</x>
-         <y>410</y>
+         <x>780</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6925,8 +6925,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_C1">
        <property name="geometry">
         <rect>
-         <x>570</x>
-         <y>410</y>
+         <x>890</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -6966,8 +6966,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_C2">
        <property name="geometry">
         <rect>
-         <x>690</x>
-         <y>410</y>
+         <x>1010</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7007,8 +7007,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_C6">
        <property name="geometry">
         <rect>
-         <x>800</x>
-         <y>410</y>
+         <x>1120</x>
+         <y>370</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7048,8 +7048,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO6">
        <property name="geometry">
         <rect>
-         <x>743</x>
-         <y>564</y>
+         <x>1063</x>
+         <y>524</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7089,8 +7089,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_TP7">
        <property name="geometry">
         <rect>
-         <x>420</x>
-         <y>480</y>
+         <x>740</x>
+         <y>440</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7130,8 +7130,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CP5">
        <property name="geometry">
         <rect>
-         <x>470</x>
-         <y>470</y>
+         <x>790</x>
+         <y>430</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7171,8 +7171,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CP3">
        <property name="geometry">
         <rect>
-         <x>520</x>
-         <y>460</y>
+         <x>840</x>
+         <y>421</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7212,8 +7212,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CP1">
        <property name="geometry">
         <rect>
-         <x>570</x>
-         <y>460</y>
+         <x>894</x>
+         <y>418</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7253,8 +7253,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CPz">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>460</y>
+         <x>950</x>
+         <y>420</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7294,8 +7294,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CP2">
        <property name="geometry">
         <rect>
-         <x>680</x>
-         <y>460</y>
+         <x>1000</x>
+         <y>420</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7335,8 +7335,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CP6">
        <property name="geometry">
         <rect>
-         <x>790</x>
-         <y>460</y>
+         <x>1110</x>
+         <y>424</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7376,8 +7376,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_CP4">
        <property name="geometry">
         <rect>
-         <x>740</x>
-         <y>460</y>
+         <x>1056</x>
+         <y>420</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7417,8 +7417,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_TP8">
        <property name="geometry">
         <rect>
-         <x>840</x>
-         <y>470</y>
+         <x>1160</x>
+         <y>430</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7458,8 +7458,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P5">
        <property name="geometry">
         <rect>
-         <x>490</x>
-         <y>520</y>
+         <x>810</x>
+         <y>480</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7499,8 +7499,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P1">
        <property name="geometry">
         <rect>
-         <x>580</x>
-         <y>510</y>
+         <x>900</x>
+         <y>470</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7540,8 +7540,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P2">
        <property name="geometry">
         <rect>
-         <x>670</x>
-         <y>510</y>
+         <x>995</x>
+         <y>468</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7581,8 +7581,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_P6">
        <property name="geometry">
         <rect>
-         <x>770</x>
-         <y>520</y>
+         <x>1090</x>
+         <y>479</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7622,8 +7622,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO7">
        <property name="geometry">
         <rect>
-         <x>490</x>
-         <y>580</y>
+         <x>810</x>
+         <y>540</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7663,8 +7663,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO5">
        <property name="geometry">
         <rect>
-         <x>530</x>
-         <y>570</y>
+         <x>850</x>
+         <y>530</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7704,8 +7704,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO3">
        <property name="geometry">
         <rect>
-         <x>560</x>
-         <y>563</y>
+         <x>880</x>
+         <y>523</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7745,8 +7745,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO1">
        <property name="geometry">
         <rect>
-         <x>595</x>
-         <y>560</y>
+         <x>915</x>
+         <y>520</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7786,8 +7786,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_POZ">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>560</y>
+         <x>950</x>
+         <y>520</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7827,8 +7827,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO8">
        <property name="geometry">
         <rect>
-         <x>780</x>
-         <y>570</y>
+         <x>1100</x>
+         <y>530</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7868,8 +7868,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO2">
        <property name="geometry">
         <rect>
-         <x>670</x>
-         <y>560</y>
+         <x>990</x>
+         <y>520</y>
          <width>28</width>
          <height>28</height>
         </rect>
@@ -7909,8 +7909,8 @@ padding: 0px;</string>
       <widget class="QLabel" name="label_Electrode_PO4">
        <property name="geometry">
         <rect>
-         <x>710</x>
-         <y>560</y>
+         <x>1030</x>
+         <y>520</y>
          <width>28</width>
          <height>28</height>
         </rect>

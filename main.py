@@ -447,6 +447,21 @@ def load_startup_config() -> dict:
     return config_service.load()
 
 
+def _parse_config_bool(value: object, default: bool) -> bool:
+    """从 config.json 解析布尔项（true/false、1/0、on/off 等）。"""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        key = value.strip().lower()
+        if key in ("true", "1", "yes", "on"):
+            return True
+        if key in ("false", "0", "no", "off"):
+            return False
+    return default
+
+
 def _subprocess_creationflags(hide_console: bool):
     """Windows 下 hide_console 时用 CREATE_NO_WINDOW 不弹窗，否则用 CREATE_NEW_CONSOLE。"""
     if sys.platform != "win32":
@@ -492,14 +507,22 @@ def main() -> None:
     default_com = str(config_data.get("NES_port") or "").strip() or AppConfig.com_port
     parser.add_argument("--com", dest="com_port", default=default_com, help="串口号（神经肌肉电刺激），默认从 config.json 的 NES_port 读取")
     parser.add_argument("--ws", dest="ws_url", default=AppConfig.ws_url, help="WebSocket 地址")
+    default_log_recv = _parse_config_bool(
+        config_data.get("log_receive_enabled"),
+        AppConfig.log_receive_enabled,
+    )
     parser.add_argument(
         "--log-recv",
         dest="log_receive_enabled",
         action="store_true",
-        default=True,
-        help="启用串口接收日志（解包前原始数据，默认开启）",
+        help="启用串口收发原始数据日志（覆盖 config.json）",
     )
-    parser.add_argument("--no-log-recv", dest="log_receive_enabled", action="store_false", help="关闭串口接收日志")
+    parser.add_argument(
+        "--no-log-recv",
+        dest="log_receive_enabled",
+        action="store_false",
+        help="关闭串口收发原始数据日志（覆盖 config.json）",
+    )
     parser.add_argument(
         "--ws-heartbeat",
         dest="ws_enable_heartbeat",
@@ -535,7 +558,10 @@ def main() -> None:
         action="store_true",
         help="打包后不显示主控/解码器/范式等子进程的终端窗口（Windows 下生效）",
     )
-    parser.set_defaults(enable_sub_window=AppConfig.enable_sub_window)
+    parser.set_defaults(
+        enable_sub_window=AppConfig.enable_sub_window,
+        log_receive_enabled=default_log_recv,
+    )
     args, _ = parser.parse_known_args()
 
     app = QApplication(sys.argv)
@@ -556,6 +582,7 @@ def main() -> None:
         if ws_max_message_size <= 0:
             ws_max_message_size = None
     logger.info("decoder_exe=%s decoder_port=%s", decoder_exe_path, decoder_port)
+    logger.info("log_receive_enabled=%s (config/CLI)", args.log_receive_enabled)
 
     # 组合根：在入口统一装配依赖（UI -> 应用层 -> 服务层 -> 基础设施）
     config = AppConfig(
