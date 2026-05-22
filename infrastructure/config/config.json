@@ -26,5 +26,7 @@
             "main": "INFO"
         }
     },
-    "websocket_exe": "D:\\WORK_space\\Code_WS\\code_localized\\Websocket_Server\\dist\\Websocket_Server\\websocket_server.exe"
+    "websocket_exe": "D:\\WORK_space\\Code_WS\\code_localized\\Websocket_Server\\dist\\Websocket_Server\\websocket_server.exe",
+    "hospital_name": "中大医院",
+    "department_name": "康复科"
 }

@@ -2115,7 +2115,7 @@ QTabBar::tab:hover:!selected {
 }</string>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_set_system">
         <attribute name="title">
@@ -2329,7 +2329,7 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>ZNKL-MFR11K-V1.0.0.0</string>
+          <string>ZNKL-MFR11AK-V1.0.0.0</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_34">
@@ -2361,7 +2361,7 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>ZNKL-MFR11-V1.0.0.0</string>
+          <string>ZNKL-MFR11A-V1.0.0.0</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_43">
@@ -2647,6 +2647,27 @@ color: #FFFFFF;
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_logout">
+         <property name="geometry">
+          <rect>
+           <x>370</x>
+           <y>310</y>
+           <width>91</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+background: #e84716;
+border: none;
+border-radius: 8px;
+color: #FFFFFF;
+}</string>
+         </property>
+         <property name="text">
+          <string>退出登录</string>
          </property>
         </widget>
        </widget>
@@ -3248,86 +3269,32 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <string/>
      </property>
     </widget>
-    <widget class="QLabel" name="label_usertitle">
-     <property name="geometry">
-      <rect>
-       <x>56</x>
-       <y>839</y>
-       <width>53</width>
-       <height>15</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: #959595;</string>
-     </property>
-     <property name="text">
-      <string>用户职称</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_logout">
-     <property name="geometry">
-      <rect>
-       <x>57</x>
-       <y>890</y>
-       <width>41</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">border-image: url(:/main/pic/main_logout.png);</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_userProphoto">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>730</y>
-       <width>61</width>
-       <height>61</height>
+       <x>65</x>
+       <y>800</y>
+       <width>34</width>
+       <height>34</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>26</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>34</width>
+       <height>34</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>34</width>
+       <height>34</height>
+      </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">border-image: url(:/main/pic/main_name_rect.png);</string>
+      <string notr="true">border-image: url(:/set/pic/icon_hosipital.png);</string>
      </property>
      <property name="text">
       <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_username">
-     <property name="geometry">
-      <rect>
-       <x>56</x>
-       <y>810</y>
-       <width>61</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: #959595;</string>
-     </property>
-     <property name="text">
-      <string>用户名</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_report">
@@ -3358,16 +3325,47 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <string/>
      </property>
     </widget>
+    <widget class="QLabel" name="label_hosipital">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>860</y>
+       <width>53</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #666666;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_department">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>890</y>
+       <width>53</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #666666;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
     <zorder>tabWidget</zorder>
     <zorder>pushButton_treat</zorder>
     <zorder>pushButton_patient</zorder>
     <zorder>pushButton_plan</zorder>
     <zorder>pushButton_set</zorder>
-    <zorder>label_usertitle</zorder>
-    <zorder>pushButton_logout</zorder>
-    <zorder>label_username</zorder>
     <zorder>label_userProphoto</zorder>
     <zorder>pushButton_report</zorder>
+    <zorder>label_hosipital</zorder>
+    <zorder>label_department</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">

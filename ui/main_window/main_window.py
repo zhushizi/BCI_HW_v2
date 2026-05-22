@@ -154,7 +154,6 @@ class MainWindow(QWidget):
 
         self._setup_connections()
         self._init_ui()
-        self._display_user_info()
         self._bind_session_events()
 
     def _setup_connections(self):
@@ -162,6 +161,7 @@ class MainWindow(QWidget):
         # 导航与治疗入口
         self._nav.bind()
         self._treat_flow.bind()
+        self._user_info.bind()
 
         # 登出
         button_logout = get_ui_attr(self.ui, "pushButton_logout")
@@ -247,6 +247,7 @@ class MainWindow(QWidget):
         self.patient_controller.init_ui()
         self.plan_controller.init_ui()
         self.set_controller.init_ui()
+        self._user_info.init_org_info()
         self.report_controller.init_ui()
 
     def _switch_tab(self, tab_index: int):
@@ -278,9 +279,6 @@ class MainWindow(QWidget):
     def _start_treatment_both_channels(self):
         """发送左右通道的开始治疗命令帧（保留位区分通道）"""
         self._treat_flow.start_treatment_both_channels()
-
-    def _get_first_char(self, text: str) -> str:
-        return self._user_info.get_first_char(text)
 
     def _extract_patient_id(self, patient: dict | None) -> str | None:
         return self._treat_flow.extract_patient_id(patient)
@@ -330,9 +328,6 @@ class MainWindow(QWidget):
 
     def _parse_treat_button_info(self, button_name: str) -> tuple[str, str, str]:
         return self._treat_flow.parse_treat_button_info(button_name)
-
-    def _display_user_info(self):
-        self._user_info.display_user_info()
 
     def _init_device_status(self):
         """初始化设备连接状态显示"""
