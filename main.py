@@ -26,6 +26,7 @@ from ui.core.app_icon import apply_application_icon
 from infrastructure.data import DatabaseService
 from service.business.config.config_service import ConfigService
 from infrastructure.hardware.serial_hardware import SerialHardware
+from infrastructure.hardware.serial_port_catalog import auto_assign_ports, enumerate_serial_ports
 from infrastructure.storage.erds_storage import ErdsStorage
 from infrastructure.storage.reaction_time_storage import ReactionTimeStorage
 from service.business.storage.erds_storage_service import ErdsStorageService
@@ -504,7 +505,11 @@ def main() -> None:
     setup_logging(config_data)
 
     parser = argparse.ArgumentParser(description="BCI 硬件控制系统")
+    port_entries = enumerate_serial_ports()
+    auto_ports = auto_assign_ports(port_entries)
     default_com = str(config_data.get("NES_port") or "").strip() or AppConfig.com_port
+    if not default_com and auto_ports.stim:
+        default_com = auto_ports.stim
     parser.add_argument("--com", dest="com_port", default=default_com, help="串口号（神经肌肉电刺激），默认从 config.json 的 NES_port 读取")
     parser.add_argument("--ws", dest="ws_url", default=AppConfig.ws_url, help="WebSocket 地址")
     default_log_recv = _parse_config_bool(
@@ -573,7 +578,15 @@ def main() -> None:
     ws_server_process = start_websocket_server(websocket_exe_path, hide_console=hide_console)
 
     decoder_port = str(config_data.get("decoder_port") or "").strip() or None
+    if not decoder_port and auto_ports.head_ring:
+        decoder_port = auto_ports.head_ring
     decoder_exe_path = str(config_data.get("decoder_exe") or "").strip() or None
+    if auto_ports.head_ring or auto_ports.stim:
+        logger.info(
+            "串口自动识别: 头环=%s 电刺激=%s",
+            auto_ports.head_ring or "(未识别)",
+            auto_ports.stim or "(未识别)",
+        )
     ws_max_message_size = config_data.get("ws_max_message_size", AppConfig.ws_max_message_size)
     if args.ws_max_message_size is not None:
         ws_max_message_size = args.ws_max_message_size

@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
+from infrastructure.hardware.serial_port_catalog import SerialPortEntry
 from service.business.hardware.stim_test_service import StimTestService
 
 class HardwareApp:
@@ -44,6 +45,9 @@ class HardwareApp:
     # --------- 用例：串口端口管理 ---------
     def list_available_ports(self) -> list[str]:
         return self.hardware_service.list_available_ports()
+
+    def list_port_entries(self) -> list[SerialPortEntry]:
+        return self.hardware_service.list_port_entries()
 
     def set_nes_port(self, next_port: str) -> bool:
         """切换 NES 串口端口。"""

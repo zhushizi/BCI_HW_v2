@@ -262,7 +262,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -3045,15 +3045,15 @@ font-weight: 600;</string>
            <string notr="true">color: #6B7280;</string>
           </property>
           <property name="text">
-           <string>脑机接口设备</string>
+           <string>头环</string>
           </property>
          </widget>
          <widget class="QComboBox" name="comboBox_decoder_port">
           <property name="geometry">
            <rect>
-            <x>160</x>
+            <x>120</x>
             <y>50</y>
-            <width>140</width>
+            <width>280</width>
             <height>32</height>
            </rect>
           </property>
@@ -3079,15 +3079,15 @@ padding-left: 12px;
            <string notr="true">color: #6B7280;</string>
           </property>
           <property name="text">
-           <string>神经肌肉电刺激仪串口</string>
+           <string>电刺激设备</string>
           </property>
          </widget>
          <widget class="QComboBox" name="comboBox_NES_port">
           <property name="geometry">
            <rect>
-            <x>160</x>
+            <x>120</x>
             <y>94</y>
-            <width>140</width>
+            <width>280</width>
             <height>32</height>
            </rect>
           </property>
@@ -3098,6 +3098,32 @@ border: 1px solid #EEF1F5;
 border-radius: 8px;
 padding-left: 12px;
 }</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton_refresh_serial_ports">
+          <property name="geometry">
+           <rect>
+            <x>640</x>
+            <y>100</y>
+            <width>100</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+background: #F7F8FC;
+border: 1px solid #EEF1F5;
+border-radius: 8px;
+color: #1F1F1F;
+font-size: 13px;
+}
+QPushButton:hover {
+background: #EEF2FF;
+border-color: #C7D2FE;
+}</string>
+          </property>
+          <property name="text">
+           <string>刷新串口</string>
           </property>
          </widget>
         </widget>

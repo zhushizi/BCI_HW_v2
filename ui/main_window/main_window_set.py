@@ -4,10 +4,16 @@ from __future__ import annotations
 '''
 import logging
 import ctypes
-from typing import Optional
+from typing import List, Optional
 
-from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QComboBox, QWidget
 
+from infrastructure.hardware.serial_port_catalog import (
+    PortRole,
+    SerialPortEntry,
+    extract_port_device,
+)
 from ui.core.utils import get_ui_attr, safe_connect
 
 
@@ -35,9 +41,23 @@ class SetPageController:
 
     def bind_signals(self):
         combo = get_ui_attr(self.ui, "comboBox_decoder_port")
-        safe_connect(self.logger, getattr(combo, "currentTextChanged", None), self._on_decoder_port_changed)
+        safe_connect(
+            self.logger,
+            getattr(combo, "currentIndexChanged", None),
+            self._on_decoder_port_changed,
+        )
         nes_combo = get_ui_attr(self.ui, "comboBox_NES_port")
-        safe_connect(self.logger, getattr(nes_combo, "currentTextChanged", None), self._on_nes_port_changed)
+        safe_connect(
+            self.logger,
+            getattr(nes_combo, "currentIndexChanged", None),
+            self._on_nes_port_changed,
+        )
+        refresh_btn = get_ui_attr(self.ui, "pushButton_refresh_serial_ports")
+        safe_connect(
+            self.logger,
+            getattr(refresh_btn, "clicked", None),
+            self._on_refresh_serial_ports,
+        )
         slider = get_ui_attr(self.ui, "horizontalSlider_volume")
         if slider is None:
             self.logger.warning("未找到音量滑条: horizontalSlider_volume")
@@ -56,39 +76,84 @@ class SetPageController:
         safe_connect(self.logger, getattr(btn_toggle, "clicked", None), self._on_volume_toggle)
 
     def init_ui(self):
-        if self.hardware_config_app:
-            self.decoder_port = self.hardware_config_app.get_decoder_port() or self.decoder_port
-            self.nes_port = self.hardware_config_app.get_nes_port()
-
-        combo = get_ui_attr(self.ui, "comboBox_decoder_port")
-        if combo:
-            prev_block = combo.blockSignals(True)
-            ports = self._list_available_ports()
-            if self.decoder_port and self.decoder_port not in ports:
-                ports.insert(0, self.decoder_port)
-            combo.clear()
-            if ports:
-                combo.addItems(ports)
-            if self.decoder_port:
-                combo.setCurrentText(self.decoder_port)
-            combo.blockSignals(prev_block)
-
-        nes_combo = get_ui_attr(self.ui, "comboBox_NES_port")
-        if nes_combo:
-            prev_block = nes_combo.blockSignals(True)
-            nes_ports = self._list_available_ports()
-            if self.nes_port and self.nes_port not in nes_ports:
-                nes_ports.insert(0, self.nes_port)
-            nes_combo.clear()
-            if nes_ports:
-                nes_combo.addItems(nes_ports)
-            if self.nes_port:
-                nes_combo.setCurrentText(self.nes_port)
-            nes_combo.blockSignals(prev_block)
+        self.refresh_serial_ports(auto_connect=True)
         self._init_volume_controls()
 
     def refresh(self):
-        pass
+        self.refresh_serial_ports(auto_connect=False)
+
+    def refresh_serial_ports(self, *, auto_connect: bool = False) -> None:
+        """刷新串口下拉列表；auto_connect 时按头环/电刺激识别结果自动连接。"""
+        if not self.hardware_config_app:
+            self.logger.warning("hardware_config_app 未注入，无法刷新串口")
+            return
+
+        if auto_connect:
+            entries, assignment, _ = self.hardware_config_app.refresh_and_auto_connect()
+            if assignment.head_ring:
+                self.decoder_port = assignment.head_ring
+            else:
+                self.decoder_port = self.hardware_config_app.get_decoder_port() or self.decoder_port
+            if assignment.stim:
+                self.nes_port = assignment.stim
+            else:
+                self.nes_port = self.hardware_config_app.get_nes_port() or self.nes_port
+        else:
+            entries = self.hardware_config_app.list_port_entries()
+            self.decoder_port = self.hardware_config_app.get_decoder_port() or self.decoder_port
+            self.nes_port = self.hardware_config_app.get_nes_port() or self.nes_port
+
+        decoder_combo = get_ui_attr(self.ui, "comboBox_decoder_port")
+        nes_combo = get_ui_attr(self.ui, "comboBox_NES_port")
+        self._populate_port_combo(decoder_combo, entries, self.decoder_port, PortRole.HEAD_RING)
+        self._populate_port_combo(nes_combo, entries, self.nes_port, PortRole.STIM)
+
+    def _populate_port_combo(
+        self,
+        combo: Optional[QComboBox],
+        entries: List[SerialPortEntry],
+        selected_port: Optional[str],
+        prefer_role: PortRole,
+    ) -> None:
+        if combo is None:
+            return
+        prev_block = combo.blockSignals(True)
+        combo.clear()
+        seen: set[str] = set()
+        ordered = sorted(
+            entries,
+            key=lambda e: (
+                0 if e.role is prefer_role else 1,
+                0 if e.role is not PortRole.UNKNOWN else 1,
+                e.device,
+            ),
+        )
+        for entry in ordered:
+            if entry.device in seen:
+                continue
+            seen.add(entry.device)
+            combo.addItem(entry.display_label, entry.device)
+        selected = str(selected_port or "").strip()
+        if selected:
+            idx = combo.findData(selected)
+            if idx >= 0:
+                combo.setCurrentIndex(idx)
+            else:
+                combo.insertItem(0, f"{selected} · 未知设备", selected)
+                combo.setCurrentIndex(0)
+        combo.blockSignals(prev_block)
+
+    @staticmethod
+    def _combo_port_device(combo: Optional[QComboBox]) -> str:
+        if combo is None:
+            return ""
+        data = combo.currentData(Qt.ItemDataRole.UserRole)
+        if data:
+            return str(data).strip()
+        return extract_port_device(combo.currentText())
+
+    def _on_refresh_serial_ports(self) -> None:
+        self.refresh_serial_ports(auto_connect=True)
 
     def _init_volume_controls(self) -> None:
         slider = get_ui_attr(self.ui, "horizontalSlider_volume")
@@ -166,7 +231,7 @@ class SetPageController:
                 self._endpoint_volume.SetMasterVolumeLevelScalar(pct / 100.0, None)
                 return True
         except Exception as exc:
-            self.logger.warning("设置系统音量失败(CoreAudio): %s", exc)
+            self.logger.warning("设置系统音量(CoreAudio): %s", exc)
         try:
             winmm = ctypes.windll.winmm
             pct = max(0, min(100, int(value)))
@@ -236,8 +301,9 @@ class SetPageController:
         step = slider.singleStep() or 5
         slider.setValue(max(slider.minimum(), slider.value() - step))
 
-    def _on_decoder_port_changed(self, text: str) -> None:
-        next_port = str(text or "").strip()
+    def _on_decoder_port_changed(self, _index: int = -1) -> None:
+        combo = get_ui_attr(self.ui, "comboBox_decoder_port")
+        next_port = self._combo_port_device(combo)
         if not next_port:
             return
         if self.decoder_port == next_port:
@@ -248,8 +314,9 @@ class SetPageController:
             if not ok:
                 self.logger.warning("切换解码器端口失败: %s", next_port)
 
-    def _on_nes_port_changed(self, text: str) -> None:
-        next_port = str(text or "").strip()
+    def _on_nes_port_changed(self, _index: int = -1) -> None:
+        combo = get_ui_attr(self.ui, "comboBox_NES_port")
+        next_port = self._combo_port_device(combo)
         if not next_port:
             return
         if self.nes_port == next_port:
@@ -259,12 +326,3 @@ class SetPageController:
             ok = self.hardware_config_app.set_nes_port(next_port)
             if not ok:
                 self.logger.warning("切换串口失败: %s", next_port)
-
-    def _list_available_ports(self) -> list[str]:
-        if not self.hardware_config_app:
-            self.logger.warning("hardware_config_app 未注入，无法读取串口列表")
-            return []
-        try:
-            return list(self.hardware_config_app.list_available_ports())
-        except Exception:
-            return []
