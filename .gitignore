@@ -10,6 +10,9 @@ db/ReactionTimeCurve/
 # Local IDE settings
 .idea/
 
+# Bundled paradigm / Unity runtimes (large binaries, local deploy only)
+runtime/
+
 # Large protocol reference docs (resource files)
 *JSON-RPC*.md
 *JSON-RPC*.pdf
