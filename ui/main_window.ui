@@ -154,21 +154,21 @@
    <property name="geometry">
     <rect>
      <x>1677</x>
-     <y>42</y>
+     <y>40</y>
      <width>17</width>
-     <height>14</height>
+     <height>18</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>17</width>
-     <height>14</height>
+     <height>18</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>17</width>
-     <height>14</height>
+     <height>18</height>
     </size>
    </property>
    <property name="styleSheet">

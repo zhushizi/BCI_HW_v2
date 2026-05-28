@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from typing import Callable, Optional
 
-from PySide6.QtCore import Qt, QRect, QSize, QTimer, QObject, QEvent
+from PySide6.QtCore import Qt, QRect, QSize, QTimer, QObject, QEvent, QPoint
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QMessageBox, QGraphicsDropShadowEffect, QVBoxLayout
+from PySide6.QtWidgets import QMessageBox, QGraphicsDropShadowEffect, QVBoxLayout, QFrame, QLabel
 
 from ui.core.utils import get_ui_attr, safe_call, safe_connect
 from ui.dialogs.tips_dialog import TipsDialog
@@ -244,15 +244,21 @@ class MainWindowDeviceStatus:
         self._host = host
         self.ui = host.ui
         self._ws_timer: Optional[QTimer] = None
+        self._status_tip_filter: Optional[_StatusIndicatorTipFilter] = None
 
     def init_device_status(self) -> None:
         label_pingpong = get_ui_attr(self.ui, "label_pingpong")
         if label_pingpong:
             label_pingpong.setText("")
+            label_pingpong.setToolTip("")
+            label_pingpong.setProperty("status_ok", False)
             self.set_pingpong_indicator(is_alive=False)
             self.update_treat_controls_by_pingpong()
         label_wifi = get_ui_attr(self.ui, "label_wifi")
         safe_call(self._host.logger, getattr(label_wifi, "setText", None), "")
+        safe_call(self._host.logger, getattr(label_wifi, "setToolTip", None), "")
+        safe_call(self._host.logger, getattr(label_wifi, "setProperty", None), "status_ok", False)
+        self._install_status_tips()
         self._init_ws_status()
 
         if self._host.pingpong_service:
@@ -279,12 +285,11 @@ class MainWindowDeviceStatus:
         label_pingpong = get_ui_attr(self.ui, "label_pingpong")
         if label_pingpong is None:
             return
+        label_pingpong.setProperty("status_ok", bool(is_alive))
         if is_alive:
             label_pingpong.setStyleSheet("border-image: url(:/main/pic/main_pingpong_on.png);")
-            label_pingpong.setToolTip("心跳正常")
         else:
             label_pingpong.setStyleSheet("border-image: url(:/main/pic/main_pingpong_off.png);")
-            label_pingpong.setToolTip("心跳超时")
 
     def _init_ws_status(self) -> None:
         self._set_wifi_indicator(False)
@@ -310,12 +315,11 @@ class MainWindowDeviceStatus:
         label_wifi = get_ui_attr(self.ui, "label_wifi")
         if label_wifi is None:
             return
+        label_wifi.setProperty("status_ok", bool(is_connected))
         if is_connected:
             label_wifi.setStyleSheet("border-image: url(:/main/pic/main_wifi_on.png);")
-            label_wifi.setToolTip("服务器连接正常")
         else:
             label_wifi.setStyleSheet("border-image: url(:/main/pic/main_wifi_off.png);")
-            label_wifi.setToolTip("服务器未连接")
 
     def on_pingpong_status_changed(self, is_alive: bool, last_seen_sec) -> None:
         self.set_pingpong_indicator(bool(is_alive))
@@ -326,7 +330,7 @@ class MainWindowDeviceStatus:
         if label_pingpong is None:
             return True
         try:
-            return label_pingpong.toolTip() == "心跳正常"
+            return bool(label_pingpong.property("status_ok"))
         except Exception:
             return True
 
@@ -337,6 +341,65 @@ class MainWindowDeviceStatus:
                 self._host.treat_controller.stim_ctrl.set_hardware_online(is_online)
         except Exception:
             pass
+
+    def _install_status_tips(self) -> None:
+        if self._status_tip_filter is None:
+            self._status_tip_filter = _StatusIndicatorTipFilter(self.ui)
+        label_pingpong = get_ui_attr(self.ui, "label_pingpong")
+        label_wifi = get_ui_attr(self.ui, "label_wifi")
+        if label_pingpong is not None:
+            label_pingpong.installEventFilter(self._status_tip_filter)
+        if label_wifi is not None:
+            label_wifi.installEventFilter(self._status_tip_filter)
+
+
+class _StatusIndicatorTipFilter(QObject):
+    """状态图标专用悬浮提示（独立样式，不使用父级/全局 tooltip 样式）。"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._popup = QFrame(None, Qt.ToolTip | Qt.FramelessWindowHint)
+        self._popup.setObjectName("statusIndicatorPopup")
+        self._popup.setStyleSheet(
+            "QFrame#statusIndicatorPopup {"
+            "background: #FFFFFF;"
+            "border: 1px solid #D0D5DD;"
+            "border-radius: 8px;"
+            "}"
+            "QLabel {"
+            "color: #1F2937;"
+            "font-size: 12px;"
+            "padding: 6px 10px;"
+            "background: transparent;"
+            "}"
+        )
+        layout = QVBoxLayout(self._popup)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self._label = QLabel("")
+        layout.addWidget(self._label)
+
+    def eventFilter(self, watched, event):
+        name = getattr(watched, "objectName", lambda: "")()
+        if name not in ("label_wifi", "label_pingpong"):
+            return super().eventFilter(watched, event)
+        if event.type() == QEvent.Enter:
+            self._show_tip(watched, name)
+        elif event.type() in (QEvent.Leave, QEvent.Hide):
+            self._popup.hide()
+        return super().eventFilter(watched, event)
+
+    def _show_tip(self, widget, name: str) -> None:
+        is_ok = bool(widget.property("status_ok"))
+        if name == "label_wifi":
+            text = "上位机通讯正常" if is_ok else "上位机通讯不正常"
+        else:
+            text = "下位机连接正常" if is_ok else "下位机连接不正常"
+        self._label.setText(text)
+        self._popup.adjustSize()
+        x = max(0, (widget.width() - self._popup.width()) // 2)
+        pos = widget.mapToGlobal(QPoint(x, widget.height() + 8))
+        self._popup.move(pos)
+        self._popup.show()
 
 
 _PARADIGM_OVERLAY_LABELS = (
