@@ -24,14 +24,22 @@ class TreatRecordActions:
 
     def delete_selected(self, table) -> None:
         if not self._session_app or not self._patient_id:
+            TipsDialog.show_tips(None, "当前患者信息无效，无法删除诊疗记录")
             return
         rows_to_delete, session_ids = table.get_selected_session_ids()
         if not rows_to_delete:
+            TipsDialog.show_tips(None, "请先选择要删除的诊疗记录")
+            return
+        parent_widget = table.ui.window() if table and getattr(table, "ui", None) else None
+        count = len(session_ids)
+        if not TipsDialog.show_confirm(parent_widget, f"确定删除选中的 {count} 条诊疗记录？"):
             return
         deleted = self._session_app.delete_patient_treat_sessions(session_ids)
         if deleted <= 0:
+            TipsDialog.show_tips(parent_widget, "删除诊疗记录失败")
             return
         table.remove_rows(rows_to_delete)
+        TipsDialog.show_tips(parent_widget, f"已删除 {deleted} 条诊疗记录")
 
     def print_row(self, row: int) -> None:
         self._logger.info("打印行: %s", row + 1)
