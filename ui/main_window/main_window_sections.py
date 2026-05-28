@@ -41,6 +41,8 @@ class MainWindowNavigation:
         if tab_main:
             safe_call(self.logger, tab_main.tabBar().hide)
             safe_connect(self.logger, getattr(tab_main, "currentChanged", None), lambda _: self._update_line2_visibility())
+        plan_btn = get_ui_attr(self.ui, "pushButton_plan")
+        safe_call(self.logger, getattr(plan_btn, "setVisible", None), False)
 
     def init_ui(self) -> None:
         self._host.setWindowTitle("BCI硬件控制系统")
