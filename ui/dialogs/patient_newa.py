@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import Qt, QDateTime
 from ui.core.base_dialog import BaseUiDialog
@@ -57,6 +58,10 @@ class PatientNewDialog(BaseUiDialog):
 
         date_edit = get_ui_attr(self.ui, "dateTimeEdit_visit")
         safe_call(self._logger, getattr(date_edit, "setDateTime", None), QDateTime.currentDateTime())
+
+        age_input = get_ui_attr(self.ui, "spinBox_age")
+        if age_input:
+            safe_call(self._logger, getattr(age_input, "setValidator", None), QIntValidator(1, 120, age_input))
 
         pid_input = get_ui_attr(self.ui, "lineEdit_patientId")
         auto_pid = QDateTime.currentDateTime().toString("yyMMddHHmmss")
@@ -138,6 +143,18 @@ class PatientNewDialog(BaseUiDialog):
             phone_input = get_ui_attr(self.ui, "lineEdit_phone")
             safe_call(self._logger, getattr(phone_input, "setFocus", None))
             return
+        age_text = self._get_text("spinBox_age")
+        if age_text:
+            try:
+                age = int(age_text)
+            except (TypeError, ValueError):
+                age = None
+            if age is None or age < 1 or age > 120:
+                TipsDialog.show_tips(self, "年龄需为1-120，请重新填写")
+                age_input = get_ui_attr(self.ui, "spinBox_age")
+                safe_call(self._logger, getattr(age_input, "setFocus", None))
+                safe_call(self._logger, getattr(age_input, "selectAll", None))
+                return
         if (
             not self._is_edit
             and self._patient_app is not None
