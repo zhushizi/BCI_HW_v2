@@ -136,6 +136,7 @@ class _PatientCard(QFrame):
 
 class PatientSelectPanel(QWidget):
     patient_selected = Signal(dict)
+    patient_cleared = Signal()
     PAGE_SIZE = 10
     CARD_HEIGHT = 67
     CARD_SPACING = 4
@@ -427,7 +428,13 @@ class PatientSelectPanel(QWidget):
         self.refresh_patients(keyword=text)
 
     def _on_card_clicked(self, patient: Dict[str, Any]) -> None:
-        self._selected_patient_id = self._patient_key(patient)
+        patient_key = self._patient_key(patient)
+        if patient_key and patient_key == self._selected_patient_id:
+            self._selected_patient_id = None
+            self._update_card_selection()
+            self.patient_cleared.emit()
+            return
+        self._selected_patient_id = patient_key
         self._update_card_selection()
         self.patient_selected.emit(patient)
 
@@ -435,6 +442,14 @@ class PatientSelectPanel(QWidget):
     def _patient_key(patient: Optional[Dict[str, Any]]) -> Optional[str]:
         if not patient:
             return None
-        value = patient.get("PatientId") or patient.get("Name") or ""
-        text = str(value).strip()
-        return text or None
+        row_id = patient.get("RowId")
+        if row_id is not None and str(row_id).strip() != "":
+            try:
+                return f"row:{int(row_id)}"
+            except (TypeError, ValueError):
+                pass
+        patient_id = str(patient.get("PatientId") or "").strip()
+        name = str(patient.get("Name") or "").strip()
+        visit_time = str(patient.get("VisitTime") or "").strip()
+        composite = "|".join((patient_id, name, visit_time))
+        return composite or None

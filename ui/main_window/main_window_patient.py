@@ -696,7 +696,7 @@ class PatientPageController(BaseTableController):
             TipsDialog.show_tips(self.parent, f"已删除 {len(success_ids)} 位患者")
 
     def _open_new_patient_dialog(self):
-        dialog = PatientNewDialog(self.parent)
+        dialog = PatientNewDialog(self.parent, patient_app=self.patient_app)
         if dialog.exec() != QDialog.Accepted:
             return
 
@@ -707,7 +707,7 @@ class PatientPageController(BaseTableController):
         if not data.get("VisitTime"):
             data["VisitTime"] = QDateTime.currentDateTime().toString("yyyy/MM/dd HH:mm:ss")
 
-        ok = False
+        patient_id = str(data.get("PatientId", "") or "").strip()
         try:
             ok = self.patient_app.add_patient(data)
         except Exception as e:
@@ -718,8 +718,9 @@ class PatientPageController(BaseTableController):
         if ok:
             TipsDialog.show_tips(self.parent, "新增患者成功")
             self.refresh()
+            saved = self.patient_app.get_patient_by_id(patient_id) if patient_id else None
             if callable(self._on_patient_selected):
-                self._on_patient_selected(data)
+                self._on_patient_selected(saved or data)
         else:
             TipsDialog.show_tips(self.parent, "新增患者失败")
 

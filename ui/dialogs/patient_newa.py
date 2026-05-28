@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict, Optional
 
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import Qt, QDateTime
@@ -36,10 +36,17 @@ QCalendarWidget QToolButton::menu-indicator {
 class PatientNewDialog(BaseUiDialog):
     """新建/编辑患者对话框"""
 
-    def __init__(self, parent=None, data: Dict[str, Any] = None, is_edit: bool = False):
+    def __init__(
+        self,
+        parent=None,
+        data: Dict[str, Any] = None,
+        is_edit: bool = False,
+        patient_app: Optional[Any] = None,
+    ):
         super().__init__(parent=parent, ui_path=UI_PATH)
         self._logger = logging.getLogger(__name__)
         self._is_edit = is_edit
+        self._patient_app = patient_app
 
         self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -130,6 +137,17 @@ class PatientNewDialog(BaseUiDialog):
             TipsDialog.show_tips(self, "手机号须为11位纯数字，请重新填写")
             phone_input = get_ui_attr(self.ui, "lineEdit_phone")
             safe_call(self._logger, getattr(phone_input, "setFocus", None))
+            return
+        if (
+            not self._is_edit
+            and self._patient_app is not None
+            and getattr(self._patient_app, "patient_id_exists", None)
+            and self._patient_app.patient_id_exists(pid)
+        ):
+            TipsDialog.show_tips(self, "就诊编号（病历号）已存在，请使用其他编号")
+            pid_input = get_ui_attr(self.ui, "lineEdit_patientId")
+            safe_call(self._logger, getattr(pid_input, "setFocus", None))
+            safe_call(self._logger, getattr(pid_input, "selectAll", None))
             return
         self.accept()
 

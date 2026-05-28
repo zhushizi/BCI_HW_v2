@@ -427,6 +427,7 @@ class MainWindowTreatFlow:
         )
         layout.addWidget(self._patient_select_panel)
         safe_connect(self.logger, self._patient_select_panel.patient_selected, self.on_patient_selected)
+        safe_connect(self.logger, self._patient_select_panel.patient_cleared, self.on_patient_deselected)
 
     def _attach_hover_shadow(self, button, on_hover_changed: Optional[Callable[[bool], None]] = None) -> None:
         effect = QGraphicsDropShadowEffect(button)
@@ -514,10 +515,27 @@ class MainWindowTreatFlow:
         if self._patient_select_panel:
             self._patient_select_panel.refresh_patients(selected_patient=self._host._selected_patient)
 
+    def on_patient_deselected(self) -> None:
+        if not self._host._selected_patient:
+            return
+        self._apply_no_patient_selected()
+
     def clear_patient_selection(self) -> None:
+        self._apply_no_patient_selected()
+
+    def _apply_no_patient_selected(self) -> None:
+        self._host._selected_patient = None
+        label_patient = get_ui_attr(self.ui, "label_patient")
+        if label_patient:
+            label_patient.setText("未选择患者")
+        else:
+            label_fallback = get_ui_attr(self.ui, "label_11")
+            safe_call(self.logger, getattr(label_fallback, "setText", None), "未选择患者")
         if self._patient_select_panel:
             self._patient_select_panel.set_selected_patient(None)
         self._fill_patient_info_labels(None)
+        if getattr(self._host, "treat_controller", None):
+            self._host.treat_controller.set_current_patient(None)
 
     @staticmethod
     def extract_patient_id(patient: dict | None) -> str | None:
