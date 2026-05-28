@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -3298,8 +3298,8 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
     <widget class="QLabel" name="label_userProphoto">
      <property name="geometry">
       <rect>
-       <x>65</x>
-       <y>800</y>
+       <x>67</x>
+       <y>811</y>
        <width>34</width>
        <height>34</height>
       </rect>
@@ -3354,10 +3354,10 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
     <widget class="QLabel" name="label_hosipital">
      <property name="geometry">
       <rect>
-       <x>57</x>
+       <x>29</x>
        <y>860</y>
-       <width>53</width>
-       <height>15</height>
+       <width>111</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -3365,15 +3365,18 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="label_department">
      <property name="geometry">
       <rect>
-       <x>57</x>
+       <x>39</x>
        <y>890</y>
-       <width>53</width>
-       <height>15</height>
+       <width>91</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -3381,6 +3384,9 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <zorder>tabWidget</zorder>
