@@ -68,18 +68,10 @@ class UserApp:
     def get_saved_username(self) -> Optional[str]:
         """获取已保存的用户名"""
         return self.user_service.get_saved_username()
-    
-    def get_saved_password(self) -> Optional[str]:
-        """获取已保存的密码"""
-        return self.user_service.get_saved_password()
-    
-    def has_saved_credentials(self) -> bool:
-        """检查是否有保存的凭据"""
-        return self.user_service.has_saved_credentials()
-    
-    def save_credentials(self, username: str, password: str, remember: bool) -> None:
-        """保存用户凭据"""
-        self.user_service.save_credentials(username, password, remember)
+
+    def save_username(self, username: str) -> None:
+        """保存上次登录的用户名"""
+        self.user_service.save_username(username)
     
     def get_user_by_id(self, user_id: int) -> Optional[dict]:
         """根据ID获取用户信息"""

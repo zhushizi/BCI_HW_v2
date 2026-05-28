@@ -152,63 +152,6 @@ QPushButton#pushButton_login:pressed {
     <string/>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox_remember">
-   <property name="geometry">
-    <rect>
-     <x>1050</x>
-     <y>627</y>
-     <width>95</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>95</width>
-     <height>25</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>95</width>
-     <height>25</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <family>Microsoft YaHei UI</family>
-     <pointsize>13</pointsize>
-     <italic>false</italic>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QCheckBox {
-	font: 13pt &quot;Microsoft YaHei UI&quot;;
-    color: #939393;
-    spacing: 8px;
-}
-
-QCheckBox::indicator {
-    width: 15px;
-    height: 15px;
-    border: 1px solid #939393;
-    border-radius: 4.84px;
-    background-color: #FFFFFF;
-}
-
-QCheckBox::indicator:checked {
-    image: url(:/login/pic/login_checked.png);
-}
-
-</string>
-   </property>
-   <property name="text">
-    <string>记住密码</string>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_product">
    <property name="geometry">
     <rect>
@@ -523,7 +466,6 @@ color:#939393;</string>
   <zorder>label_7</zorder>
   <zorder>pushButton_login</zorder>
   <zorder>label_welcome</zorder>
-  <zorder>checkBox_remember</zorder>
   <zorder>label_product</zorder>
   <zorder>label_tip</zorder>
   <zorder>label_2</zorder>

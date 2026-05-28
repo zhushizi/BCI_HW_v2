@@ -4,7 +4,7 @@
 - 用户登录验证
 - 用户注册（作为登录流程的一部分）
 - 用户登出
-- 登录凭据的保存和读取（记住密码功能）
+- 上次登录用户名的保存和读取
 """
 
 import json
@@ -14,6 +14,8 @@ from pathlib import Path
 import logging
 
 from infrastructure.data import DatabaseService
+
+INVALID_CREDENTIALS_MESSAGE = "用户名或者密码不正确"
 
 
 class _CredentialStore:
@@ -31,39 +33,29 @@ class _CredentialStore:
             self._logger.warning(f"读取保存的用户名失败: {e}")
             return None
 
-    def get_password(self) -> Optional[str]:
-        if not self._path.exists():
-            return None
-        try:
-            config = self._read()
-            if config.get('remember_password', False):
-                return config.get('password')
-        except Exception as e:
-            self._logger.warning(f"读取保存的密码失败: {e}")
-        return None
-
-    def has_credentials(self) -> bool:
-        if not self._path.exists():
-            return False
-        try:
-            config = self._read()
-            return config.get('remember_password', False)
-        except Exception:
-            return False
-
-    def save(self, username: str, password: str, remember: bool) -> None:
+    def save_username(self, username: str) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        config = {
-            'username': username,
-            'remember_password': remember
-        }
-        if remember:
-            config['password'] = password
+        config = {'username': username}
         try:
             self._write(config)
-            self._logger.debug(f"保存用户凭据: {username}, remember={remember}")
+            self._logger.debug(f"保存用户名: {username}")
         except Exception as e:
-            self._logger.error(f"保存用户凭据失败: {e}")
+            self._logger.error(f"保存用户名失败: {e}")
+
+    def clear_stored_password(self) -> None:
+        if not self._path.exists():
+            return
+        try:
+            config = self._read()
+            changed = False
+            if config.pop("password", None) is not None:
+                changed = True
+            if config.pop("remember_password", None) is not None:
+                changed = True
+            if changed:
+                self._write(config)
+        except Exception as e:
+            self._logger.warning(f"清除本地保存的密码失败: {e}")
 
     def _read(self) -> Dict[str, Any]:
         with self._path.open('r', encoding='utf-8') as f:
@@ -161,14 +153,14 @@ class UserLoginService:
             if not user:
                 return {
                     'success': False,
-                    'message': '用户名不存在'
+                    'message': INVALID_CREDENTIALS_MESSAGE,
                 }
-            
+
             # 验证密码（数据库中是明文存储，直接比较）
             if user['Password'] != password:
                 return {
                     'success': False,
-                    'message': '密码错误'
+                    'message': INVALID_CREDENTIALS_MESSAGE,
                 }
             
             # 登录成功
@@ -237,6 +229,7 @@ class UserLoginService:
         """用户登出"""
         self._current_user = None
         self._is_authenticated = False
+        self._credential_store.clear_stored_password()
         self.logger.info("用户已登出")
     
     def get_saved_username(self) -> Optional[str]:
@@ -248,34 +241,9 @@ class UserLoginService:
         """
         return self._credential_store.get_username()
     
-    def get_saved_password(self) -> Optional[str]:
-        """
-        获取已保存的密码
-        
-        Returns:
-            Optional[str]: 保存的密码，不存在返回 None
-        """
-        return self._credential_store.get_password()
-    
-    def has_saved_credentials(self) -> bool:
-        """
-        检查是否有保存的凭据
-        
-        Returns:
-            bool: 是否有保存的凭据
-        """
-        return self._credential_store.has_credentials()
-    
-    def save_credentials(self, username: str, password: str, remember: bool) -> None:
-        """
-        保存用户凭据（记住密码功能）
-        
-        Args:
-            username: 用户名
-            password: 密码
-            remember: 是否记住密码
-        """
-        self._credential_store.save(username, password, remember)
+    def save_username(self, username: str) -> None:
+        """保存上次登录的用户名"""
+        self._credential_store.save_username(username)
 
     def _build_config_path(self) -> Path:
         home_dir = Path.home()

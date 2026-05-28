@@ -7,9 +7,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide6.QtWidgets import QMessageBox, QWidget
+from PySide6.QtWidgets import QWidget
 
-from ui.core.dialog_overlay import message_box_question
+from ui.dialogs.tips_dialog import TipsDialog
 from PySide6.QtCore import Signal, QFile, Qt
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtGui import QIcon
@@ -376,17 +376,11 @@ class MainWindow(QWidget):
         self._device_status.update_treat_controls_by_pingpong()
 
     def _handle_logout(self):
-        reply = message_box_question(
-            self,
-            "确认登出",
-            "确定要退出登录吗？",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
-        )
-        if reply == QMessageBox.Yes:
-            self.user_app.logout()
-            self.logout_requested.emit()
-            self.close()
+        if not TipsDialog.show_confirm(self, "确定要退出登录吗？"):
+            return
+        self.user_app.logout()
+        self.logout_requested.emit()
+        self.close()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
