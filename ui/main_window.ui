@@ -2553,7 +2553,7 @@ border-radius: 8px;
 padding-left: 12px;</string>
          </property>
          <property name="placeholderText">
-          <string>请输入新密码</string>
+          <string>至少6位数字或字母组合</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_account_confirmpwd">
@@ -2588,7 +2588,7 @@ border-radius: 8px;
 padding-left: 12px;</string>
          </property>
          <property name="placeholderText">
-          <string>请确认新密码</string>
+          <string>再次输入新密码</string>
          </property>
         </widget>
         <widget class="QPushButton" name="pushButton_set_cancel">
