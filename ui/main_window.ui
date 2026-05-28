@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>3</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -1666,6 +1666,9 @@ QTableWidget#tableWidget_patient_2::item:selected:!active {
          <height>41</height>
         </rect>
        </property>
+       <property name="visible">
+        <bool>false</bool>
+       </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
 background: transparent;
@@ -1689,6 +1692,9 @@ QPushButton:pressed { background: rgba(75,134,252,0.16); }</string>
          <width>71</width>
          <height>41</height>
         </rect>
+       </property>
+       <property name="visible">
+        <bool>false</bool>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -2115,7 +2121,7 @@ QTabBar::tab:hover:!selected {
 }</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_set_system">
         <attribute name="title">
@@ -2652,11 +2658,23 @@ color: #FFFFFF;
         <widget class="QPushButton" name="pushButton_logout">
          <property name="geometry">
           <rect>
-           <x>370</x>
-           <y>310</y>
-           <width>91</width>
-           <height>31</height>
+           <x>380</x>
+           <y>308</y>
+           <width>80</width>
+           <height>36</height>
           </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>36</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>36</height>
+          </size>
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
@@ -3240,9 +3258,6 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_plan">
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="geometry">
       <rect>
        <x>40</x>
@@ -3262,6 +3277,9 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
        <width>77</width>
        <height>77</height>
       </size>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">border-image: url(:/main/pic/main_plan_off.png);</string>
