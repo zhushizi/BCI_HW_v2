@@ -7,7 +7,6 @@ config.json 中 *_exe 使用相对路径，如 runtime/ParadigmOne/ParadigmOne.e
 
 from __future__ import annotations
 
-import shutil
 import sys
 from pathlib import Path
 from typing import Iterable
@@ -51,7 +50,7 @@ def get_bundle_root() -> Path:
 
 
 def get_config_file_path() -> Path:
-    """配置文件路径；打包后优先使用 exe 旁可写的 infrastructure/config/config.json。"""
+    """配置文件路径；打包后优先使用包内（_MEIPASS/_internal）配置，不自动外拷。"""
     dev_path = get_project_root() / "infrastructure" / "config" / "config.json"
     if not getattr(sys, "frozen", False):
         return dev_path
@@ -60,17 +59,11 @@ def get_config_file_path() -> Path:
     external = exe_dir / "infrastructure" / "config" / "config.json"
     bundled = Path(getattr(sys, "_MEIPASS", "")) / "infrastructure" / "config" / "config.json"
 
+    if bundled.is_file():
+        return bundled
+
     if external.is_file():
         return external
-
-    if bundled.is_file():
-        try:
-            external.parent.mkdir(parents=True, exist_ok=True)
-            if not external.is_file():
-                shutil.copy2(bundled, external)
-            return external
-        except OSError:
-            return bundled
 
     return dev_path
 
