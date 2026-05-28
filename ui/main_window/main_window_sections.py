@@ -571,8 +571,10 @@ class MainWindowTreatFlow:
             return "--"
 
         def _height_weight_text() -> str:
-            height = _txt(patient.get("Height")) if patient.get("Height") not in (None, "") else ""
-            weight = _txt(patient.get("Weight")) if patient.get("Weight") not in (None, "") else ""
+            height_raw = patient.get("Height")
+            weight_raw = patient.get("Weight")
+            height = "" if height_raw in (None, "") else str(height_raw).strip()
+            weight = "" if weight_raw in (None, "") else str(weight_raw).strip()
             if height and weight:
                 return f"{height}/{weight}"
             if height:
