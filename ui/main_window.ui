@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -1716,15 +1716,50 @@ QPushButton:pressed { background: rgba(75,134,252,0.16); }</string>
         <rect>
          <x>80</x>
          <y>35</y>
-         <width>141</width>
+         <width>120</width>
          <height>41</height>
         </rect>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">border-image: url(:/patient/pic/patient_new.png);</string>
+        <string notr="true">QPushButton#pushButton_new {
+background-color: transparent;
+border: 1px solid #4B86FC;
+border-radius: 10px;
+color: #4B86FC;
+padding: 4px 10px;
+}
+QPushButton#pushButton_new:hover {
+background-color: rgba(75, 134, 252, 0.12);
+border: 1px solid #6B9BFD;
+color: #3A6FE0;
+}
+QPushButton#pushButton_new:pressed {
+background-color: rgba(75, 134, 252, 0.24);
+border: 1px solid #3A6FE0;
+color: #2A5FD0;
+padding-top: 5px;
+padding-bottom: 3px;
+}</string>
        </property>
        <property name="text">
-        <string/>
+        <string>新建患者</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="lineEdit_search">
