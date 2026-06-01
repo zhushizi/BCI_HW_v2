@@ -88,3 +88,36 @@ def resolve_config_exe_paths(data: dict, keys: Iterable[str] = EXE_CONFIG_KEYS) 
         if isinstance(val, str) and val.strip():
             out[key] = str(resolve_resource_path(val.strip()))
     return out
+
+
+def to_config_storage_path(path: str | Path) -> str:
+    """将路径规范为 config.json 中保存的 runtime/ 相对路径（正斜杠）。"""
+    raw = str(path).strip()
+    if not raw:
+        return raw
+    p = Path(raw)
+    if p.is_absolute():
+        try:
+            rel = p.resolve().relative_to(get_bundle_root().resolve())
+            return rel.as_posix()
+        except ValueError:
+            parts = p.parts
+            if "runtime" in parts:
+                idx = parts.index("runtime")
+                return Path(*parts[idx:]).as_posix()
+            return p.as_posix()
+    return p.as_posix()
+
+
+def normalize_config_exe_paths_for_storage(
+    data: dict, keys: Iterable[str] = EXE_CONFIG_KEYS
+) -> dict:
+    """写回 config.json 前，将 *_exe 统一为 runtime/ 相对路径。"""
+    if not data:
+        return data
+    out = dict(data)
+    for key in keys:
+        val = out.get(key)
+        if isinstance(val, str) and val.strip():
+            out[key] = to_config_storage_path(val.strip())
+    return out

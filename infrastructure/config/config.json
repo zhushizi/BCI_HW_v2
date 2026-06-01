@@ -1,5 +1,5 @@
 {
-    "NES_port": "COM2",
+    "NES_port": "COM16",
     "decoder_port": "COM4",
     "ws_url": "ws://127.0.0.1:8080",
     "log_receive_enabled": true,
@@ -8,13 +8,13 @@
     "swap_screens": false,
     "Countdown_time_minutes": 30,
     "pingpong_interval_sec": 2.0,
-    "decoder_exe": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\16ch_Algorithm\\start_decode.dist\\start_decode.exe",
-    "ssmvep_exe_up": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\ParadigmSmvep\\ParadigmOne.exe",
-    "ssvep_exe_up": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\ParadigmOne\\ParadigmOne.exe",
-    "mi_exe_up": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\ParadigmMI\\ParadigmOne.exe",
-    "ssmvep_exe_down": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\LegParadigmSmvep\\ParadigmOne.exe",
-    "ssvep_exe_down": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\LegParadigmOne\\ParadigmOne.exe",
-    "mi_exe_down": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\LegParadigmMI\\ParadigmOne.exe",
+    "decoder_exe": "runtime/16ch_Algorithm/start_decode.dist/start_decode.exe",
+    "ssmvep_exe_up": "runtime/ParadigmSmvep/ParadigmOne.exe",
+    "ssvep_exe_up": "runtime/ParadigmOne/ParadigmOne.exe",
+    "mi_exe_up": "runtime/ParadigmMI/ParadigmOne.exe",
+    "ssmvep_exe_down": "runtime/LegParadigmSmvep/ParadigmOne.exe",
+    "ssvep_exe_down": "runtime/LegParadigmOne/ParadigmOne.exe",
+    "mi_exe_down": "runtime/LegParadigmMI/ParadigmOne.exe",
     "logging": {
         "level": "INFO",
         "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -26,7 +26,7 @@
             "main": "INFO"
         }
     },
-    "websocket_exe": "D:\\WORK_space\\Code_WS\\code_localized\\BCI_HW_v2\\runtime\\websocket_server\\websocket_server.exe",
+    "websocket_exe": "runtime/websocket_server/websocket_server.exe",
     "hospital_name": "南京市某某医院",
     "department_name": "康复科"
 }
