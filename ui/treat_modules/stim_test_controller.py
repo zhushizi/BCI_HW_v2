@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from PySide6.QtCore import QEvent, QObject, QSize, QTimer
+from PySide6.QtCore import QEvent, QObject, QTimer
 from PySide6.QtGui import QFontMetrics, QIcon, QRegion
 from PySide6.QtWidgets import QComboBox, QMessageBox, QPushButton, QStyleFactory, QVBoxLayout
 
@@ -100,19 +100,22 @@ class StimTestController:
         self._apply_start_test_button_appearance(self._test_running)
         self._refresh_channel_status_labels()
 
-    _START_TEST_PLAY_ICON = ":/set/pic/icon_start.png"
+    # label_69 相对按钮左缘 22px、宽 14px，文字从图标右侧约 4px 起（22+14+4=40）
+    _START_BTN_PADDING_LEFT = 38
+    _START_BTN_QSS_BASE = (
+        "border: none; border-radius: 8px; color: rgba(255, 255, 255, 1); "
+        f"padding-left: {_START_BTN_PADDING_LEFT}px; padding-right: 8px;"
+    )
     _START_BTN_QSS_IDLE = (
-        "QPushButton { background-color: rgba(120, 158, 255, 1); color: rgba(255, 255, 255, 1); "
-        "border: none; border-radius: 8px; padding-left: 12px; padding-right: 12px; }"
-        "QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1); "
-        "border: none; border-radius: 8px; }"
+        f"QPushButton {{ background-color: rgba(120, 158, 255, 1); {_START_BTN_QSS_BASE} }}"
+        f"QPushButton:disabled {{ background-color: #707070; {_START_BTN_QSS_BASE} }}"
     )
     _START_BTN_QSS_RUNNING = (
-        "QPushButton { background-color: #F48438; color: rgba(255, 255, 255, 1); "
-        "border: none; border-radius: 8px; padding-left: 12px; padding-right: 12px; }"
-        "QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1); "
-        "border: none; border-radius: 8px; }"
+        f"QPushButton {{ background-color: #F48438; {_START_BTN_QSS_BASE} }}"
+        f"QPushButton:disabled {{ background-color: #707070; {_START_BTN_QSS_BASE} }}"
     )
+    _START_TEST_ICON_IDLE = ":/set/pic/icon_start.png"
+    _START_TEST_ICON_RUNNING = ":/set/pic/icon_zanting.png"
 
     _CHANNEL_ICON_IDLE = ":/set/pic/icon_elec_hui.png"
     _CHANNEL_ICON_RUNNING = ":/set/pic/icon_elec_lan.png"
@@ -166,42 +169,61 @@ class StimTestController:
             self._apply_stim_combo_layout(combo)
 
     def _ensure_start_test_button_style(self) -> None:
-        """与 main_window.ui 一致：Fusion 样式 + 按钮自带播放图标（弃用 label_69 叠层）。"""
+        """label_69 叠层图标 + QSS 左内边距；勿 setStyle(Fusion)，否则文字会被样式引擎居中。"""
         start_btn = get_ui_attr(self.ui, "pushButton_start_test")
         if not isinstance(start_btn, QPushButton):
             return
-        fusion = QStyleFactory.create("Fusion")
-        if fusion is not None:
-            start_btn.setStyle(fusion)
+        safe_call(self._logger, getattr(start_btn, "setIcon", None), QIcon())
+
+    def _apply_start_test_icon(self, running: bool) -> None:
+        """开始测试显示播放图标，运行中显示暂停图标。"""
         overlay = get_ui_attr(self.ui, "label_69")
-        if overlay is not None:
-            safe_call(self._logger, getattr(overlay, "setVisible", None), False)
+        if overlay is None:
+            return
+        icon_url = self._START_TEST_ICON_RUNNING if running else self._START_TEST_ICON_IDLE
+        safe_call(
+            self._logger,
+            getattr(overlay, "setStyleSheet", None),
+            f"border-image: url({icon_url});",
+        )
+
+    def _raise_start_test_icon(self) -> None:
+        """保证 label_69 叠在按钮之上，避免被 QPushButton 绘制盖住。"""
+        overlay = get_ui_attr(self.ui, "label_69")
+        if overlay is None:
+            return
+        safe_call(self._logger, getattr(overlay, "setVisible", None), True)
+        safe_call(self._logger, getattr(overlay, "raise_", None))
 
     def _apply_start_test_button_appearance(self, running: bool) -> None:
         start_btn = get_ui_attr(self.ui, "pushButton_start_test")
         if not isinstance(start_btn, QPushButton):
             return
         if running:
-            safe_call(self._logger, getattr(start_btn, "setText", None), "停止测试")
-            safe_call(self._logger, getattr(start_btn, "setIcon", None), QIcon())
+            safe_call(
+                self._logger,
+                getattr(start_btn, "setText", None),
+                "停止测试",
+            )
             safe_call(
                 self._logger,
                 getattr(start_btn, "setStyleSheet", None),
                 self._START_BTN_QSS_RUNNING,
             )
         else:
-            safe_call(self._logger, getattr(start_btn, "setText", None), "开始测试")
             safe_call(
                 self._logger,
-                getattr(start_btn, "setIcon", None),
-                QIcon(self._START_TEST_PLAY_ICON),
+                getattr(start_btn, "setText", None),
+                "开始测试",
             )
-            safe_call(self._logger, getattr(start_btn, "setIconSize", None), QSize(14, 16))
             safe_call(
                 self._logger,
                 getattr(start_btn, "setStyleSheet", None),
                 self._START_BTN_QSS_IDLE,
             )
+        safe_call(self._logger, getattr(start_btn, "setIcon", None), QIcon())
+        self._apply_start_test_icon(running)
+        self._raise_start_test_icon()
 
     def _init_left_circle_widget(self) -> None:
         """在 widget_circle_level_left 中放入只读圆环，并裁剪为圆形区域。"""
