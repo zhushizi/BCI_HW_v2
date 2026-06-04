@@ -4,8 +4,8 @@ import logging
 from typing import Optional
 
 from PySide6.QtCore import QEvent, QObject, QTimer
-from PySide6.QtGui import QRegion
-from PySide6.QtWidgets import QMessageBox, QStyleFactory, QVBoxLayout
+from PySide6.QtGui import QFontMetrics, QRegion
+from PySide6.QtWidgets import QComboBox, QMessageBox, QStyleFactory, QVBoxLayout
 
 from ui.dialogs.tips_dialog import TipsDialog
 from ui.widgets.circle_level_widget import CircleLevelWidget
@@ -96,9 +96,43 @@ class StimTestController:
         self._init_left_circle_widget()
         self._init_right_circle_widget()
         self._ensure_stim_combo_arrow_style()
+        self._refresh_channel_status_labels()
+
+    _CHANNEL_ICON_IDLE = ":/set/pic/icon_elec_hui.png"
+    _CHANNEL_ICON_RUNNING = ":/set/pic/icon_elec_lan.png"
+    _CHANNEL_ICON_STIMULATING = ":/set/pic/icon_elec_huang.png"
+
+    _STIM_COMBO_TEXT_ARROW_GAP = 8
+    _STIM_COMBO_DROP_DOWN_WIDTH = 16
+    _STIM_COMBO_STYLE = (
+        "QComboBox { color: #666666; border: none; background: transparent; "
+        "padding-right: 8px; padding-left: 0px; }"
+        "QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; "
+        "width: 16px; border: none; background: transparent; }"
+        "QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); "
+        "width: 12px; height: 12px; }"
+    )
+
+    def _stim_combo_preferred_width(self, combo: QComboBox) -> int:
+        """按最长选项计算宽度，保证文字完整且与箭头保留适度间距。"""
+        fm = QFontMetrics(combo.font())
+        text_w = 0
+        for i in range(combo.count()):
+            text_w = max(text_w, fm.boundingRect(combo.itemText(i)).width())
+        chrome = self._STIM_COMBO_TEXT_ARROW_GAP + self._STIM_COMBO_DROP_DOWN_WIDTH + 10
+        return text_w + chrome
+
+    def _apply_stim_combo_layout(self, combo: QComboBox) -> None:
+        width = self._stim_combo_preferred_width(combo)
+        combo.setMinimumWidth(width)
+        combo.setMaximumWidth(16777215)
+        combo.resize(width, combo.height())
+        view = combo.view()
+        if view is not None:
+            view.setMinimumWidth(width)
 
     def _ensure_stim_combo_arrow_style(self) -> None:
-        """Windows 原生样式会忽略 down-arrow 图片，Fusion 才能显示 combo_triangle_down.png。"""
+        """Windows 原生样式会忽略 down-arrow 图片；宽度按最长项适配，避免文字被裁切。"""
         fusion = QStyleFactory.create("Fusion")
         if fusion is None:
             return
@@ -109,8 +143,11 @@ class StimTestController:
             "comboBox_right_scheme",
         ):
             combo = get_ui_attr(self.ui, name)
-            if combo is not None:
-                combo.setStyle(fusion)
+            if combo is None:
+                continue
+            combo.setStyleSheet(self._STIM_COMBO_STYLE)
+            combo.setStyle(fusion)
+            self._apply_stim_combo_layout(combo)
 
     def _init_left_circle_widget(self) -> None:
         """在 widget_circle_level_left 中放入只读圆环，并裁剪为圆形区域。"""
@@ -190,6 +227,40 @@ class StimTestController:
         self._send_right_channel_params(current_value=0)
         self._save_current_params()
 
+    # ----------------- 通道状态标签（t1=左，t2=右）-----------------
+    def _channel_status_display(self, grade: int) -> tuple[str, str, str]:
+        if not self._test_running:
+            return "未运行", "#999999", self._CHANNEL_ICON_IDLE
+        if grade > 0:
+            return "刺激中", "#F2AD49", self._CHANNEL_ICON_STIMULATING
+        return "运行中", "#789EFF", self._CHANNEL_ICON_RUNNING
+
+    def _apply_channel_status_label(self, status_name: str, icon_name: str, grade: int) -> None:
+        text, color, icon_url = self._channel_status_display(grade)
+        status = get_ui_attr(self.ui, status_name)
+        if status is not None:
+            safe_call(self._logger, getattr(status, "setText", None), text)
+            safe_call(
+                self._logger,
+                getattr(status, "setStyleSheet", None),
+                f"color: {color};",
+            )
+        icon = get_ui_attr(self.ui, icon_name)
+        if icon is not None:
+            safe_call(
+                self._logger,
+                getattr(icon, "setStyleSheet", None),
+                f"border-image: url({icon_url});",
+            )
+
+    def _refresh_channel_status_labels(self) -> None:
+        self._apply_channel_status_label(
+            "label_t1_status", "label_t1_icon", self._get_left_grade()
+        )
+        self._apply_channel_status_label(
+            "label_t2_status", "label_t2_icon", self._get_right_grade()
+        )
+
     # ----------------- UI 状态管理 -----------------
     def _set_default_freq_to_fifth(self) -> None:
         """将左右频率下拉框默认设置为第五档（index=4）"""
@@ -235,6 +306,8 @@ class StimTestController:
             button = get_ui_attr(self.ui, btn_name)
             safe_call(self._logger, getattr(button, "setEnabled", None), self._hardware_online)
 
+        self._refresh_channel_status_labels()
+
     def set_hardware_online(self, is_online: bool) -> None:
         """根据下位机在线状态更新控件可用性"""
         self._hardware_online = bool(is_online)
@@ -245,6 +318,9 @@ class StimTestController:
         enabled = bool(self._hardware_online)
 
         if not enabled:
+            if self._test_running:
+                self._stop_treatment_safe()
+                self._set_running_state(running=False)
             # 离线：重置档位为 0，恢复默认下拉框
             self._set_left_grade(0)
             self._set_right_grade(0)
@@ -346,6 +422,7 @@ class StimTestController:
         self._left_grade = self._normalize_grade(grade)
         if self._left_circle_widget is not None:
             self._left_circle_widget.set_level(self._left_grade)
+        self._apply_channel_status_label("label_t1_status", "label_t1_icon", self._left_grade)
         return self._left_grade
 
     def _get_right_grade(self) -> int:
@@ -357,6 +434,7 @@ class StimTestController:
         self._right_grade = self._normalize_grade(grade)
         if self._right_circle_widget is not None:
             self._right_circle_widget.set_level(self._right_grade)
+        self._apply_channel_status_label("label_t2_status", "label_t2_icon", self._right_grade)
         return self._right_grade
 
     def _send_left_channel_params(self, current_value: int) -> None:
