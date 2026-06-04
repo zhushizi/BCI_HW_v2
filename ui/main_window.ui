@@ -262,7 +262,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -3479,7 +3479,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       </size>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -8442,9 +8442,9 @@ padding: 0px;</string>
       <widget class="QWidget" name="widget_BCIWave" native="true">
        <property name="geometry">
         <rect>
-         <x>630</x>
+         <x>590</x>
          <y>80</y>
-         <width>1241</width>
+         <width>1281</width>
          <height>731</height>
         </rect>
        </property>

@@ -12,6 +12,7 @@ class BCIWaveWidget(QWidget):
     """
     简易 EEG 波形显示控件（多通道叠加分区显示）。
     """
+    PLACEHOLDER_CH_LABELS = ("CH10", "CH12", "CH14")
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -36,11 +37,12 @@ class BCIWaveWidget(QWidget):
         self._last_raw_channel_count: int = 0
 
     def count_visible_eeg_rows(self, eeg_data: Any) -> int:
-        """与 _filter_channels 一致的可视行数（排除 CH 前缀通道），用于侧栏布局。"""
+        """与 _filter_channels 一致的可视行数，用于侧栏布局。"""
         eeg = self._to_2d_array(eeg_data)
         if not eeg:
             return self._last_visible_channel_count
-        return sum(1 for idx in range(len(eeg)) if not self._channel_row_hidden_for_display(idx))
+        real_rows = sum(1 for idx in range(len(eeg)) if not self._channel_row_hidden_for_display(idx))
+        return real_rows + len(self._placeholder_channel_labels())
 
     def set_channel_labels(self, electrodes: Iterable[Any]) -> None:
         """由 decoder.ImpedanceValue 的 electrode 列表设置通道名，顺序与 EEG 通道一致。"""
@@ -74,6 +76,7 @@ class BCIWaveWidget(QWidget):
                 continue
             label = self._channel_label_at(idx)
             out.append(label)
+        out.extend(self._placeholder_channel_labels())
         return out
 
     def paintEvent(self, event) -> None:
@@ -214,6 +217,10 @@ class BCIWaveWidget(QWidget):
     def _channel_row_hidden_for_display(self, idx: int) -> bool:
         return self._is_ch_prefixed_electrode_label(self._channel_label_at(idx))
 
+    def _placeholder_channel_labels(self) -> list[str]:
+        labels = {label.upper() for label in self._channel_labels if label}
+        return [label for label in self.PLACEHOLDER_CH_LABELS if label in labels]
+
     def _filter_channels(self, eeg: list[list[float]]) -> tuple[list[list[float]], list[str]]:
         visible_eeg: list[list[float]] = []
         visible_labels: list[str] = []
@@ -222,4 +229,7 @@ class BCIWaveWidget(QWidget):
                 continue
             visible_eeg.append(samples)
             visible_labels.append(self._channel_label_at(idx))
+        for label in self._placeholder_channel_labels():
+            visible_eeg.append([0.0, 0.0])
+            visible_labels.append(label)
         return visible_eeg, visible_labels
