@@ -3544,36 +3544,35 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <widget class="QPushButton" name="pushButton_next">
        <property name="geometry">
         <rect>
-         <x>970</x>
+         <x>1009</x>
          <y>805</y>
-         <width>242</width>
-         <height>55</height>
+         <width>141</width>
+         <height>50</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
-         <width>242</width>
-         <height>55</height>
+         <width>141</width>
+         <height>50</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>242</width>
-         <height>55</height>
+         <width>141</width>
+         <height>50</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <pointsize>26</pointsize>
+         <pointsize>14</pointsize>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton { background-color: transparent; color: rgba(120, 158, 255, 1); border: 2px solid rgba(120, 158, 255, 1); border-radius: 12.6px; }
-QPushButton:pressed { background-color: rgba(120, 158, 255, 0.12); }
-QPushButton:disabled { color: rgba(120, 158, 255, 0.45); border: 2px solid rgba(120, 158, 255, 0.45); background-color: transparent; }</string>
+        <string notr="true">QPushButton { background-color: rgba(120, 158, 255, 1); color: rgba(255, 255, 255, 1); border-radius: 8px; }
+QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1); border-radius: 8px; }</string>
        </property>
        <property name="text">
-        <string>下一项</string>
+        <string>  下一项</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_left_channel">
@@ -3757,7 +3756,7 @@ QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QComboBox { color: #666666; border: none; background: transparent; padding-right: 10px; }
+        <string notr="true">QComboBox { color: #999999; border: none; background: transparent; padding-right: 10px; }
 QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; width: 14px; border: none; background: transparent; }
 QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 12px; height: 12px; }</string>
        </property>
@@ -3808,7 +3807,7 @@ QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#666666;</string>
+        <string notr="true">color: #999999;</string>
        </property>
        <property name="text">
         <string>处方选择：</string>
@@ -3850,7 +3849,7 @@ QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#666666;</string>
+        <string notr="true">color: #999999;</string>
        </property>
        <property name="text">
         <string>频率选择：</string>
@@ -3953,7 +3952,7 @@ QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QComboBox { color: #666666; border: none; background: transparent; padding-right: 10px; }
+        <string notr="true">QComboBox { color: #999999; border: none; background: transparent; padding-right: 10px; }
 QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: center right; width: 14px; border: none; background: transparent; }
 QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 12px; height: 12px; }</string>
        </property>
@@ -4011,35 +4010,35 @@ QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 
       <widget class="QPushButton" name="pushButton_start_test">
        <property name="geometry">
         <rect>
-         <x>700</x>
+         <x>792</x>
          <y>805</y>
-         <width>242</width>
-         <height>55</height>
+         <width>141</width>
+         <height>50</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
-         <width>242</width>
-         <height>55</height>
+         <width>141</width>
+         <height>50</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>242</width>
-         <height>55</height>
+         <width>141</width>
+         <height>50</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <pointsize>26</pointsize>
+         <pointsize>14</pointsize>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton { background-color: rgba(120, 158, 255, 1); color: rgba(255, 255, 255, 1); border-radius: 12.6px; }
-QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1); border-radius: 12.6px; }</string>
+        <string notr="true">QPushButton { background-color: rgba(120, 158, 255, 1); color: rgba(255, 255, 255, 1); border-radius: 8px; }
+QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1); border-radius: 8px; }</string>
        </property>
        <property name="text">
-        <string>开始测试</string>
+        <string>    开始测试</string>
        </property>
       </widget>
       <widget class="QWidget" name="widget_circle_level_left" native="true">
@@ -4551,6 +4550,62 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
         <string/>
        </property>
       </widget>
+      <widget class="QLabel" name="label_69">
+       <property name="geometry">
+        <rect>
+         <x>814</x>
+         <y>822</y>
+         <width>14</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>14</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>14</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_start.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_70">
+       <property name="geometry">
+        <rect>
+         <x>1037</x>
+         <y>822</y>
+         <width>14</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>14</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>14</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_next.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
       <zorder>label_3</zorder>
       <zorder>label_20</zorder>
       <zorder>label_6</zorder>
@@ -4587,6 +4642,8 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
       <zorder>label_71</zorder>
       <zorder>label_t2_status</zorder>
       <zorder>label_t2_icon</zorder>
+      <zorder>label_69</zorder>
+      <zorder>label_70</zorder>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">

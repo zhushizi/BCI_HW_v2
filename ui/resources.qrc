@@ -157,5 +157,7 @@
         <file>pic/icon_elec_hui.png</file>
         <file>pic/icon_elec_lan.png</file>
         <file>pic/icon_elec_huang.png</file>
+        <file>pic/icon_start.png</file>
+        <file>pic/icon_next.png</file>
     </qresource>
 </RCC>
