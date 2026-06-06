@@ -49,6 +49,24 @@ def get_bundle_root() -> Path:
     return get_project_root()
 
 
+LOCAL_LOGIN_FLAG_FILENAME = "local_login_initialized.flag"
+
+
+def get_writable_config_dir() -> Path:
+    """本机可写配置目录（开发时为仓库 infrastructure/config，打包后为 exe 旁同路径）。"""
+    if not getattr(sys, "frozen", False):
+        config_dir = get_project_root() / "infrastructure" / "config"
+    else:
+        config_dir = Path(sys.executable).resolve().parent / "infrastructure" / "config"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    return config_dir
+
+
+def get_local_login_flag_path() -> Path:
+    """本机首次登录标记文件，存在则表示已在本机完成过首次登录提醒。"""
+    return get_writable_config_dir() / LOCAL_LOGIN_FLAG_FILENAME
+
+
 def get_config_file_path() -> Path:
     """配置文件路径；打包后优先使用包内（_MEIPASS/_internal）配置，不自动外拷。"""
     dev_path = get_project_root() / "infrastructure" / "config" / "config.json"

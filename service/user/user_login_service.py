@@ -14,6 +14,7 @@ from typing import Optional, Dict, Any, Tuple
 from pathlib import Path
 import logging
 
+from infrastructure.app_paths import get_local_login_flag_path
 from infrastructure.data import DatabaseService
 
 INVALID_CREDENTIALS_MESSAGE = "用户名或者密码不正确"
@@ -267,6 +268,21 @@ class UserLoginService:
     def save_username(self, username: str) -> None:
         """保存上次登录的用户名"""
         self._credential_store.save_username(username)
+
+    def should_show_password_change_reminder(self) -> bool:
+        """本机尚未完成首次登录初始化时，需要提示修改默认密码。"""
+        return not get_local_login_flag_path().is_file()
+
+    def mark_local_login_initialized(self) -> bool:
+        """登录成功后写入本机首次登录标记（仅提醒一次）。"""
+        flag_path = get_local_login_flag_path()
+        try:
+            flag_path.parent.mkdir(parents=True, exist_ok=True)
+            flag_path.write_text("1\n", encoding="utf-8")
+            return True
+        except Exception as e:
+            self.logger.warning("创建本机登录标记失败: %s", e)
+            return False
 
     def _build_config_path(self) -> Path:
         home_dir = Path.home()

@@ -18,6 +18,7 @@ sys.path.insert(0, str(project_root))
 # 日志由 main() 内根据 config 统一配置，见 infrastructure.logging_config
 logger = logging.getLogger(__name__)
 
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QGuiApplication
 from ui.core.app_icon import apply_application_icon
@@ -435,6 +436,7 @@ def run_login_flow(
         main_window.logout_requested.connect(on_logout)
         main_window.showFullScreen()
         set_window_on_screen(main_window, main_screen)
+        QTimer.singleShot(0, main_window.maybe_show_password_change_reminder)
 
     def on_login_cancelled() -> None:
         sys.exit(0)

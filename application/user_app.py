@@ -72,6 +72,14 @@ class UserApp:
     def save_username(self, username: str) -> None:
         """保存上次登录的用户名"""
         self.user_service.save_username(username)
+
+    def should_show_password_change_reminder(self) -> bool:
+        """本机首次登录时返回 True，用于提示修改默认密码。"""
+        return self.user_service.should_show_password_change_reminder()
+
+    def mark_local_login_initialized(self) -> bool:
+        """写入本机首次登录标记，确保密码修改提醒只出现一次。"""
+        return self.user_service.mark_local_login_initialized()
     
     def get_user_by_id(self, user_id: int) -> Optional[dict]:
         """根据ID获取用户信息"""

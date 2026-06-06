@@ -261,6 +261,26 @@ class MainWindow(QWidget):
         """切换顶级标签页 (0=治疗, 1=患者, 2=方案, 3=设置)"""
         self._nav.switch_tab(tab_index)
 
+    def open_password_change_page(self) -> None:
+        """跳转到设置页中的账号密码修改子页。"""
+        self._nav.switch_tab(3)
+        tab_set = get_ui_attr(self.ui, "tabWidget_set")
+        safe_call(self.logger, getattr(tab_set, "setCurrentIndex", None), 1)
+
+    def maybe_show_password_change_reminder(self) -> None:
+        """本机首次登录成功后提示修改默认密码（每台机器仅提醒一次）。"""
+        if not self.user_app.should_show_password_change_reminder():
+            return
+        if not self.user_app.mark_local_login_initialized():
+            return
+        if TipsDialog.show_confirm(
+            self,
+            "系统默认密码等级过低，建议修改密码！",
+            confirm_text="修改",
+            cancel_text="取消",
+        ):
+            self.open_password_change_page()
+
     def _on_tab_changed(self, index: int):
         self._nav.on_tab_changed(index)
 

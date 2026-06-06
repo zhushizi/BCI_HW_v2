@@ -70,7 +70,18 @@ class TipsDialog(OverlayDialog):
         d.exec()
 
     @staticmethod
-    def show_confirm(parent=None, message: str = "") -> bool:
-        """显示双按钮确认框（否+确定），使用 tips.ui。返回 True 表示点击「确定」，False 表示「否」或关闭。"""
+    def show_confirm(
+        parent=None,
+        message: str = "",
+        confirm_text: str = "确定",
+        cancel_text: str = "否",
+    ) -> bool:
+        """显示双按钮确认框，使用 tips.ui。返回 True 表示点击确认按钮，False 表示取消或关闭。"""
         d = TipsDialog(parent, message=message, question=True)
+        cancel_btn = get_ui_attr(d.ui, "pushButton_cancel")
+        confirm_btn = get_ui_attr(d.ui, "pushButton_confirm")
+        if cancel_btn is not None:
+            cancel_btn.setText(str(cancel_text or "否"))
+        if confirm_btn is not None:
+            confirm_btn.setText(str(confirm_text or "确定"))
         return d.exec() == QDialog.DialogCode.Accepted

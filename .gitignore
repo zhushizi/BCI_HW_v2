@@ -10,6 +10,9 @@ db/ReactionTimeCurve/
 # Local IDE settings
 .idea/
 
+# Per-machine first-login marker (infrastructure/config/)
+infrastructure/config/local_login_initialized.flag
+
 # Bundled paradigm / Unity runtimes (large binaries, local deploy only)
 runtime/
 
