@@ -31,6 +31,16 @@ class TrainingMainController:
     _START_STOP_QSS_PAUSE = (
         "background: #F2AD49; color: #FFFFFF; border: none; border-radius: 8px;"
     )
+    _START_STOP_QSS_DISABLED = (
+        "background: #B0B0B0; color: #FFFFFF; border: none; border-radius: 8px;"
+    )
+    _SHUT_DOWN_QSS_NORMAL = (
+        "background: #FFFFFF; color: #FF7B71; border: 1px solid #FF7B71; border-radius: 8px;"
+    )
+    _SHUT_DOWN_QSS_DISABLED = (
+        "background: #E0E0E0; color: #A0A0A0; border: 1px solid #C0C0C0; border-radius: 8px;"
+    )
+    _ENTER_COOLDOWN_MS = 2000
     _START_STOP_ICON_START = ":/set/pic/icon_start.png"
     _START_STOP_ICON_PAUSE = ":/set/pic/icon_zanting.png"
     _START_STOP_ICON_SIZE_START = (14, 16)
@@ -76,6 +86,9 @@ class TrainingMainController:
         self._last_session_id: Optional[int] = None
         self._countdown_timer = QTimer()
         self._countdown_timer.timeout.connect(self._tick_countdown)
+        self._enter_cooldown_timer = QTimer()
+        self._enter_cooldown_timer.setSingleShot(True)
+        self._enter_cooldown_timer.timeout.connect(self._on_enter_cooldown_finished)
         self._countdown_remaining = 0
         self._countdown_total = 0
         self._pretrain_full_completed = False  # decoder.Inform pretrain=pretrain_full_completed 后为 True
@@ -121,6 +134,7 @@ class TrainingMainController:
             self._pretrain_full_completed = False
             self._has_sent_paradigm_shut_down = False
         self._refresh_info_panel()
+        self._start_enter_cooldown()
 
     def set_pretrain_full_completed(self) -> None:
         """收到 decoder.Inform pretrain=pretrain_full_completed 时调用（SSMVEP/MI 可暂停）。"""
@@ -133,7 +147,38 @@ class TrainingMainController:
         self._reaction_time_points = []
         self._last_session_id = None
         self.stop_countdown()
+        if self._enter_cooldown_timer.isActive():
+            self._enter_cooldown_timer.stop()
+        self._set_training_action_buttons_enabled(True)
         return
+
+    def _start_enter_cooldown(self) -> None:
+        """进入训练模式后，开始/结束按钮置灰 2s。"""
+        if self._enter_cooldown_timer.isActive():
+            self._enter_cooldown_timer.stop()
+        self._set_training_action_buttons_enabled(False)
+        self._enter_cooldown_timer.start(self._ENTER_COOLDOWN_MS)
+
+    def _on_enter_cooldown_finished(self) -> None:
+        self._set_training_action_buttons_enabled(True)
+
+    def _set_training_action_buttons_enabled(self, enabled: bool) -> None:
+        start_stop_btn = get_ui_attr(self.ui, "pushButton_start_stop")
+        shut_down_btn = get_ui_attr(self.ui, "pushButton_paradigm_shut_down")
+        if start_stop_btn:
+            safe_call(self._logger, getattr(start_stop_btn, "setEnabled", None), enabled)
+            if enabled:
+                if "暂停" in (start_stop_btn.text() or ""):
+                    start_stop_btn.setStyleSheet(self._START_STOP_QSS_PAUSE)
+                else:
+                    start_stop_btn.setStyleSheet(self._START_STOP_QSS_START)
+            else:
+                start_stop_btn.setStyleSheet(self._START_STOP_QSS_DISABLED)
+        if shut_down_btn:
+            safe_call(self._logger, getattr(shut_down_btn, "setEnabled", None), enabled)
+            shut_down_btn.setStyleSheet(
+                self._SHUT_DOWN_QSS_NORMAL if enabled else self._SHUT_DOWN_QSS_DISABLED
+            )
 
     def shutdown_paradigm_on_manual_exit(self) -> None:
         """手动退出治疗流程时关闭范式（若本 session 尚未发送 paradigm.shut_down）。"""
