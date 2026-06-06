@@ -262,7 +262,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -850,9 +850,9 @@ border-radius: 8px;</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>70</y>
+         <y>80</y>
          <width>301</width>
-         <height>841</height>
+         <height>851</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -1830,7 +1830,7 @@ padding-bottom: 3px;
         <string notr="true">
 QLabel#label_search_2 {
 	background-color: #DDDDDD;
-	border-radius: 24.37px;
+	border-radius: 8px;
 	color: #DDDDDD;
 }</string>
        </property>
@@ -2139,13 +2139,15 @@ QWidget#tab_set_other {
 }
 QTabBar::tab {
     min-width: 110px;
-    height: 34px;
+    height: 36px;
     margin-right: 10px;
     padding: 0 16px;
     border: 1px solid transparent;
     border-radius: 6px;
     background: transparent;
     color: #4A4A4A;
+    font-size: 14px;
+    font-weight: bold;
 }
 QTabBar::tab:selected {
     background: #789EFF;
@@ -2157,7 +2159,7 @@ QTabBar::tab:hover:!selected {
 }</string>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_set_system">
         <attribute name="title">
@@ -2320,7 +2322,7 @@ QTabBar::tab:hover:!selected {
           <string notr="true">color: #4A4A4A;</string>
          </property>
          <property name="text">
-          <string>南京华伟智脑康联科技有限公司对本软件拥有一切法定权利、所有权和利益，严禁对本软件进行各种形式的复制和修改，违者将追究其法律责任。最终解释权归南京华伟华智脑康联科技有限公司所有。</string>
+          <string>南京华伟智脑康联科技有限公司对本软件拥有一切法定权利、所有权和利益，严禁对本软件进行各种形式的复制和修改，违者将追究其法律责任。最终解释权归南京华伟智脑康联科技有限公司所有。</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -2788,14 +2790,14 @@ font-weight: 600;</string>
             <height>36</height>
            </rect>
           </property>
-          <property name="maxLength">
-           <number>18</number>
-          </property>
           <property name="styleSheet">
            <string notr="true">background: #F7F8FC;
 border: 1px solid #EEF1F5;
 border-radius: 8px;
 padding-left: 12px;</string>
+          </property>
+          <property name="maxLength">
+           <number>18</number>
           </property>
           <property name="placeholderText">
            <string>医院名称</string>
@@ -2826,14 +2828,14 @@ padding-left: 12px;</string>
             <height>36</height>
            </rect>
           </property>
-          <property name="maxLength">
-           <number>9</number>
-          </property>
           <property name="styleSheet">
            <string notr="true">background: #F7F8FC;
 border: 1px solid #EEF1F5;
 border-radius: 8px;
 padding-left: 12px;</string>
+          </property>
+          <property name="maxLength">
+           <number>9</number>
           </property>
           <property name="placeholderText">
            <string>科室名称</string>
@@ -3486,7 +3488,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -4742,7 +4744,7 @@ border: none;
 border-radius: 8px;</string>
        </property>
        <property name="text">
-        <string>开始评估</string>
+        <string>     开始评估</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_Electrode_P7">
@@ -8287,6 +8289,34 @@ padding: 0px;</string>
         <string/>
        </property>
       </widget>
+      <widget class="QLabel" name="label_72">
+       <property name="geometry">
+        <rect>
+         <x>911</x>
+         <y>803</y>
+         <width>14</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>14</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>14</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/set/pic/icon_start.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
       <zorder>label_21</zorder>
       <zorder>label_19</zorder>
       <zorder>label_18</zorder>
@@ -8377,6 +8407,7 @@ padding: 0px;</string>
       <zorder>label_Electrode_PO8</zorder>
       <zorder>label_Electrode_PO2</zorder>
       <zorder>label_Electrode_PO4</zorder>
+      <zorder>label_72</zorder>
      </widget>
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
@@ -8948,29 +8979,29 @@ padding: 0px;</string>
         <rect>
          <x>1070</x>
          <y>830</y>
-         <width>180</width>
+         <width>141</width>
          <height>50</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
-         <width>180</width>
+         <width>141</width>
          <height>50</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>180</width>
+         <width>141</width>
          <height>50</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <pointsize>16</pointsize>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">border-image: url(:/treat/pic/treat_start.png);color: #ffffff;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>          开始</string>
@@ -8981,29 +9012,29 @@ padding: 0px;</string>
         <rect>
          <x>1280</x>
          <y>830</y>
-         <width>180</width>
+         <width>141</width>
          <height>50</height>
         </rect>
        </property>
        <property name="minimumSize">
         <size>
-         <width>180</width>
+         <width>141</width>
          <height>50</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>180</width>
+         <width>141</width>
          <height>50</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <pointsize>16</pointsize>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">border-image: url(:/treat/pic/treat_shut.png); color: #ffffff;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>          结束</string>
