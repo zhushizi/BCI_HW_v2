@@ -135,6 +135,17 @@ class TrainingMainController:
         self.stop_countdown()
         return
 
+    def shutdown_paradigm_on_manual_exit(self) -> None:
+        """手动退出治疗流程时关闭范式（若本 session 尚未发送 paradigm.shut_down）。"""
+        if self._has_sent_paradigm_shut_down:
+            self._set_start_stop_to_start_state()
+            return
+        if self.training_flow_app:
+            self.training_flow_app.notify_shut_down()
+        self._has_sent_paradigm_shut_down = True
+        self.stop_countdown()
+        self._set_start_stop_to_start_state()
+
     def _refresh_info_panel(self) -> None:
         patient = None
         if self.patient_app and self._current_patient_id:
@@ -432,10 +443,7 @@ class TrainingMainController:
             return
         if not TipsDialog.show_confirm(self.ui.window() if self.ui else None, "本次训练未完成确定退出吗"):
             return
-        if self.training_flow_app:
-            self.training_flow_app.notify_shut_down()
-        self._has_sent_paradigm_shut_down = True
-        self._set_start_stop_to_start_state()
+        self.shutdown_paradigm_on_manual_exit()
         if callable(self._on_shut_down_return_home):
             self._on_shut_down_return_home()
 

@@ -124,6 +124,17 @@ class TreatPageController:
         self.training_main_ctrl.on_exit()
         # 副屏不一定要退出；这里只保留占位
 
+    def shutdown_paradigm_on_manual_exit(self) -> None:
+        """确认退出治疗流程时：关闭范式并切回副屏欢迎页。"""
+        try:
+            self.training_main_ctrl.shutdown_paradigm_on_manual_exit()
+        except Exception:
+            self._logger.exception("关闭范式失败")
+        try:
+            self.training_sub_ctrl.show_welcome_tab()
+        except Exception:
+            self._logger.exception("副屏切回欢迎页失败")
+
     # ---------- 内部事件（导航/编排） ----------
     def _on_preprocess_next(self) -> None:
         """预处理页：下一步，进入 tabWidget_2 的第二页（脑阻抗测试）"""

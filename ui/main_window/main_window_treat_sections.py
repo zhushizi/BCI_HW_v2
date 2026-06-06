@@ -54,6 +54,7 @@ class TreatSessionGuard:
         parent = self._host.ui.window() if self._host.ui else None
         if not TipsDialog.show_confirm(parent, "本次治疗还未完成，确认退出？"):
             return False
+        self._host.shutdown_paradigm_on_manual_exit()
         self._host.session_app.end_session("manual_exit")
         return True
 
