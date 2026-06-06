@@ -65,6 +65,8 @@
         <file>pic/main_tips_logo.png</file>
         <file>pic/main_report_on.png</file>
         <file>pic/main_report_off.png</file>
+        <file>pic/icon_dialog_gantan.png</file>
+        <file>pic/icon_dialog_chengong.png</file>
 
     </qresource>
 

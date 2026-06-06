@@ -1,13 +1,15 @@
 """
-提示框对话框：单按钮用 tips_sigle.ui，双按钮（否+确定）用 tips.ui。
+提示框对话框：单按钮用 tips_sigle.ui，双按钮（取消+确认）用 tips.ui。
 """
 
 from __future__ import annotations
 
 import logging
+from enum import Enum
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QFile, QIODevice
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QDialog, QVBoxLayout
 from PySide6.QtUiTools import QUiLoader
 
@@ -16,14 +18,39 @@ from ui.core.resource_loader import ensure_resources_loaded
 from ui.core.utils import get_ui_attr, safe_connect
 
 UI_ROOT = Path(__file__).resolve().parents[1]
-UI_PATH_SINGLE = UI_ROOT / "tips_sigle.ui"   # 仅「确定」
-UI_PATH_QUESTION = UI_ROOT / "tips.ui"       # 「否」+「确定」
+UI_PATH_SINGLE = UI_ROOT / "tips_sigle.ui"   # 仅「确认」
+UI_PATH_QUESTION = UI_ROOT / "tips.ui"       # 「取消」+「确认」
+
+ICON_GANTAN = ":/main/pic/icon_dialog_gantan.png"
+ICON_CHENGGONG = ":/main/pic/icon_dialog_chengong.png"
+
+
+class TipsIconType(Enum):
+    """提示弹窗图标类型。"""
+
+    WARNING = "warning"
+    SUCCESS = "success"
+
+
+def _resolve_icon_type(message: str, success: bool | None) -> TipsIconType:
+    if success is not None:
+        return TipsIconType.SUCCESS if success else TipsIconType.WARNING
+    if "成功" in str(message or ""):
+        return TipsIconType.SUCCESS
+    return TipsIconType.WARNING
 
 
 class TipsDialog(OverlayDialog):
-    """单按钮提示用 tips_sigle.ui，双按钮确认用 tips.ui，无顶栏，pushButton_close 关闭。"""
+    """单按钮提示用 tips_sigle.ui，双按钮确认用 tips.ui。"""
 
-    def __init__(self, parent=None, message: str = "", question: bool = False):
+    def __init__(
+        self,
+        parent=None,
+        message: str = "",
+        question: bool = False,
+        success: bool | None = None,
+        title: str = "提示",
+    ):
         super().__init__(parent)
         ensure_resources_loaded()
         self._logger = logging.getLogger(__name__)
@@ -51,37 +78,69 @@ class TipsDialog(OverlayDialog):
             if cancel_btn is not None:
                 safe_connect(self._logger, getattr(cancel_btn, "clicked", None), self.reject)
             safe_connect(self._logger, getattr(confirm_btn, "clicked", None), self.accept)
+            self.set_icon(TipsIconType.WARNING)
         else:
             safe_connect(self._logger, getattr(confirm_btn, "clicked", None), self.reject)
+            self.set_icon(_resolve_icon_type(message, success))
 
+        self.set_title(title)
         self.set_message(message)
+
+    def set_title(self, text: str) -> None:
+        title_label = get_ui_attr(self.ui, "label_title")
+        if title_label is not None:
+            title_label.setText(str(text or "提示"))
 
     def set_message(self, text: str) -> None:
         msg_label = get_ui_attr(self.ui, "label_message")
         if msg_label is not None:
             msg_label.setText(str(text or ""))
 
+    def set_icon(self, icon_type: TipsIconType) -> None:
+        icon_label = get_ui_attr(self.ui, "label_icon")
+        if icon_label is None:
+            return
+        icon_path = ICON_CHENGGONG if icon_type == TipsIconType.SUCCESS else ICON_GANTAN
+        pixmap = QPixmap(icon_path)
+        if pixmap.isNull():
+            self._logger.warning("提示弹窗图标加载失败: %s", icon_path)
+            return
+        icon_label.setStyleSheet("")
+        icon_label.setPixmap(
+            pixmap.scaled(
+                55,
+                55,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            )
+        )
+        icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
     @staticmethod
-    def show_tips(parent=None, message: str = "", title: str = "") -> None:
-        """显示单按钮提示框（点击确定/关闭后返回）。"""
-        d = TipsDialog(parent, message=message, question=False)
-        if title:
-            d.setWindowTitle(title)
+    def show_tips(
+        parent=None,
+        message: str = "",
+        title: str = "提示",
+        success: bool | None = None,
+    ) -> None:
+        """显示单按钮提示框（点击确认/关闭后返回）。"""
+        d = TipsDialog(parent, message=message, question=False, success=success, title=title)
         d.exec()
 
     @staticmethod
     def show_confirm(
         parent=None,
         message: str = "",
-        confirm_text: str = "确定",
-        cancel_text: str = "否",
+        confirm_text: str = "确认",
+        cancel_text: str = "取消",
+        title: str = "提示",
     ) -> bool:
         """显示双按钮确认框，使用 tips.ui。返回 True 表示点击确认按钮，False 表示取消或关闭。"""
-        d = TipsDialog(parent, message=message, question=True)
+        d = TipsDialog(parent, message=message, question=True, title=title)
         cancel_btn = get_ui_attr(d.ui, "pushButton_cancel")
         confirm_btn = get_ui_attr(d.ui, "pushButton_confirm")
         if cancel_btn is not None:
-            cancel_btn.setText(str(cancel_text or "否"))
+            cancel_btn.setText(str(cancel_text or "取消"))
         if confirm_btn is not None:
-            confirm_btn.setText(str(confirm_text or "确定"))
+            confirm_btn.setText(str(confirm_text or "确认"))
         return d.exec() == QDialog.DialogCode.Accepted
