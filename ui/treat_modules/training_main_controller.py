@@ -25,6 +25,17 @@ class TrainingMainController:
     需要负责显示脑电波形13个通道
     """
 
+    _START_STOP_QSS_START = (
+        "background: #789EFF; color: #FFFFFF; border: none; border-radius: 8px;"
+    )
+    _START_STOP_QSS_PAUSE = (
+        "background: #F2AD49; color: #FFFFFF; border: none; border-radius: 8px;"
+    )
+    _START_STOP_ICON_START = ":/set/pic/icon_start.png"
+    _START_STOP_ICON_PAUSE = ":/set/pic/icon_zanting.png"
+    _START_STOP_ICON_SIZE_START = (14, 16)
+    _START_STOP_ICON_SIZE_PAUSE = (11, 16)
+
     def __init__(
         self,
         ui,
@@ -334,12 +345,30 @@ class TrainingMainController:
         self._countdown_remaining -= 1
         self._update_countdown_label()
 
+    def _apply_start_stop_icon(self, running: bool) -> None:
+        """开始状态显示播放图标，运行中显示暂停图标。"""
+        label = get_ui_attr(self.ui, "label_73")
+        if label is None:
+            return
+        icon_url = self._START_STOP_ICON_PAUSE if running else self._START_STOP_ICON_START
+        width, height = (
+            self._START_STOP_ICON_SIZE_PAUSE if running else self._START_STOP_ICON_SIZE_START
+        )
+        safe_call(
+            self._logger,
+            getattr(label, "setStyleSheet", None),
+            f"border-image: url({icon_url});",
+        )
+        safe_call(self._logger, getattr(label, "setMinimumSize", None), width, height)
+        safe_call(self._logger, getattr(label, "setMaximumSize", None), width, height)
+
     def _set_start_stop_to_start_state(self) -> None:
         """将开始/暂停按钮设为「开始」状态（倒计时完成或停止时）。"""
         start_stop_btn = get_ui_attr(self.ui, "pushButton_start_stop")
         if start_stop_btn:
-            start_stop_btn.setStyleSheet("border-image: url(:/treat/pic/treat_start.png); color: #ffffff;")
-            start_stop_btn.setText("          开始")
+            start_stop_btn.setStyleSheet(self._START_STOP_QSS_START)
+            start_stop_btn.setText("        开始")
+        self._apply_start_stop_icon(running=False)
 
     def _show_countdown_finished_dialog(self) -> None:
         """倒计时结束时弹窗（tips.ui）：本次训练结束，是否返回主页面。确定：返回主页面，否：留在当前页。"""
@@ -381,13 +410,15 @@ class TrainingMainController:
                     TipsDialog.show_tips(self.ui, message or "预训练未完成无法暂停")
                     return
             self.pause_countdown()
-            start_stop_btn.setStyleSheet("border-image: url(:/treat/pic/treat_start.png); color: #ffffff;")
-            start_stop_btn.setText("          开始")
+            start_stop_btn.setStyleSheet(self._START_STOP_QSS_START)
+            start_stop_btn.setText("        开始")
+            self._apply_start_stop_icon(running=False)
             if self.training_flow_app:
                 self.training_flow_app.notify_pause()
         else:
-            start_stop_btn.setStyleSheet("border-image: url(:/treat/pic/treat_pause.png); color: #ffffff;")
-            start_stop_btn.setText("          暂停")
+            start_stop_btn.setStyleSheet(self._START_STOP_QSS_PAUSE)
+            start_stop_btn.setText("        暂停")
+            self._apply_start_stop_icon(running=True)
             self.start_countdown()
             if self.training_flow_app:
                 self.training_flow_app.notify_start()

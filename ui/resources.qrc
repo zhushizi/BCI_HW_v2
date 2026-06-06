@@ -160,5 +160,7 @@
         <file>pic/icon_start.png</file>
         <file>pic/icon_next.png</file>
         <file>pic/icon_zanting.png</file>
+        <file>pic/icon_shut_paradigm.png</file>
+        
     </qresource>
 </RCC>
