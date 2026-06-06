@@ -262,7 +262,7 @@ QTabWidget#tabWidget_main QTabBar::tab {
 }</string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -345,7 +345,7 @@ QTabWidget#tabWidget QTabBar::tab {
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -2788,6 +2788,9 @@ font-weight: 600;</string>
             <height>36</height>
            </rect>
           </property>
+          <property name="maxLength">
+           <number>18</number>
+          </property>
           <property name="styleSheet">
            <string notr="true">background: #F7F8FC;
 border: 1px solid #EEF1F5;
@@ -2822,6 +2825,9 @@ padding-left: 12px;</string>
             <width>320</width>
             <height>36</height>
            </rect>
+          </property>
+          <property name="maxLength">
+           <number>9</number>
           </property>
           <property name="styleSheet">
            <string notr="true">background: #F7F8FC;
@@ -3351,7 +3357,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
        <x>29</x>
        <y>860</y>
        <width>111</width>
-       <height>20</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -3367,9 +3373,9 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
     <widget class="QLabel" name="label_department">
      <property name="geometry">
       <rect>
-       <x>39</x>
-       <y>890</y>
-       <width>91</width>
+       <x>30</x>
+       <y>910</y>
+       <width>111</width>
        <height>20</height>
       </rect>
      </property>
@@ -3489,7 +3495,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>12</x>
+         <x>20</x>
          <y>0</y>
          <width>1881</width>
          <height>901</height>
@@ -3546,7 +3552,7 @@ border-image: url(:/main/pic/main_patient_off.png);</string>
        <property name="geometry">
         <rect>
          <x>1009</x>
-         <y>813</y>
+         <y>820</y>
          <width>141</width>
          <height>50</height>
         </rect>
@@ -4012,7 +4018,7 @@ QComboBox::down-arrow { image: url(:/treat/pic/combo_triangle_down.png); width: 
        <property name="geometry">
         <rect>
          <x>792</x>
-         <y>813</y>
+         <y>820</y>
          <width>141</width>
          <height>50</height>
         </rect>
@@ -4451,7 +4457,7 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
        <property name="geometry">
         <rect>
          <x>326</x>
-         <y>707</y>
+         <y>706</y>
          <width>41</width>
          <height>20</height>
         </rect>
@@ -4570,7 +4576,7 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
        <property name="geometry">
         <rect>
          <x>814</x>
-         <y>830</y>
+         <y>838</y>
          <width>14</width>
          <height>16</height>
         </rect>
@@ -4598,7 +4604,7 @@ QPushButton:disabled { background-color: #707070; color: rgba(255, 255, 255, 1);
        <property name="geometry">
         <rect>
          <x>1037</x>
-         <y>830</y>
+         <y>837</y>
          <width>14</width>
          <height>16</height>
         </rect>
