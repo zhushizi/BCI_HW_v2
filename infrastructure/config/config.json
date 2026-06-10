@@ -1,5 +1,5 @@
 {
-    "NES_port": "COM2",
+    "NES_port": "COM16",
     "decoder_port": "COM4",
     "ws_url": "ws://127.0.0.1:8080",
     "log_receive_enabled": true,
@@ -27,6 +27,6 @@
         }
     },
     "websocket_exe": "runtime/websocket_server/websocket_server.exe",
-    "hospital_name": "撒规划分局凯撒黑客技术医院",
-    "department_name": "1111z1"
+    "hospital_name": "撒规划分局凯撒黑客技术医院发撒打发士",
+    "department_name": "1111z1撒旦发"
 }

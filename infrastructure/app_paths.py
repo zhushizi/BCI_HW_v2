@@ -50,21 +50,33 @@ def get_bundle_root() -> Path:
 
 
 LOCAL_LOGIN_FLAG_FILENAME = "local_login_initialized.flag"
+USER_DATA_DIR_NAME = ".bci_hw"
 
 
-def get_writable_config_dir() -> Path:
-    """本机可写配置目录（开发时为仓库 infrastructure/config，打包后为 exe 旁同路径）。"""
-    if not getattr(sys, "frozen", False):
-        config_dir = get_project_root() / "infrastructure" / "config"
-    else:
-        config_dir = Path(sys.executable).resolve().parent / "infrastructure" / "config"
-    config_dir.mkdir(parents=True, exist_ok=True)
-    return config_dir
+def _legacy_local_login_flag_path() -> Path:
+    """旧版打包后在 exe 旁写入的标记路径（仅兼容读取）。"""
+    return Path(sys.executable).resolve().parent / "infrastructure" / "config" / LOCAL_LOGIN_FLAG_FILENAME
 
 
 def get_local_login_flag_path() -> Path:
-    """本机首次登录标记文件，存在则表示已在本机完成过首次登录提醒。"""
-    return get_writable_config_dir() / LOCAL_LOGIN_FLAG_FILENAME
+    """
+    本机首次登录标记文件，存在则表示已在本机完成过首次登录提醒。
+
+    开发：infrastructure/config/local_login_initialized.flag
+    打包：用户目录 ~/.bci_hw/local_login_initialized.flag（与登录凭据同目录，不在 exe 旁建 infrastructure）
+    """
+    if not getattr(sys, "frozen", False):
+        return get_project_root() / "infrastructure" / "config" / LOCAL_LOGIN_FLAG_FILENAME
+    return Path.home() / USER_DATA_DIR_NAME / LOCAL_LOGIN_FLAG_FILENAME
+
+
+def local_login_flag_exists() -> bool:
+    """检查本机是否已有首次登录标记（含旧版 exe 旁路径）。"""
+    if get_local_login_flag_path().is_file():
+        return True
+    if getattr(sys, "frozen", False):
+        return _legacy_local_login_flag_path().is_file()
+    return False
 
 
 def get_config_file_path() -> Path:

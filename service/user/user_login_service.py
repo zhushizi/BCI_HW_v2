@@ -14,7 +14,7 @@ from typing import Optional, Dict, Any, Tuple
 from pathlib import Path
 import logging
 
-from infrastructure.app_paths import get_local_login_flag_path
+from infrastructure.app_paths import get_local_login_flag_path, local_login_flag_exists
 from infrastructure.data import DatabaseService
 
 INVALID_CREDENTIALS_MESSAGE = "用户名或者密码不正确"
@@ -271,7 +271,7 @@ class UserLoginService:
 
     def should_show_password_change_reminder(self) -> bool:
         """本机尚未完成首次登录初始化时，需要提示修改默认密码。"""
-        return not get_local_login_flag_path().is_file()
+        return not local_login_flag_exists()
 
     def mark_local_login_initialized(self) -> bool:
         """登录成功后写入本机首次登录标记（仅提醒一次）。"""
