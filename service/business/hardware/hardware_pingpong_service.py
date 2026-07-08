@@ -155,13 +155,17 @@ class HardwarePingPongService:
                 self._recv_buffer.pop(0)
                 continue
             frame = bytes(self._recv_buffer[:HeartbeatFrame.FRAME_SIZE])
-            if not HeartbeatFrame.is_heartbeat_request(frame, self.logger):
-                self._recv_buffer.pop(0)
+            if HeartbeatFrame.is_heartbeat_request(frame, self.logger):
+                del self._recv_buffer[:HeartbeatFrame.FRAME_SIZE]
+                self._last_heartbeat_ts = self._now()
+                self._update_status(status=HeartbeatStatus.ONLINE, last_seen_sec=0.0)
+                self.logger.debug("收到下位机心跳包（仅刷新在线状态）")
                 continue
-            del self._recv_buffer[:HeartbeatFrame.FRAME_SIZE]
-            self._last_heartbeat_ts = self._now()
-            self._update_status(status=HeartbeatStatus.ONLINE, last_seen_sec=0.0)
-            self.logger.debug("收到下位机心跳包（仅刷新在线状态）")
+            if HeartbeatFrame.is_treat_ok_frame(frame, self.logger):
+                del self._recv_buffer[:HeartbeatFrame.FRAME_SIZE]
+                self.logger.debug("跳过 Treat_OK 帧（由 SerialHandler 处理）")
+                continue
+            self._recv_buffer.pop(0)
 
     def _start_threads(self) -> None:
         """启动后台线程：主动发送 + 超时监控"""

@@ -11,19 +11,29 @@ FRAME_SIZE = 13
 HEARTBEAT_MODE = 0xAB
 HEARTBEAT_FROM_DEVICE = 0x01
 HEARTBEAT_TO_DEVICE = 0x02
+HEARTBEAT_TREAT_OK = 0x03
 
 
-def looks_like_heartbeat_frame(data: bytes) -> bool:
-    """是否为 13 字节心跳 ping(0x01) 或 pong(0x02) 帧。"""
+def _looks_like_ab_frame(data: bytes) -> bool:
     if len(data) != FRAME_SIZE:
         return False
     if data[0:2] != FRAME_HEADER:
         return False
     if data[2] != FRAME_LENGTH:
         return False
-    if data[4] != HEARTBEAT_MODE:
+    return data[4] == HEARTBEAT_MODE
+
+
+def looks_like_treat_ok_frame(data: bytes) -> bool:
+    """是否为 13 字节 Treat_OK 帧 (0xAB/0x03)。"""
+    return _looks_like_ab_frame(data) and data[5] == HEARTBEAT_TREAT_OK
+
+
+def looks_like_heartbeat_frame(data: bytes) -> bool:
+    """是否为 13 字节 AB 模式帧：ping(0x01)、pong(0x02) 或 Treat_OK(0x03)。"""
+    if not _looks_like_ab_frame(data):
         return False
-    return data[5] in (HEARTBEAT_FROM_DEVICE, HEARTBEAT_TO_DEVICE)
+    return data[5] in (HEARTBEAT_FROM_DEVICE, HEARTBEAT_TO_DEVICE, HEARTBEAT_TREAT_OK)
 
 
 def strip_heartbeat_frames(data: bytes) -> bytes:

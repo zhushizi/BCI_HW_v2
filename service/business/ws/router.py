@@ -11,7 +11,7 @@ WebSocket(JSON-RPC) 消息路由（服务层）。
 - decoder.ready：仅记录 params，并更新 ws.decoder_ready/decoder_info（保持兼容）
 - decoder.session_info：记录 params，并更新 ws.decoder_session_info（保持兼容）；日志仅输出摘要避免刷屏
 - system.ping：被动回 pong（可按需关闭/扩展）
-- paradigm.action_command：按动作指令下发治疗命令/数据帧，收到 Treat_OK 后回 main.exo_action_complete
+- paradigm.action_command：按动作指令下发治疗命令/数据帧，收到 Treat_OK 帧(0xAB/0x03) 后回 main.exo_action_complete
 """
 
 import logging
@@ -45,7 +45,6 @@ class WsMessageRouter:
     METHOD_MAIN_STOP_SESSION = "main.stop_session"
     CHANNEL_LEFT = "left"
     CHANNEL_RIGHT = "right"
-    TOKEN_TREAT_OK = "Treat_OK"
 
     def __init__(
         self,
@@ -79,7 +78,6 @@ class WsMessageRouter:
             ws=self.ws,
             logger=self.logger,
             pending_action_store=self._pending_action_store,
-            treat_ok_token=self.TOKEN_TREAT_OK,
         )
         self._stop_session_handler = StopSessionHandler(
             logger=self.logger,
@@ -96,7 +94,7 @@ class WsMessageRouter:
         """
         self._register_ws_handlers()
 
-        # 订阅串口回调（用于接收 Treat_OK）
+        # 订阅串口回调（用于接收 Treat_OK 帧 0x03）
         self._ensure_serial_callback()
 
     def set_on_action_command(self, handler: Callable[[int, str, str], bool]) -> None:
@@ -175,8 +173,8 @@ class WsMessageRouter:
     def _on_main_stop_session(self, msg: Dict[str, Any]) -> None:
         self._stop_session_handler.on_main_stop_session(msg)
 
-    def _contains_treat_ok(self, data: bytes) -> bool:
-        return self._serial_handler.contains_treat_ok(data)
+    def _contains_treat_ok_frame(self, data: bytes) -> bool:
+        return self._serial_handler.contains_treat_ok_frame(data)
 
     def _handle_action_command(self, trial_index: int, action: str, channel: str) -> bool:
         if not self._on_action_command:

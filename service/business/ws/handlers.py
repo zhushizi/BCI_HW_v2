@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, Optional
 
 from infrastructure.communication.websocket_service import MainWebSocketService
+from service.business.protocol.heartbeat_frame import HeartbeatFrame
 
 @dataclass(frozen=True)
 class ActionCommand:
@@ -74,7 +75,7 @@ class ParadigmHandler:
 
 
 class SerialHandler:
-    """接收串口数据并识别 Treat_OK；对分片到达的数据做缓冲，避免 'Treat_O' + 'K' 拆成两段时漏检。"""
+    """接收串口数据并识别 Treat_OK 帧（AB 模式 0x03）；分片到达时先组帧再校验。"""
     MAX_RECV_BUFFER = 256
 
     def __init__(
@@ -83,46 +84,59 @@ class SerialHandler:
         ws: MainWebSocketService,
         logger: logging.Logger,
         pending_action_store: PendingActionStore,
-        treat_ok_token: str,
     ) -> None:
         self._ws = ws
         self._logger = logger
         self._pending_action_store = pending_action_store
-        self._treat_ok_token = treat_ok_token
         self._recv_buffer = bytearray()
 
     def on_serial_data(self, data: bytes) -> None:
         if not data:
             return
-        self._recv_buffer.extend(data) # 将接收到的数据添加到缓冲区
-        if len(self._recv_buffer) > self.MAX_RECV_BUFFER: # 如果缓冲区超过最大长度，则截取最后一部分
+        self._recv_buffer.extend(data)
+        if len(self._recv_buffer) > self.MAX_RECV_BUFFER:
             self._recv_buffer = self._recv_buffer[-self.MAX_RECV_BUFFER:]
-        if not self.contains_treat_ok(bytes(self._recv_buffer)):
-            return
+        self._try_consume_treat_ok_frames()
+
+    def _try_consume_treat_ok_frames(self) -> None:
+        """从 _recv_buffer 中尽量解析并消费完整的 Treat_OK 帧（每帧 13 字节）。"""
+        while len(self._recv_buffer) >= HeartbeatFrame.FRAME_SIZE:
+            if bytes(self._recv_buffer[0:2]) != HeartbeatFrame.FRAME_HEADER:
+                self._recv_buffer.pop(0)
+                continue
+            frame = bytes(self._recv_buffer[:HeartbeatFrame.FRAME_SIZE])
+            if not HeartbeatFrame.is_treat_ok_frame(frame, self._logger):
+                self._recv_buffer.pop(0)
+                continue
+            del self._recv_buffer[:HeartbeatFrame.FRAME_SIZE]
+            self._logger.info("收到下位机 Treat_OK 帧 (0x03): %s", frame.hex())
+            self._handle_treat_ok_frame()
+
+    def contains_treat_ok_frame(self, data: bytes) -> bool:
+        """判断缓冲区是否包含至少一帧完整的 Treat_OK 帧。"""
+        if len(data) < HeartbeatFrame.FRAME_SIZE:
+            return False
+        for i in range(len(data) - HeartbeatFrame.FRAME_SIZE + 1):
+            if data[i : i + 2] != HeartbeatFrame.FRAME_HEADER:
+                continue
+            frame = data[i : i + HeartbeatFrame.FRAME_SIZE]
+            if HeartbeatFrame.is_treat_ok_frame(frame, self._logger):
+                return True
+        return False
+
+    def _handle_treat_ok_frame(self) -> None:
         if not self._pending_action_store.value:
-            self._logger.warning("收到 Treat_OK，但无待完成动作")
-            self._recv_buffer.clear()
+            self._logger.warning("收到 Treat_OK 帧，但无待完成动作")
             return
         trial_index = self._pending_action_store.value.trial_index
         action = self._pending_action_store.value.action
         self._pending_action_store.value = None
-        self._recv_buffer.clear()
         self._send_action_complete(trial_index, action)
-
-    def contains_treat_ok(self, data: bytes) -> bool:
-        """识别 Treat_OK 的逻辑："""
-        if self._treat_ok_token.encode() in data: # 如果缓冲区中包含 Treat_OK 的 token，则返回 True
-            return True
-        try:
-            text = data.decode(errors="ignore") # 如果缓冲区中不包含 Treat_OK 的 token，则尝试解码为文本
-        except Exception:
-            return False
-        return self._treat_ok_token in text
 
     def _send_action_complete(self, trial_index: int, action: str) -> None:
         self._ws.send_exo_action_complete(trial_index=trial_index, executed_action=action)
         self._logger.info(
-            "收到 Treat_OK，已发送 main.exo_action_complete: trial_index=%s, action=%s",
+            "收到 Treat_OK 帧，已发送 main.exo_action_complete: trial_index=%s, action=%s",
             trial_index,
             action,
         )

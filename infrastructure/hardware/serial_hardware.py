@@ -13,6 +13,7 @@ import logging
 
 from infrastructure.hardware.heartbeat_log_filter import (
     looks_like_heartbeat_frame,
+    looks_like_treat_ok_frame,
     strip_heartbeat_frames,
 )
 
@@ -53,10 +54,13 @@ class SerialHardware:
         self.logger = logging.getLogger(__name__)
 
     def _log_serial_traffic(self, data: bytes, *, receiving: bool) -> None:
-        """打印串口原始数据；心跳帧 (ab01/ab02) 不输出 INFO，避免刷屏。"""
+        """打印串口原始数据；心跳 ping/pong 不输出 INFO；Treat_OK(0x03) 单独 INFO 打印。"""
         if not self.log_receive_enabled or not data:
             return
         label = "接收指令" if receiving else "发送指令"
+        if looks_like_treat_ok_frame(data):
+            self.logger.info("[%s] Treat_OK: %s (%s 字节)", label, data.hex(), len(data))
+            return
         if looks_like_heartbeat_frame(data):
             self.logger.debug("[%s] 心跳: %s (%s 字节)", label, data.hex(), len(data))
             return

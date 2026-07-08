@@ -14,12 +14,13 @@ class HeartbeatFrame:
     RESERVED_COUNT = 5
 
     HEARTBEAT_MODE = 0xAB  # 心跳模式标识
-    HEARTBEAT_FROM_DEVICE = 0x01  # 下位机->上位机
-    HEARTBEAT_TO_DEVICE = 0x02    # 上位机->下位机
+    HEARTBEAT_FROM_DEVICE = 0x01  # 下位机->上位机（心跳 ping）
+    HEARTBEAT_TO_DEVICE = 0x02    # 上位机->下位机（心跳 pong）
+    HEARTBEAT_TREAT_OK = 0x03     # 下位机->上位机（治疗完成，原 Treat_OK）
 
     @classmethod
-    def is_heartbeat_request(cls, data: bytes, logger: logging.Logger) -> bool:
-        """判断数据是否为下位机心跳包（并校验校验和）"""
+    def _is_valid_frame(cls, data: bytes, direction: int, logger: logging.Logger) -> bool:
+        """判断是否为指定方向的 AB 模式帧（并校验校验和）。"""
         if len(data) < cls.FRAME_SIZE:
             return False
         if data[0:2] != cls.FRAME_HEADER:
@@ -28,17 +29,30 @@ class HeartbeatFrame:
             return False
         if data[4] != cls.HEARTBEAT_MODE:
             return False
-        if data[5] != cls.HEARTBEAT_FROM_DEVICE:
+        if data[5] != direction:
             return False
 
         frame_data = bytearray(data[0:cls.FRAME_DATA_SIZE])
         expected_checksum = cls.calculate_checksum(frame_data)
         actual_checksum = data[cls.FRAME_DATA_SIZE:cls.FRAME_SIZE]
         if expected_checksum != actual_checksum:
-            logger.warning(f"心跳包校验和错误: 期望={expected_checksum.hex()}, 实际={actual_checksum.hex()}")
+            logger.warning(
+                f"AB 帧校验和错误(direction=0x{direction:02X}): "
+                f"期望={expected_checksum.hex()}, 实际={actual_checksum.hex()}"
+            )
             return False
 
         return True
+
+    @classmethod
+    def is_heartbeat_request(cls, data: bytes, logger: logging.Logger) -> bool:
+        """判断数据是否为下位机心跳包（并校验校验和）"""
+        return cls._is_valid_frame(data, cls.HEARTBEAT_FROM_DEVICE, logger)
+
+    @classmethod
+    def is_treat_ok_frame(cls, data: bytes, logger: logging.Logger) -> bool:
+        """判断数据是否为下位机治疗完成帧（原 Treat_OK，并校验校验和）"""
+        return cls._is_valid_frame(data, cls.HEARTBEAT_TREAT_OK, logger)
 
     @classmethod
     def build_heartbeat_response(cls) -> bytes:
